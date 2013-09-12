@@ -48,9 +48,9 @@
     <!-- CODE MANAGEMENT -->
     <scm>
         <tag>HEAD</tag>
-        <url>https://github.com/link-nv/linkid-sdk</url>
-        <connection>scm:git:ssh://github.com/link-nv/linkid-sdk</connection>
-        <developerConnection>scm:git:ssh://github.com/link-nv/linkid-sdk</developerConnection>
+        <url>https://github.com/link-nv/linkid-sdk-php</url>
+        <connection>scm:git:ssh://github.com/link-nv/linkid-sdk-php</connection>
+        <developerConnection>scm:git:ssh://github.com/link-nv/linkid-sdk-php</developerConnection>
     </scm>
 
     <!-- DISTRIBUTION AND DEPLOYMENT -->
@@ -65,68 +65,12 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
-    <reporting>
-        <outputDirectory>target/site</outputDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${maven-surefire-report-plugin.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <!-- COMPILATION PROFILES -->
     <profiles>
 
         <profile>
             <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <boot.classpath>/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jce.jar:/Library//Java/JavaVirtualMachines/1.6.0_29-b11-402.jdk/Contents/Classes/classes.jar:/Library//Java/JavaVirtualMachines/1.6.0_29-b11-402.jdk/Contents/Classes/jsse.jar:/Library//Java/JavaVirtualMachines/1.6.0_29-b11-402.jdk/Contents/Classes/jce.jar</boot.classpath>
-            </properties>
         </profile>
         <!-- Profile to use the buildserver maven repository -->
         <profile>
@@ -258,11 +202,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
 
@@ -317,22 +256,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                    <configuration>
-                        <forkMode>always</forkMode>
-                        <useSystemClassLoader>true</useSystemClassLoader>
-                        <childDelegation>false</childDelegation>
-                        <systemProperties>
-                          <property>
-                            <name>java.awt.headless</name>
-                            <value>true</value>
-                          </property>
-                        </systemProperties>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                 </plugin>
@@ -355,11 +278,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jvnet.jax-ws-commons</groupId>
-                    <artifactId>jaxws-maven-plugin</artifactId>
-                    <version>${jaxws-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -401,33 +319,8 @@
 
     <!-- MODULES -->
     <modules>
-        <module>linkid-container-test</module>
-
-        <module>linkid-config</module>
-        <module>linkid-sdk-api</module>
-        <module>linkid-sdk</module>
-        <module>linkid-sdk-ws</module>
-        <module>linkid-sdk-saml2</module>
-        <module>linkid-sdk-openid</module>
-        <module>linkid-sdk-oauth2</module>
-        <module>linkid-ws</module>
-        <module>linkid-wicket-sdk</module>
-
-        <module>linkid-sdk-dotnet</module>
         <module>linkid-sdk-php</module>
-
-        <module>linkid-sdk-package-java</module>
-        <module>linkid-sdk-package-dotnet</module>
         <module>linkid-sdk-package-php</module>
-
-        <module>linkid-sdk-example-jsp</module>
-        <module>linkid-sdk-example-wicket</module>
-        <module>linkid-sdk-example-mobile</module>
-
-        <module>device</module>
-        <module>attribute</module>
-
-        <module>linkid-nfc-sdk</module>
 
         <module>repo.linkid.be</module>
 
@@ -442,19 +335,6 @@
         <repo.url>http://repo.linkid.be/releases</repo.url>
         <!--<repo.plugin.url>http://repo1.maven.org/maven2</repo.plugin.url>-->
         <repo.plugin.url>http://repo.linkid.be/releases</repo.plugin.url>
-
-        <!-- WS locations -->
-        <linkid.ws.attribute.path>attrib</linkid.ws.attribute.path>
-        <linkid.ws.data.path>data</linkid.ws.data.path>
-        <linkid.ws.idmapping.path>idmapping</linkid.ws.idmapping.path>
-        <linkid.ws.sts.path>sts</linkid.ws.sts.path>
-        <linkid.ws.notification.producer.path>producer</linkid.ws.notification.producer.path>
-        <linkid.ws.notification.subscription.path>subscription</linkid.ws.notification.subscription.path>
-        <linkid.ws.session.tracking.path>session</linkid.ws.session.tracking.path>
-        <linkid.ws.xkms2.path>xkms2</linkid.ws.xkms2.path>
-        <linkid.ws.auth.path>auth</linkid.ws.auth.path>
-        <linkid.ws.get.auth.path>get_auth</linkid.ws.get.auth.path>
-        <linkid.ws.payment.path>payment</linkid.ws.payment.path>
 
         <!-- DEFAULT VERSIONS, SEE PLUGINS -->
         <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
@@ -472,427 +352,14 @@
 
         <!-- DEFAULT VERSIONS, SEE DEPENDENCIES -->
         <release.version>1.18</release.version>
-        <link-util.version>1.49</link-util.version>
-        <opal.version>1.6-p5</opal.version>
-        <jtrust.version>1.1.2</jtrust.version>
-
-        <joda-time.version>1.6.2</joda-time.version>
-
-        <slf4j.version>1.5.11</slf4j.version>
-        <logback.version>0.9.20</logback.version>
-        <simpledb-appender.version>0.9-linkid</simpledb-appender.version>
-
-        <!-- JAX-WS -->
-        <jaxws-maven-plugin.version>2.2</jaxws-maven-plugin.version>
-        <jaxws-rt.version>2.1.7</jaxws-rt.version>
-
-        <!-- WICKET -->
-        <wicket.version>1.4.18</wicket.version>
-
-        <serializer.version>2.10.0</serializer.version>
-
-        <guava.version>r05</guava.version>
-        <gson.version>2.2.2</gson.version>
-        <jetbrains-annotations.version>7.0.2</jetbrains-annotations.version>
-        <bouncycastle.version>1.46</bouncycastle.version>
-
-        <!-- ZXING - used in OAuth2 mobile linking servlet -->
-        <zxing.version>2.0</zxing.version>
-
-        <!-- DEFAULT VERSIONS for Test Dependencies -->
-        <junit.version>4.8.1</junit.version>
-        <junit-addons.version>1.4</junit-addons.version>
-        <easymock.version>2.3</easymock.version>
-        <easymockclassextension.version>2.2.2</easymockclassextension.version>
-        <jetty.version>6.1.7</jetty.version>
-        <catalina.version>5.5.15</catalina.version>
-        <antlr.version>2.7.7</antlr.version>
-        <javassist.version>3.6.0.GA</javassist.version>
-
-        <!-- VARIOUS -->
-        <commons-io.version>1.3.1</commons-io.version>
-        <jtidy.version>r8-20060801</jtidy.version>
-        <openid4java.version>0.9.7</openid4java.version>
-
-        <!-- JSP -->
-        <jstl.version>1.2</jstl.version>
-        <jsp-api.version>2.1</jsp-api.version>
-
-        <!-- JSR's -->
-        <jsr181-api.version>1.0-MR1</jsr181-api.version>
 
     </properties>
 
     <!-- DEPENDENCIES: DEFAULT SCOPE AND VERSION -->
     <dependencyManagement>
         <dependencies>
-
-            <!-- linkID SDK -->
-            <dependency>
-                <groupId>net.lin-k.linkid.client.sdk</groupId>
-                <artifactId>linkid-container-test</artifactId>
-                <version>GIT-SNAPSHOT</version>
-                <scope>test</scope>
-                <type>pom</type>
-            </dependency>
-
-            <!-- lin.k util -->
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-j2ee</artifactId>
-                <version>${link-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-common</artifactId>
-                <version>${link-util.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-j2ee-jboss6</artifactId>
-                <version>${link-util.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>jboss.jbossws</groupId>
-                        <artifactId>jboss-jaxws</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>sun-jaxb</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>apache-xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>apache-xerces</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-jpa</artifactId>
-                <version>${link-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-test</artifactId>
-                <version>${link-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-wicket</artifactId>
-                <version>${link-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-ws</artifactId>
-                <version>${link-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.lin-k.util</groupId>
-                <artifactId>util-saml2</artifactId>
-                <version>${link-util.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xalan</groupId>
-                        <artifactId>xalan</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket</artifactId>
-                <version>${wicket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk16</artifactId>
-                <version>${bouncycastle.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcmail-jdk16</artifactId>
-                <version>${bouncycastle.version}</version>
-            </dependency>
-
-            <!-- External -->
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-tools</artifactId>
-                <version>${hibernate-tools.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jul-to-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${gson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kikini</groupId>
-                <artifactId>simpledb-appender</artifactId>
-                <version>${simpledb-appender.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-rt</artifactId>
-                <version>${jaxws-rt.version}</version>
-                <exclusions>
-                    <!-- Conflicts on javax.xml.namespace.QName -->
-                    <exclusion>
-                        <groupId>javax.xml.stream</groupId>
-                        <artifactId>stax-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>stax</groupId>
-                        <artifactId>stax-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>${jetbrains-annotations.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- Test Dependencies -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>${easymock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>${easymockclassextension.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>junit-addons</groupId>
-                <artifactId>junit-addons</artifactId>
-                <version>${junit-addons.version}</version>
-
-                <!-- We use org.apache.* instead -->
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xmlParserAPIs</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>tomcat</groupId>
-                <artifactId>catalina</artifactId>
-                <version>${catalina.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xerces</groupId>
-                <artifactId>serializer</artifactId>
-                <version>${serializer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>jtidy</artifactId>
-                <version>${jtidy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket-extensions</artifactId>
-                <version>${wicket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket-ioc</artifactId>
-                <version>${wicket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openid4java</groupId>
-                <artifactId>openid4java</artifactId>
-                <version>${openid4java.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.lyndir.lhunath.opal</groupId>
-                <artifactId>opal-system</artifactId>
-                <version>${opal.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.lyndir.lhunath.opal</groupId>
-                <artifactId>opal-struct</artifactId>
-                <version>${opal.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.lyndir.lhunath.opal</groupId>
-                <artifactId>opal-network</artifactId>
-                <version>${opal.version}</version>
-
-                <!-- We use org.apache.* instead -->
-                <exclusions>
-                    <exclusion>
-                        <groupId>xom</groupId>
-                        <artifactId>xom</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.lyndir.lhunath.opal</groupId>
-                <artifactId>opal-wicket</artifactId>
-                <version>${opal.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.fedict</groupId>
-                <artifactId>jtrust</artifactId>
-                <version>${jtrust.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- Added... -->
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>core</artifactId>
-                <version>${zxing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>javase</artifactId>
-                <version>${zxing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.jws</groupId>
-                <artifactId>jsr181-api</artifactId>
-                <version>${jsr181-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${jstl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>${jsp-api.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-
-
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-    </dependencies>
 
     <prerequisites>
         <maven>2.2.0</maven>
