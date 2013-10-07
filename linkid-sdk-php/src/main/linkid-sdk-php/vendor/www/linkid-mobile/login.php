@@ -10,8 +10,9 @@ if (!$as->isAuthenticated()) {
     $as->login(array(
         'saml:idp' => 'linkID',
         'ReturnTo' => 'https://192.168.5.14/example-mobile/loggedin.php',
-        'ErrorURL'  => 'http://192.168.5.14/example-mobile/failed.php',
-        'linkID:mobileMinimal' => 'true'
+        'ErrorURL' => 'http://192.168.5.14/example-mobile/failed.php',
+        'linkID:mobileMinimal' => 'true',
+        'saml:Extensions' => SAML2_Utils::createLinkIDPaymentExtension(500, "Testing...", null, 5, true, false),
     ));
 
 } else {

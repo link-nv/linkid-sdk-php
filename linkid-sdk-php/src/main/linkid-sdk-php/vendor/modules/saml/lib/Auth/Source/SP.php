@@ -255,6 +255,11 @@ class sspmod_saml_Auth_Source_SP extends SimpleSAML_Auth_Source {
             $b->setDestinationParams($state['DestinationParams']);
         }
 
+        if (isset($state['saml:Extensions'])) {
+            SimpleSAML_Logger::debug('Adding extensions...');
+            $ar->setExtensions($state['saml:Extensions']);
+        }
+
 		$b->send($ar);
 
 		assert('FALSE');

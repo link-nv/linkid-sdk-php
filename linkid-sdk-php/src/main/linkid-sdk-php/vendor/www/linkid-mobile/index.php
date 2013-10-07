@@ -47,7 +47,7 @@ $as = new SimpleSAML_Auth_Simple('example-mobile');
             </a>
         </div>
 
-        <script type="text/javascript" id="linkid-login-script" src="https://192.168.5.14:8443/linkid-static/js/linkid.js"></script>
+        <script type="text/javascript" id="linkid-login-script" src="https://demo.linkid.be/linkid-static/js/linkid.js"></script>
     </body>
 </html>
 
