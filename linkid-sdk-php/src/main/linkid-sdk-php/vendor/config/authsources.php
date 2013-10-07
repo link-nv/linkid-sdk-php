@@ -10,22 +10,36 @@ $config = array(
 		'core:AdminPassword',
 	),
 
-        // linkID Example authentication source
-        'linkid-example' => array(
-                'saml:SP',
-        'privatekey' => 'example.pem',
-        'certificate' => 'example.crt',
-        'RelayState'  => '/www/linkid-example/index.php',
+    // linkID Example authentication source
+    'linkid-example' => array(
+            'saml:SP',
+    'privatekey' => 'example.pem',
+    'certificate' => 'example.crt',
+    'RelayState'  => '/www/linkid-example/index.php',
 
-                // The entity ID of this SP.
-                // Can be NULL/unset, in which case an entity ID is generated based on the metadata URL.
-                'entityID' => 'linkid-example',
+            // The entity ID of this SP.
+            // Can be NULL/unset, in which case an entity ID is generated based on the metadata URL.
+            'entityID' => 'linkid-example',
 
-                // The entity ID of the IdP this should SP should contact.
-                // Can be NULL/unset, in which case the user will be shown a list of available IdPs.
-                'idp' => 'linkID',
+            // The entity ID of the IdP this should SP should contact.
+            // Can be NULL/unset, in which case the user will be shown a list of available IdPs.
+            'idp' => 'linkID',
+    ),
+
+    // linkID Mobile authentication source
+    'example-mobile' => array('saml:SP',
+        'privatekey'    => 'example-mobile.pem',
+        'certificate'   => 'example-mobile.crt',
+        'RelayState'    => '/www/example-mobile/loggedin.php',
+        'entityID'      => 'example-mobile',
+        'idp'           => 'linkID',
+        'authproc'      => array(
+            10 => array(
+                'class' => 'core:LinkIDAttributes',
+                'removeurnprefix'
+            ),
         ),
-
+    ),
 
 	// An authentication source which can authenticate against both SAML 2.0
 	// and Shibboleth 1.3 IdPs.

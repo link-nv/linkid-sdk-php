@@ -130,11 +130,23 @@ class SimpleSAML_Auth_Default {
             echo "window.close();";
             echo "</script>";
             return;
-
-//throw new SimpleSAML_Error_BadRequest('Debugging...: ' . $return . ' -state:' . print_r($state));
         }
 
-		if (is_string($return)) {
+        /**
+         * Check if linkID mobile minimal login flow, if so jump out of iframe
+         */
+        SimpleSAML_Logger::debug('linkID Mobile minimal? ' . $state['linkID:mobileMinimal']);
+        if ($state['linkID:mobileMinimal']) {
+
+            SimpleSAML_Logger::debug(' --> jump out of iframe to ' . $return);
+            echo "<script type=\"text/javascript\">";
+            echo "window.top.location.replace(\"" . $return . "\");";
+            echo "</script>";
+            return;
+
+        }
+
+        if (is_string($return)) {
 			/* Redirect... */
 			SimpleSAML_Utilities::redirect($return);
 		} else {
