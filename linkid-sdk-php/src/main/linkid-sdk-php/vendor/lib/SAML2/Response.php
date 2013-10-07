@@ -13,7 +13,6 @@ class SAML2_Response extends SAML2_StatusResponse {
 	 */
 	private $assertions;
 
-
 	/**
 	 * Constructor for SAML 2 response messages.
 	 *
@@ -61,7 +60,6 @@ class SAML2_Response extends SAML2_StatusResponse {
 
 		$this->assertions = $assertions;
 	}
-
 
 	/**
 	 * Convert the response message to an XML element.

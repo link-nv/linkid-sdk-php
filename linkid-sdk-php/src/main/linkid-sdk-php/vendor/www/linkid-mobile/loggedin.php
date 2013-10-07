@@ -49,6 +49,10 @@ $as = new SimpleSAML_Auth_Simple('example-mobile');
             foreach ($authnStatements as $as) {
                 print "Device: " . $as->getAuthnContext() . " @ " . $as->getAuthnInstant() . "<br/>";
             }
+
+            print "<h2>Payment response</h2>";
+
+            print_r($authDataArray['linkID:paymentResponse']);
         }
 
         ?>

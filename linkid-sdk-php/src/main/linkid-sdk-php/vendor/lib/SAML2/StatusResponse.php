@@ -38,8 +38,16 @@ abstract class SAML2_StatusResponse extends SAML2_Message {
 	 */
 	private $status;
 
+    /**
+     * The optional payment response in this response.
+     *
+     * @var SAML2_PaymentResponse
+     */
+    private $paymentResponse;
 
-	/**
+
+
+    /**
 	 * Constructor for SAML 2 response messages.
 	 *
 	 * @param string $tagName  The tag name of the root element.
@@ -48,7 +56,8 @@ abstract class SAML2_StatusResponse extends SAML2_Message {
 	protected function __construct($tagName, DOMElement $xml = NULL) {
 		parent::__construct($tagName, $xml);
 
-		$this->status = array(
+
+        $this->status = array(
 			'Code' => SAML2_Const::STATUS_SUCCESS,
 			'SubCode' => NULL,
 			'Message' => NULL,
@@ -85,8 +94,18 @@ abstract class SAML2_StatusResponse extends SAML2_Message {
 		if (!empty($message)) {
 			$this->status['Message'] = trim($message[0]->textContent);
 		}
-	}
 
+        // check for possible extensions
+        $extensions = SAML2_Utils::xpQuery($xml, './saml_protocol:Extensions');
+        if (!empty($extensions)) {
+            SimpleSAML_Logger::debug('  --> Extensions present');
+            $paymentResponseDOM = SAML2_Utils::xpQuery($extensions[0], './saml_assertion:PaymentResponse');
+            if (!empty($paymentResponseDOM)) {
+                SimpleSAML_Logger::debug('  --> Payment response present');
+                $this->paymentResponse = new SAML2_PaymentResponse($paymentResponseDOM[0]);
+            }
+        }
+    }
 
 	/**
 	 * Determine whether this is a successful response.
@@ -153,8 +172,17 @@ abstract class SAML2_StatusResponse extends SAML2_Message {
 		}
 	}
 
+    /**
+     * @return \PaymentResponse
+     */
+    public function getPaymentResponse()
+    {
+        return $this->paymentResponse;
+    }
 
-	/**
+
+
+    /**
 	 * Convert status response message to an XML element.
 	 *
 	 * @return DOMElement  This status response.

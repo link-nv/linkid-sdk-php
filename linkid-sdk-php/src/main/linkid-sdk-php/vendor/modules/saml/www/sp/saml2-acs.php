@@ -43,6 +43,12 @@ if (!empty($stateId)) {
 $linkIDLoginMode =  $_POST['login_mode'];
 $state['linkID:loginMode'] = $linkIDLoginMode;
 
+/**
+ * Possible payment response
+ */
+$state['linkID:paymentResponse'] = $response->getPaymentResponse();
+$state['PersistentAuthData'][] = 'linkID:paymentResponse';
+
 $idp = $response->getIssuer();
 if ($idp === NULL) {
 	throw new Exception('Missing <saml:Issuer> in message delivered to AssertionConsumerService.');
