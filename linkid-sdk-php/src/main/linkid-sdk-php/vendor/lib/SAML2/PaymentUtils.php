@@ -54,6 +54,13 @@ class SAML2_PaymentUtils
     }
 
     /**
+     * Returns the payment state for the specified payment transaction.
+     * Possible return values are:
+     *
+     * STARTED          : Payment is being processed
+     * AUTHORIZED       : Payment is authorized
+     * FAILED           : Payment has failed
+     *
      * @param string $transactionId the transaction Id
      * @return string PaymentState
      */
