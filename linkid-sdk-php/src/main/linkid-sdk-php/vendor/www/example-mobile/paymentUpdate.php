@@ -4,7 +4,7 @@ require_once('../_include.php');
 
 $transactionId = $_GET['txn_id'];
 // fetch payment state for this transaction
-$paymentState = SAML2_PaymentUtils::getPaymentStatus($transactionId);
+$paymentState = SAML2_PaymentUtils::getPaymentStatus($transactionId, "https://demo.linkid.be");
 
 //echo "<pre>".print_r($result, true)."</pre>";
 ?>

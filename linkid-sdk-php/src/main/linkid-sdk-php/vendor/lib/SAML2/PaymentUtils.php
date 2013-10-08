@@ -62,12 +62,13 @@ class SAML2_PaymentUtils
      * FAILED           : Payment has failed
      *
      * @param string $transactionId the transaction Id
+     * @param string $linkIDHost the linkID service hostname, e.g. https://service.linkid.be
      * @return string PaymentState
      */
-    public static function getPaymentStatus($transactionId)
+    public static function getPaymentStatus($transactionId, $linkIDHost)
     {
 
-        $paymentPortUrl = "https://demo.linkid.be/linkid-ws/payment?wsdl";
+        $paymentPortUrl = $linkIDHost . "/linkid-ws/payment?wsdl";
         $client = new SoapClient($paymentPortUrl, array("trace" => 0, "exception" => 1));
         $result = $client->__soapCall("status", array(
             "PaymentStatusRequest" => array("transactionId" => $transactionId)
