@@ -20,7 +20,15 @@ class SAML2_PaymentResponse
     }
 
     /**
-     * @return mixed
+     * Possible return values are:
+     *
+     *     STARTED                // payment is being processed
+     *     DEFERRED               // deferred payment
+     *     WAITING_FOR_UPDATE     // linkID stopped waiting for status update, SP will be informed on payment status change
+     *     FAILED                 // payment has failed
+     *     PAYED                  // completed
+     *
+     * @return string the payment state of the transaction
      */
     public function getPaymentState()
     {
@@ -28,7 +36,7 @@ class SAML2_PaymentResponse
     }
 
     /**
-     * @return mixed
+     * @return string the transaction ID, a UUID
      */
     public function getTransactionId()
     {
