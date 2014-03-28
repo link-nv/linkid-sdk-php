@@ -1,5 +1,8 @@
 <?php
 
+require_once('simplexml_dump.php');
+require_once('simplexml_tree.php');
+
 /*
  * LinkID SAML v2.0 Utility class
  *
@@ -31,6 +34,26 @@ class LinkIDSaml2 {
         $authnRequest .= "</saml2p:AuthnRequest>";
 
         return $authnRequest;
+    }
+
+    public function parseAuthnResponse($authnResponse) {
+
+        $xml = new SimpleXMLElement($authnResponse);
+        //simplexml_tree($xml, true);
+
+        // validate challenge
+        $inResponseTo = $xml->attributes()->InResponseTo;
+        if ($inResponseTo != $this->expectedChallenge) {
+            throw new Exception("SAML response is not a response belonging to the original request.");
+        }
+
+        // check status success
+        $statusValue = $xml->children("urn:oasis:names:tc:SAML:2.0:protocol")->Status[0]->StatusCode[0]->attributes()->Value;
+        if ($statusValue != "urn:oasis:names:tc:SAML:2.0:status:Success") {
+            return null;
+        }
+
+        return "TODO";
     }
 
     public function gen_uuid() {

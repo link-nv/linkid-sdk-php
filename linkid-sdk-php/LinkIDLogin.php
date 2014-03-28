@@ -66,13 +66,14 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
 
         // fetch authentication response from linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
-        $sessionId = $hawsClient->pull($sessionId);
+        $authnResponse = $hawsClient->pull($sessionId);
 
         // validate/parse
-        // $authnContext = $saml2Util->parseAuthnResponse();
-        // $_SESSION[$authnContextParam] = $authnContext;
+        $authnContext = $saml2Util->parseAuthnResponse($authnResponse);
+        $_SESSION[$authnContextParam] = $authnContext;
 
-        // TODO :finalize
+        // TODO finalize
+        print_r($authnContext);
 
         return;
     }

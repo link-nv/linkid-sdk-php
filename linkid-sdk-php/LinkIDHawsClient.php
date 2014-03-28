@@ -50,9 +50,7 @@ class LinkIDHawsClient {
             throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
         }
 
-        // TODO: parse response
-        $authnResponse = new SimpleXMLElement($response->success->any);
-        print_r($authnResponse);
+        return $response->success->any;
     }
 }
 ?>
