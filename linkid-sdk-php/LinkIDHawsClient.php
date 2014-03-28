@@ -17,7 +17,7 @@ class LinkIDHawsClient {
      */
     public function __construct($linkIDHost, $username, $password) {
 
-        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/haws?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/haws?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username,$password,'PasswordDigest');
@@ -51,8 +51,8 @@ class LinkIDHawsClient {
         }
 
         // TODO: parse response
-        print_r($response);
+        $authnResponse = new SimpleXMLElement($response->success->any);
+        print_r($authnResponse);
     }
 }
 ?>
-

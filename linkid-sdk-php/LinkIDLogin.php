@@ -7,7 +7,7 @@ require_once('LinkIDSaml2.php');
 /*
  * linkID Configuration
  */
-$linkIDHost = "192.168.5.14:8080";
+$linkIDHost = "192.168.5.14:8443";
 // $linkIDHost = "demo.linkid.be";
 
 $linkIDAppName = "demo-test";
@@ -30,9 +30,9 @@ $loginPage = "http://localhost/~wvdhaute/linkid-sdk-php/LinkIDLogin.php";
  * used authentication device(s) and optionally the returned linkID attributes
  * for the application.
  */
-$authnContext = "linkID.authnContext";
+$authnContextParam = "linkID.authnContext";
 
-handleLinkID($authnContext, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword);
+handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword);
 
 
 
@@ -40,23 +40,41 @@ handleLinkID($authnContext, $linkIDHost, $linkIDAppName, $linkIDLanguage, $login
 /**
  * Handles sending a linkID authentication request and validation/parsing a linkID authentication response
  */
-function handleLinkID($authnContext, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword) {
+function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword) {
 
-    $sessionId = urldecode($_GET["hawsId"]);
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $sessionId = urldecode($_REQUEST["hawsId"]);
 
     /*
      * Check if "force" query param is present.
      * If set, an authentication will be started, regardless if the user was already logged in.
      * For e.g. linkID payments...
      */
-    $forceAuthentication = null != $_GET["force"];
+    $forceAuthentication = null != $_REQUEST["force"];
 
     /*
      * If a SAML2 response was found but no authentication context was on the session we received a
      * SAML2 authentication response.
      */
     if (null != $sessionId && null == $_SESSION[$authnContext]) {
-        // TODO...
+
+        $saml2Util = $_SESSION["linkID.saml2Util"];
+        $loginConfig = $_SESSION["linkID.loginConfig"];
+
+        // fetch authentication response from linkID
+        $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
+        $sessionId = $hawsClient->pull($sessionId);
+
+        // validate/parse
+        // $authnContext = $saml2Util->parseAuthnResponse();
+        // $_SESSION[$authnContextParam] = $authnContext;
+
+        // TODO :finalize
+
+        return;
     }
 
     /*
@@ -72,6 +90,7 @@ function handleLinkID($authnContext, $linkIDHost, $linkIDAppName, $linkIDLanguag
         }
 
         $loginConfig = new LinkIDLoginConfig($linkIDHost);
+        $_SESSION["linkID.loginConfig"] = $loginConfig;
 
         // print("LoginConfig: " . $loginConfig->forceRegistration . "," . $loginConfig->targetURI . "," . $loginConfig->linkIDLandingPage);
 
@@ -90,7 +109,7 @@ function handleLinkID($authnContext, $linkIDHost, $linkIDAppName, $linkIDLanguag
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
-        $sessionId = $hawsClient->push($authnRequest, 'en');
+        $sessionId = $hawsClient->push($authnRequest, $linkIDLanguage);
 
         // redirect
         header("Location: " . $loginConfig->generateRedirectURL($sessionId));
