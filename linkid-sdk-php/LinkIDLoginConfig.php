@@ -41,7 +41,7 @@ class LinkIDLoginConfig {
  */
 function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword) {
 
-    date_default_timezone_set('UTC');
+    date_default_timezone_set('UTC'); // needed for parsing dates
     if (!isset($_SESSION)) {
         session_start();
     }
@@ -99,14 +99,16 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         $saml2Util = new LinkIDSaml2();
         $_SESSION["linkID.saml2Util"] = $saml2Util;
 
-        // TODO: device context
+        // device context
+        $deviceContext = getLinkIDContext();
 
         // TODO: attribute suggestions
+        $attributeSuggestions = getLinkIDAttributeSuggestions();
 
         // TODO: payment context
 
         // generate authn request
-        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage);
+        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions);
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
@@ -132,4 +134,51 @@ function finalize($loginConfig) {
     session_write_close();
     exit();
 }
+
+/**
+ * Specify a custom context to be shown on the linkID mobile app
+ */
+function setLinkIDContext($context) {
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.deviceContext'] = $context;
+
+}
+
+function getLinkIDContext() {
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.deviceContext'];
+
+}
+
+/**
+ * Specify an array of attribute suggestions to be used in the identity part of the linkID login process.
+ */
+function setLinkIDAttributeSuggestions($attributeSuggestions) {
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.attributeSuggestions'] = $attributeSuggestions;
+
+}
+
+function getLinkIDAttributeSuggestions() {
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.attributeSuggestions'];
+
+}
+
 ?>

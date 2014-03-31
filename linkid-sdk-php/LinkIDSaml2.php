@@ -16,7 +16,7 @@ class LinkIDSaml2 {
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage) {
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions) {
 
         $this->expectedChallenge = $this->gen_uuid();
         $this->expectedAudience = $appName;
@@ -33,6 +33,67 @@ class LinkIDSaml2 {
         $authnRequest .= "<saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">" . $appName . "</saml2:Issuer>";
 
         $authnRequest .= "<saml2p:NameIDPolicy AllowCreate=\"true\"/>";
+
+        $authnRequest .= "<saml2p:Extensions>";
+
+        /*
+         * Optional linkID device context
+         */
+        if (null != $deviceContext) {
+
+            $authnRequest .= "<saml2:DeviceContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.contextTitle\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $deviceContext;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+            $authnRequest .= "</saml2:DeviceContext>";
+
+        }
+
+        /*
+         * Optional linkID attribute suggestions
+         */
+        if (null != $attributeSuggestions) {
+
+            $authnRequest .= "<saml2:SubjectAttributes xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
+
+            foreach ($attributeSuggestions as $key => $value) {
+
+                // determine type
+                $type = gettype($value);
+                $xsType = "xs:string";
+                $xsValue = $value;
+
+                if ($type == "boolean") {
+                    $xsType = "xs:boolean";
+                } else if ($type == "integer") {
+                    $xsType = "xs:integer";
+                } else if ($type == "double") {
+                    $xsType = "xs:float";
+                } else if ($type == "string") {
+                    $xsType = "xs:string";
+                } else if ($type == "object" && $value instanceof DateTime) {
+                    $xsType = "xs:dateTime";
+                    $xsValue = $value->format(DateTime::ATOM);
+                } else {
+                    continue;
+                }
+
+
+                $authnRequest .= "<saml2:Attribute Name=\"" . $key . "\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"" . $xsType . "\">" . $xsValue . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+
+            }
+
+            $authnRequest .= "</saml2:SubjectAttributes>";
+        }
+
+        $authnRequest .= "</saml2p:Extensions>";
+
         $authnRequest .= "</saml2p:AuthnRequest>";
 
         return $authnRequest;
