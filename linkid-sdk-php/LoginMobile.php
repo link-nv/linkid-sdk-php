@@ -2,7 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
     <head>
-        <title>linkID Mobile over HAWS Login Demo</title>
+        <title>linkID Mobile Demo</title>
 
         <script type="text/javascript" id="linkid-login-script"
             src="http://192.168.5.14:8080/linkid-static/js/linkid-min.js"></script>
@@ -16,7 +16,7 @@
 
     <body>
 
-        <h1>linkID Mobile Login Demo</h1>
+        <h1>linkID Mobile Demo</h1>
 
         <div class="qr-demo">
             <div>

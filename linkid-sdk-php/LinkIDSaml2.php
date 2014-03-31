@@ -2,6 +2,8 @@
 
 require_once('simplexml_dump.php');
 require_once('simplexml_tree.php');
+require_once('LinkIDAuthnContext.php');
+require_once('LinkIDAttribute.php');
 
 /*
  * LinkID SAML v2.0 Utility class
@@ -39,7 +41,7 @@ class LinkIDSaml2 {
     public function parseAuthnResponse($authnResponse) {
 
         $xml = new SimpleXMLElement($authnResponse);
-        //simplexml_tree($xml, true);
+        // simplexml_tree($xml, true);
 
         // validate challenge
         $inResponseTo = $xml->attributes()->InResponseTo;
@@ -53,7 +55,110 @@ class LinkIDSaml2 {
             return null;
         }
 
-        return "TODO";
+        // get userId
+        $userId = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Subject[0]->NameID[0];
+
+        // check audience
+        $audience = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->AudienceRestriction[0]->Audience[0];
+        if ($audience != $this->expectedAudience) {
+            throw new Exception("Audience name not correct, expected: " . this.expectedAudience);
+        }
+
+        // validate NotBefore/NotOnOrAfter conditions
+        $notBeforeString = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotBefore;
+        $notOnOrAfterString = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotOnOrAfter;
+        $this->checkConditionsTime($notBeforeString, $notOnOrAfterString);
+
+        // parse attributes;
+        $attributes = $this->getAttributes($xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->AttributeStatement[0]);
+
+        return new LinkIDAuthnContext($userId, $attributes, null);
+    }
+
+    public function getAttributes($attributeStatement) {
+
+        $attributes = array();
+
+        foreach($attributeStatement->Attribute as $xmlAttribute) {
+
+            $attribute = $this->getAttribute($xmlAttribute);
+
+            $attributeList = array();
+            if (array_key_exists($attribute->name, $attributes)) {
+                $attributeList = $attributes[$attribute->name];
+            }
+
+            array_push($attributeList, $attribute);
+            $attributes[$attribute->name] = $attributeList;
+        }
+
+        return $attributes;
+    }
+
+    public function getAttribute($xmlAttribute) {
+
+        $name = (string)$xmlAttribute->attributes()->Name;
+        $id = (string)$xmlAttribute->attributes("urn:net:lin-k:safe-online:saml")->attributeId;
+
+        $value = null;
+        if (isset($xmlAttribute->AttributeValue[0]->Attribute[0])) {
+
+            // compound
+            $value = array();
+            foreach($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
+
+                $memberAttribute = new LinkIDAttribute((string)$xmlMemberAttribute->attributes()->Name, $id, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
+                array_push($value, $memberAttribute);
+
+            }
+
+        } else {
+            $value = $this->getAttributeValue($xmlAttribute->AttributeValue[0]);
+        }
+
+        return new LinkIDAttribute($id,$name,$value);
+    }
+
+    public function getAttributeValue($xmlAttributeValue) {
+
+        $type = $xmlAttributeValue->attributes("http://www.w3.org/2001/XMLSchema-instance")->type;
+
+        if ($type == "xs:string") {
+            return (string)$xmlAttributeValue;
+        } else if ($type == "xs:boolean") {
+            return (boolean)$xmlAttributeValue;
+        } else if ($type == "xs:integer") {
+            return (integer)$xmlAttributeValue;
+        } else if ($type == "xs:long") {
+            return (float)$xmlAttributeValue;
+        } else if ($type == "xs:float") {
+            return (float)$xmlAttributeValue;
+        } else if ($type == "xs:dateTime") {
+            return strtotime((string)$xmlAttributeValue);
+        }
+
+        return null;
+    }
+
+    public function checkConditionsTime($notBeforeString, $notOnOrAfterString) {
+
+        $notBefore = new DateTime($notBeforeString);
+        $notOnOrAfter = new DateTime($notOnOrAfterString);
+        $now = new DateTime();
+
+        if ($now <= $notBefore) {
+
+            $now->add(new DateInterval('PT' . 5 . 'M'));
+            if ($now < $notBefore)      throw new Exception("SAML2 assertion invalid: invalid timeframe");
+            $now->sub(new DateInterval('PT' . 10 . 'M'));
+            if ($now > $notOnOrAfter)   throw new Exception("SAML2 assertion invalid: invalid timeframe");
+
+        } else {
+            if ($now < $notBefore || $now > $notOnOrAfter) {
+                throw new Exception("SAML2 assertion invalid: invalid timeframe");
+            }
+        }
+
     }
 
     public function gen_uuid() {
