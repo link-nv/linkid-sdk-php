@@ -27,22 +27,28 @@ class LinkIDPaymentResponse {
     public function __construct($orderReference,$paymentState) {
 
         $this->orderReference = $orderReference;
-
-        if ($paymentState == "STARTED") {
-            $this->paymentState = LinkIDPaymentResponse::STARTED;
-        } else if ($paymentState == "DEFERRED") {
-            $this->paymentState = LinkIDPaymentResponse::DEFERRED;
-        } else if ($paymentState == "WAITING_FOR_UPDATE") {
-            $this->paymentState = LinkIDPaymentResponse::WAITING_FOR_UPDATE;
-        } else if ($paymentState == "FAILED") {
-            $this->paymentState = LinkIDPaymentResponse::FAILED;
-        } else if ($paymentState == "REFUNDED") {
-            $this->paymentState = LinkIDPaymentResponse::REFUNDED;
-        } else if ($paymentState == "REFUND_STARTED") {
-            $this->paymentState = LinkIDPaymentResponse::REFUND_STARTED;
-        } else if ($paymentState == "PAYED") {
-            $this->paymentState = LinkIDPaymentResponse::PAYED;
-        }
+        $this->paymentState = parseLinkIDPaymentState($paymentState);
     }
 }
+
+function parseLinkIDPaymentState($paymentState) {
+
+    if ($paymentState == "STARTED") {
+        return LinkIDPaymentResponse::STARTED;
+    } else if ($paymentState == "DEFERRED") {
+        return LinkIDPaymentResponse::DEFERRED;
+    } else if ($paymentState == "WAITING_FOR_UPDATE") {
+        return LinkIDPaymentResponse::WAITING_FOR_UPDATE;
+    } else if ($paymentState == "FAILED") {
+        return LinkIDPaymentResponse::FAILED;
+    } else if ($paymentState == "REFUNDED") {
+        return LinkIDPaymentResponse::REFUNDED;
+    } else if ($paymentState == "REFUND_STARTED") {
+        return LinkIDPaymentResponse::REFUND_STARTED;
+    } else if ($paymentState == "PAYED" || $paymentState == "AUTHORIZED") {
+        return LinkIDPaymentResponse::PAYED;
+    }
+
+}
+
 ?>

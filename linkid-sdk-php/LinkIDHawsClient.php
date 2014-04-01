@@ -3,7 +3,7 @@
 require_once('LinkIDWSSoapClient.php');
 
 /*
- * HAWS WS client
+ * linkID HAWS WS client
  *
  * @author Wim Vandenhaute
  */
