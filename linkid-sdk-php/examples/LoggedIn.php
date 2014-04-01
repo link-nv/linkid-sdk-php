@@ -1,6 +1,6 @@
 <?php
 
-require_once('LinkIDAuthnContext.php');
+require_once('../LinkIDAuthnContext.php');
 
 if (!isset($_SESSION)) {
     session_start();
