@@ -1,7 +1,5 @@
 <?php
 
-require_once('simplexml_dump.php');
-require_once('simplexml_tree.php');
 require_once('LinkIDAuthnContext.php');
 require_once('LinkIDAttribute.php');
 require_once('LinkIDPaymentContext.php');
@@ -143,7 +141,6 @@ class LinkIDSaml2 {
     public function parseAuthnResponse($authnResponse) {
 
         $xml = new SimpleXMLElement($authnResponse);
-        // simplexml_tree($xml, true);
 
         // validate challenge
         $inResponseTo = $xml->attributes()->InResponseTo;

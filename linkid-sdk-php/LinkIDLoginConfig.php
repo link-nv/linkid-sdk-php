@@ -120,6 +120,9 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
     }
 }
 
+/**
+ * Finalize the linkID authentication process and break out of the iframe redirecting to the targetURI
+ */
 function finalize($loginConfig) {
 
     print("<html>");
@@ -149,6 +152,9 @@ function setLinkIDContext($context) {
 
 }
 
+/**
+ * Returns the custom linkID context to be shown on the linkID mobile app ( if any )
+ */
 function getLinkIDContext() {
 
     if (!isset($_SESSION)) {
@@ -172,6 +178,9 @@ function setLinkIDAttributeSuggestions($attributeSuggestions) {
 
 }
 
+/**
+ * Returns the array of attribute suggestions to be used in the identity part of the linkID login process.
+ */
 function getLinkIDAttributeSuggestions() {
 
     if (!isset($_SESSION)) {
@@ -195,6 +204,9 @@ function setLinkIDPaymentContext($paymentContext) {
 
 }
 
+/**
+ * Returns the linkID payment context to be piggy-backed on the linkID authentication request ( if any )
+ */
 function getLinkIDPaymentContext() {
 
     if (!isset($_SESSION)) {

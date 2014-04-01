@@ -10,6 +10,10 @@ class LinkIDAttribute {
 
     public $id;
     public $name;
+
+    /**
+     * Value can be either a string, boolean, integer, float, unix timestamp or array of LinkIDAttribute objects for compound linkID attributes
+     */
     public $value;
 
     /**
