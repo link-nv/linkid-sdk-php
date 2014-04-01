@@ -11,6 +11,10 @@ setLinkIDContext("PHP Example context");
 $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime() );
 setLinkIDAttributeSuggestions($attributeSuggestions);
 
+// set payment context
+$paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
+setLinkIDPaymentContext($paymentContext);
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

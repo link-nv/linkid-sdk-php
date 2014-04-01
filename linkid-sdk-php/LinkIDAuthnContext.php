@@ -1,5 +1,6 @@
 <?php
 
+require_once('LinkIDPaymentResponse.php');
 require_once('LinkIDAttribute.php');
 
 /*

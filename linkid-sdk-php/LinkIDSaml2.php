@@ -4,6 +4,7 @@ require_once('simplexml_dump.php');
 require_once('simplexml_tree.php');
 require_once('LinkIDAuthnContext.php');
 require_once('LinkIDAttribute.php');
+require_once('LinkIDPaymentContext.php');
 
 /*
  * LinkID SAML v2.0 Utility class
@@ -16,7 +17,7 @@ class LinkIDSaml2 {
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions) {
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext) {
 
         $this->expectedChallenge = $this->gen_uuid();
         $this->expectedAudience = $appName;
@@ -92,6 +93,46 @@ class LinkIDSaml2 {
             $authnRequest .= "</saml2:SubjectAttributes>";
         }
 
+        /**
+         * Optional payment context
+         */
+        if (null != $paymentContext) {
+
+            $authnRequest .= "<saml2:PaymentContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
+
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.amount\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->amount . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.currency\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">EUR</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.description\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->description . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            if (null != $paymentContext->orderReference) {
+                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.orderReference\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->orderReference . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.validationTime\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->validationTime . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addLinkKey\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->showAddPaymentMethodLink? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->allowDeferredPay? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            $authnRequest .= "</saml2:PaymentContext>";
+        }
+
         $authnRequest .= "</saml2p:Extensions>";
 
         $authnRequest .= "</saml2p:AuthnRequest>";
@@ -133,7 +174,28 @@ class LinkIDSaml2 {
         // parse attributes;
         $attributes = $this->getAttributes($xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->AttributeStatement[0]);
 
-        return new LinkIDAuthnContext($userId, $attributes, null);
+        // parse payment response if any
+        $extensions = $xml->children("urn:oasis:names:tc:SAML:2.0:protocol")->Extensions[0];
+        $paymentResponse = $this->getPaymentResponse($extensions->children("urn:oasis:names:tc:SAML:2.0:assertion")->PaymentResponse[0]);
+
+        return new LinkIDAuthnContext($userId, $attributes, $paymentResponse);
+    }
+
+    public function getPaymentResponse($xmlPaymentResponse) {
+
+        if (null == $xmlPaymentResponse) return null;
+
+        $orderReference = null;
+        $paymentState = null;
+        foreach($xmlPaymentResponse->Attribute as $xmlAttribute) {
+            if ($xmlAttribute->attributes()->Name == "PaymentResponse.txnId") {
+                $orderReference = (string)$xmlAttribute->AttributeValue[0];
+            } else if ($xmlAttribute->attributes()->Name == "PaymentResponse.state") {
+                $paymentState = (string)$xmlAttribute->AttributeValue[0];
+            }
+        }
+
+         return new LinkIDPaymentResponse($orderReference,$paymentState);
     }
 
     public function getAttributes($attributeStatement) {

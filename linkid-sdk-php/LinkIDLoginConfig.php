@@ -102,13 +102,14 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         // device context
         $deviceContext = getLinkIDContext();
 
-        // TODO: attribute suggestions
+        // attribute suggestions
         $attributeSuggestions = getLinkIDAttributeSuggestions();
 
-        // TODO: payment context
+        // payment context
+        $paymentContext = getLinkIDPaymentContext();
 
         // generate authn request
-        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions);
+        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext);
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
@@ -178,6 +179,29 @@ function getLinkIDAttributeSuggestions() {
     }
 
     return $_SESSION['linkID.attributeSuggestions'];
+
+}
+
+/**
+ * Specify the linkID payment context
+ */
+function setLinkIDPaymentContext($paymentContext) {
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.paymentContext'] = $paymentContext;
+
+}
+
+function getLinkIDPaymentContext() {
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.paymentContext'];
 
 }
 

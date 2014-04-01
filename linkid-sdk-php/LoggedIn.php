@@ -25,7 +25,7 @@ print("<h2>User: " . $authnContext->userId . "</h2>");
 
 print("<h3>Attributes</h3>");
 print("<p>");
-    print_r($authnContext->attributes);
+print_r($authnContext->attributes);
 print("</p>");
 
 
