@@ -60,6 +60,16 @@ class LinkIDWSSoapClient extends SoapClient
         $this->__setSoapHeaders($this->generateWSSecurityHeader());
         return parent::__call($function_name, $arguments);
     }
+
+/* TODO: Testing... clean me up...
+    public function __doRequest($request, $location, $action, $version) {
+
+        $result = parent::__doRequest($request, $location, $action, $version);
+        $result = str_replace('sosaml:attributeId', 'FriendlyName', $result);
+        $result = str_replace('sosaml:multivalued', 'multivalued', $result);
+        return $result;
+    }
+*/
         
     /**
      * Generate password digest.

@@ -232,6 +232,17 @@ class LinkIDSaml2 {
 
             }
 
+        } else if (isset($xmlAttribute->AttributeValue[0]->AttributeValue[0])) {
+
+            // ws compound
+            $value = array();
+            foreach($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
+
+                $memberAttribute = new LinkIDAttribute((string)$xmlMemberAttribute->attributes()->Name, $id, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
+                array_push($value, $memberAttribute);
+
+            }
+
         } else {
             $value = $this->getAttributeValue($xmlAttribute->AttributeValue[0]);
         }
@@ -241,13 +252,15 @@ class LinkIDSaml2 {
 
     public function getAttributeValue($xmlAttributeValue) {
 
+        date_default_timezone_set('UTC'); // needed for parsing dates
+
         $type = $xmlAttributeValue->attributes("http://www.w3.org/2001/XMLSchema-instance")->type;
 
         if ($type == "xs:string") {
             return (string)$xmlAttributeValue;
         } else if ($type == "xs:boolean") {
             return (boolean)$xmlAttributeValue;
-        } else if ($type == "xs:integer") {
+        } else if ($type == "xs:integer" || $type == "xs:int") {
             return (integer)$xmlAttributeValue;
         } else if ($type == "xs:long") {
             return (float)$xmlAttributeValue;

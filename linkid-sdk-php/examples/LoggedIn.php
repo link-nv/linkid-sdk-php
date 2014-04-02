@@ -24,15 +24,15 @@ $authnContext = $_SESSION[$authnContextParam];
 print("<h2>User: " . $authnContext->userId . "</h2>");
 
 print("<h3>Attributes</h3>");
-print("<p>");
+print("<pre>");
 print_r($authnContext->attributes);
-print("</p>");
+print("</pre>");
 
 
 print("<h3>Payment response</h3>");
-print("<p>");
+print("<pre>");
 print_r($authnContext->paymentResponse);
-print("</p>");
+print("</pre>");
 
 
 ?>
