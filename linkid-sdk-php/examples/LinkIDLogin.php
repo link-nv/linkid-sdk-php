@@ -1,6 +1,6 @@
 <?php
 
-require_once('LinkIDLoginConfig.php');
+require_once('../LinkIDLoginConfig.php');
 
 /*
  * linkID Configuration
@@ -18,7 +18,7 @@ $linkIDWSUsername = "demo-test";
 $linkIDWSPassword = "08427E9F-6355-4DE4-B992-B1AB93CEE9D4";
 
 // location of this page, linkID will post its authentication response back to this location.
-$loginPage = "http://localhost/~wvdhaute/linkid-sdk-php/LinkIDLogin.php";
+$loginPage = "http://localhost/~wvdhaute/linkid-sdk-php/examples/LinkIDLogin.php";
 
 /*
  * linkID authentication context session attribute

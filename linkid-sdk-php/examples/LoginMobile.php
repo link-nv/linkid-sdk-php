@@ -42,8 +42,8 @@ setLinkIDPaymentContext($paymentContext);
                 <iframe id="linkid" style="display: none;"></iframe>
             </div>
             <div>
-                <a class="linkid-login" data-login-href="../LinkIDLogin.php" data-protocol="HAWS"
-                    data-mobile-minimal="linkid" data-completion-href="./examples/LoggedIn.php">
+                <a class="linkid-login" data-login-href="./LinkIDLogin.php" data-protocol="HAWS"
+                    data-mobile-minimal="linkid" data-completion-href="./LoggedIn.php">
                 Start
                 </a>
             </div>

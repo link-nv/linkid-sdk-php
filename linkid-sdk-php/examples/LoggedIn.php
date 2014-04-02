@@ -23,6 +23,8 @@ $authnContext = $_SESSION[$authnContextParam];
 
 print("<h2>User: " . $authnContext->userId . "</h2>");
 
+print ("<a href=\"logout.php\">Logout</a>");
+
 print("<h3>Attributes</h3>");
 print("<pre>");
 print_r($authnContext->attributes);
@@ -37,7 +39,6 @@ print("</pre>");
 
 ?>
 
-<a href="logout.php">Logout</a>
 
     </body>
 </html>
