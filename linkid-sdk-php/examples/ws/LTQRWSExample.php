@@ -1,7 +1,7 @@
 <?php
 
- require_once('../LinkIDLTQRClient.php');
- require_once('ExampleConfig.php');
+ require_once('../../LinkIDLTQRClient.php');
+ require_once('../ExampleConfig.php');
 
  date_default_timezone_set('UTC'); // needed for parsing dates
 

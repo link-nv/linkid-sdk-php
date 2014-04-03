@@ -1,7 +1,7 @@
 <?php
 
- require_once('../LinkIDDataClient.php');
- require_once('ExampleConfig.php');
+ require_once('../../LinkIDDataClient.php');
+ require_once('../ExampleConfig.php');
 
  //$attributeName = "profile.address";
  $attributeName = "profile.givenName";

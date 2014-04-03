@@ -1,7 +1,7 @@
 <?php
 
-require_once('../LinkIDAttributeClient.php');
-require_once('ExampleConfig.php');
+require_once('../../LinkIDAttributeClient.php');
+require_once('../ExampleConfig.php');
 
 $client = new LinkIDAttributeClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 $attributes = $client->getAttributes($userId);

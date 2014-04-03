@@ -1,7 +1,7 @@
 <?php
 
-require_once('../LinkIDIdMappingClient.php');
-require_once('ExampleConfig.php');
+require_once('../../LinkIDIdMappingClient.php');
+require_once('../ExampleConfig.php');
 
 $client = new LinkIDIdMappingClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 $userId = $client->getUserId("profile.email.address", "wim.vandenhaute@gmail.com");
