@@ -8,5 +8,3 @@ There is also support for [.NET](https://github.com/link-nv/linkid-sdk-dotnet) a
 If you have absolutely no idea what linkID is, please visit [www.linkid.be](http://www.linkid.be) first.
 
 A good starting point if you want to know how to integrate linkID in your webapp is in the [wiki](https://github.com/link-nv/linkid-sdk/wiki)
-
-The PHP integration documentation you can find [here](https://github.com/link-nv/linkid-sdk/blob/master/docs/sdk-manual-php.md	)
