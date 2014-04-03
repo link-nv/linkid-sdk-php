@@ -19,6 +19,8 @@ class LinkIDWSSoapClient extends SoapClient
 {
     private $OASIS = 'http://docs.oasis-open.org/wss/2004/01';
 
+    private $headers = array();
+
     /**
      * WS-Security Username
      * @var string
@@ -50,6 +52,14 @@ class LinkIDWSSoapClient extends SoapClient
         $this->password = $password;
         $this->passwordType = $passwordType;
     }
+
+    /**
+     * Add custom SOAP headers
+     */
+    public function __addHeader($soapHeader) {
+
+        $this->headers[] = $soapHeader;
+    }
        
     /**
      * Overwrites the original method adding the security header.
@@ -57,20 +67,13 @@ class LinkIDWSSoapClient extends SoapClient
      */
     public function __call($function_name, $arguments)
     {
-        $this->__setSoapHeaders($this->generateWSSecurityHeader());
+
+        $this->headers[] = $this->generateWSSecurityHeader();
+
+        $this->__setSoapHeaders($this->headers);
         return parent::__call($function_name, $arguments);
     }
 
-/* TODO: Testing... clean me up...
-    public function __doRequest($request, $location, $action, $version) {
-
-        $result = parent::__doRequest($request, $location, $action, $version);
-        $result = str_replace('sosaml:attributeId', 'FriendlyName', $result);
-        $result = str_replace('sosaml:multivalued', 'multivalued', $result);
-        return $result;
-    }
-*/
-        
     /**
      * Generate password digest.
      * 

@@ -227,7 +227,7 @@ class LinkIDSaml2 {
             $value = array();
             foreach($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
 
-                $memberAttribute = new LinkIDAttribute((string)$xmlMemberAttribute->attributes()->Name, $id, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
+                $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
                 array_push($value, $memberAttribute);
 
             }
@@ -238,7 +238,7 @@ class LinkIDSaml2 {
             $value = array();
             foreach($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
 
-                $memberAttribute = new LinkIDAttribute((string)$xmlMemberAttribute->attributes()->Name, $id, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
+                $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
                 array_push($value, $memberAttribute);
 
             }
@@ -267,7 +267,7 @@ class LinkIDSaml2 {
         } else if ($type == "xs:float") {
             return (float)$xmlAttributeValue;
         } else if ($type == "xs:dateTime") {
-            return strtotime((string)$xmlAttributeValue);
+            return new DateTime((string)$xmlAttributeValue);
         }
 
         return null;
