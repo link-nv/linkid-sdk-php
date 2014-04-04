@@ -1,9 +1,7 @@
 <?php
 
+require_once('ExampleConfig.php');
 require_once('../LinkIDPaymentClient.php');
-
-$linkIDHost = "192.168.5.14:8443";
-// $linkIDHost = "demo.linkid.be";
 
 // get order reference
 if (!isset($_REQUEST['orderRef'])) {

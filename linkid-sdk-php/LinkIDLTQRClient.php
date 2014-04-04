@@ -105,7 +105,7 @@ class LinkIDLTQRClient {
         }
 
         $clientSessions = array();
-        foreach($response->success->sessions as $session) {
+        foreach($response->success as $session) {
             $clientSessions[] = new LinkIDLTQRClientSession($session->orderReference, $session->clientSessionId, $session->userId, $session->created, $session->paymentStatus);
         }
 
