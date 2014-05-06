@@ -149,38 +149,43 @@ class LinkIDSaml2
     {
 
         $xml = new SimpleXMLElement($authnResponse);
+        return $this->parseXmlAuthnResponse($xml);
+    }
+
+    public function parseXmlAuthnResponse($xmlAuthnResponse)
+    {
 
         // validate challenge
-        $inResponseTo = $xml->attributes()->InResponseTo;
+        $inResponseTo = $xmlAuthnResponse->attributes()->InResponseTo;
         if ($inResponseTo != $this->expectedChallenge) {
             throw new Exception("SAML response is not a response belonging to the original request.");
         }
 
         // check status success
-        $statusValue = $xml->children("urn:oasis:names:tc:SAML:2.0:protocol")->Status[0]->StatusCode[0]->attributes()->Value;
+        $statusValue = $xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:protocol")->Status[0]->StatusCode[0]->attributes()->Value;
         if ($statusValue != "urn:oasis:names:tc:SAML:2.0:status:Success") {
             return null;
         }
 
         // get userId
-        $userId = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Subject[0]->NameID[0];
+        $userId = (string)$xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Subject[0]->NameID[0];
 
         // check audience
-        $audience = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->AudienceRestriction[0]->Audience[0];
+        $audience = (string)$xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->AudienceRestriction[0]->Audience[0];
         if ($audience != $this->expectedAudience) {
             throw new Exception("Audience name not correct, expected: " . $this->expectedAudience);
         }
 
         // validate NotBefore/NotOnOrAfter conditions
-        $notBeforeString = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotBefore;
-        $notOnOrAfterString = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotOnOrAfter;
+        $notBeforeString = (string)$xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotBefore;
+        $notOnOrAfterString = (string)$xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotOnOrAfter;
         $this->checkConditionsTime($notBeforeString, $notOnOrAfterString);
 
         // parse attributes;
-        $attributes = $this->getAttributes($xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->AttributeStatement[0]);
+        $attributes = $this->getAttributes($xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->AttributeStatement[0]);
 
         // parse payment response if any
-        $extensions = $xml->children("urn:oasis:names:tc:SAML:2.0:protocol")->Extensions[0];
+        $extensions = $xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:protocol")->Extensions[0];
         $paymentResponse = $this->getPaymentResponse($extensions->children("urn:oasis:names:tc:SAML:2.0:assertion")->PaymentResponse[0]);
 
         return new LinkIDAuthnContext($userId, $attributes, $paymentResponse);

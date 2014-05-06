@@ -79,9 +79,14 @@ class LinkIDAuthClient
         }
 
         $authenticationContext = null;
-        $authnResponse = $response->success->any;
-        if (null != $authnResponse) {
-            $authenticationContext = $saml2Util->parseAuthnResponse($authnResponse);
+//        print_r($response->success);
+        if (null != $response->success->any) {
+
+            $xml = new SimpleXMLElement($response->success->any);
+
+            $authnResponse = $xml->children("urn:oasis:names:tc:SAML:2.0:protocol")->Response[0];
+
+            $authenticationContext = $saml2Util->parseXmlAuthnResponse($authnResponse);
         }
 
         return new LinkIDPollResponse($response->success->authenticationState, $response->success->paymentState, $response->success->paymentMenuURL, $authenticationContext);
