@@ -27,5 +27,3 @@ $authnContextParam = "linkID.authnContext";
 
 // UserId to be used in the WS examples
 $userId = "2b35dbab-2ba2-403b-8c36-a8399c3af3d5";
-
-?>

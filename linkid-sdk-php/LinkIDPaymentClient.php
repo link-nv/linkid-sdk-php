@@ -31,6 +31,7 @@ class LinkIDPaymentClient
         $requestParams = array(
             'orderReference' => $orderReference
         );
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->getStatus($requestParams);
 
         if (null == $response) throw new Exception("Failed to get payment status...");
@@ -41,5 +42,3 @@ class LinkIDPaymentClient
     }
 
 }
-
-?>

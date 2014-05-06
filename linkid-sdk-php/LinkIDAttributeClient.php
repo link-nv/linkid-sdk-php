@@ -53,6 +53,7 @@ class LinkIDAttributeClient
             );
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->attributeQuery($requestParams);
         // need to parse the raw xml string due to the custom linkID attributes for the attributeId
         $raw = $this->client->__getLastResponse();
@@ -85,5 +86,3 @@ class LinkIDAttributeClient
     }
 
 }
-
-?>

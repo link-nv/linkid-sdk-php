@@ -23,6 +23,3 @@ print("<h2>LTQR Client Sessions</h2>");
 print("<pre>");
 print_r($clientSessions);
 print("</pre>");
-
-
-?>

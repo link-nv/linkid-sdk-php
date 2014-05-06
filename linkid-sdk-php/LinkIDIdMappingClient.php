@@ -35,6 +35,7 @@ class LinkIDIdMappingClient
         $this->client->__setAttributeName($attributeName);
         $this->client->__setIdentifier($identifier);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->nameIdentifierMappingQuery($requestParams);
 
         // validate response status
@@ -50,5 +51,3 @@ class LinkIDIdMappingClient
     }
 
 }
-
-?>

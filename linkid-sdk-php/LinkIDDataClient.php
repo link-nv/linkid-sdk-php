@@ -43,6 +43,7 @@ class LinkIDDataClient
         // add target identity header
         $this->addIdentityHeader($userId);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->query($requestParams);
         // need to parse the raw xml string due to the custom linkID attributes for the attributeId
         $raw = $this->client->__getLastResponse();
@@ -76,6 +77,7 @@ class LinkIDDataClient
         // add target identity header
         $this->addIdentityHeader($userId);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->modify($requestParams);
 
         // validate response status
@@ -94,6 +96,7 @@ class LinkIDDataClient
         // add target identity header
         $this->addIdentityHeader($userId);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->delete($requestParams);
 
         // validate response status
@@ -116,7 +119,7 @@ class LinkIDDataClient
             $secondLevelStatusCode = $response->Status->Status->code;
             $comment = $response->Status->Status->comment;
 
-            throw new Exception("DataWS failed: : " . $comment);
+            throw new Exception("DataWS failed: " . $comment . "statusCode: " . $statusCode . "secondLevelStatusCode: " . $secondLevelStatusCode);
         }
 
     }

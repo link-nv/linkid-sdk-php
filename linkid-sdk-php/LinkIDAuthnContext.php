@@ -27,5 +27,3 @@ class LinkIDAuthnContext
         $this->paymentResponse = $paymentResponse;
     }
 }
-
-?>

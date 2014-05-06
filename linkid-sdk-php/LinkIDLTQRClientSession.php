@@ -40,6 +40,5 @@ function parseLinkIDLTQRPaymentState($paymentState)
     if ($paymentState == "AUTHORIZED") return LinkIDLTQRClientSession::PAYED;
     if ($paymentState == "FAILED") return LinkIDLTQRClientSession::FAILED;
 
+    throw new Exception("Unexpected payment state: " . $paymentState);
 }
-
-?>

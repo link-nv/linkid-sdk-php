@@ -1,11 +1,5 @@
 <?php
 
-/*
- * LinkID Payment Response
- *
- * @author Wim Vandenhaute
- */
-
 class LinkIDPaymentResponse
 {
 
@@ -36,6 +30,8 @@ class LinkIDPaymentResponse
 function parseLinkIDPaymentState($paymentState)
 {
 
+    if (null == $paymentState) return null;
+
     if ($paymentState == "STARTED") {
         return LinkIDPaymentResponse::STARTED;
     } else if ($paymentState == "DEFERRED") {
@@ -52,6 +48,6 @@ function parseLinkIDPaymentState($paymentState)
         return LinkIDPaymentResponse::PAYED;
     }
 
-}
+    throw new Exception("Unexpected payment state: " . $paymentState);
 
-?>
+}

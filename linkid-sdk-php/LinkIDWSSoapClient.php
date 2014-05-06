@@ -138,5 +138,3 @@ class LinkIDWSSoapClient extends SoapClient
             true);
     }
 }
-
-?>

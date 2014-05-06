@@ -8,6 +8,3 @@ $loginPage = "http://localhost/~wvdhaute/linkid-sdk-php/examples/LinkIDLogin.php
 
 // creates authentication request and handles incoming authentication responses
 handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword);
-
-
-?>

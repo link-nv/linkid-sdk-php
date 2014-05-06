@@ -33,6 +33,7 @@ class LinkIDHawsClient
             'any' => $authnRequest,
             'language' => $language
         );
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->pushV2($requestParams);
 
         if (null != $response->error) {
@@ -48,6 +49,7 @@ class LinkIDHawsClient
         $requestParams = array(
             'sessionId' => $sessionId
         );
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->pull($requestParams);
 
         if (null != $response->error) {
@@ -57,5 +59,3 @@ class LinkIDHawsClient
         return $response->success->any;
     }
 }
-
-?>

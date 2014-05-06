@@ -8,9 +8,7 @@ require_once('LinkIDWSSoapClient.php');
 class LinkIDIdMappingWSSoapClient extends LinkIDWSSoapClient
 {
 
-    private $NS = 'urn:liberty:dst:2006-08:ref:safe-online';
     private $NS_SAML = 'urn:oasis:names:tc:SAML:2.0:assertion';
-    private $NS_SAMLP = 'rn:oasis:names:tc:SAML:2.0:protocol';
 
     private $attributeName;
     private $identifier;
@@ -47,6 +45,7 @@ class LinkIDIdMappingWSSoapClient extends LinkIDWSSoapClient
         for ($i = 0; $i < $itemList->length; $i++) {
 
             $requestItem = $itemList->item($i);
+            /** @noinspection PhpUndefinedMethodInspection */
             $requestItem->setAttribute('AttributeType', $this->attributeName);
 
             $nameId = $dom->createElementNS($this->NS_SAML, 'NameID', $this->identifier);
@@ -58,7 +57,9 @@ class LinkIDIdMappingWSSoapClient extends LinkIDWSSoapClient
         for ($i = 0; $i < $itemList->length; $i++) {
 
             $nameIDPolicy = $itemList->item($i);
+            /** @noinspection PhpUndefinedMethodInspection */
             $nameIDPolicy->setAttribute('Format', 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent');
+            /** @noinspection PhpUndefinedMethodInspection */
             $nameIDPolicy->setAttribute('AllowCreate', 'true');
         }
 
@@ -70,5 +71,3 @@ class LinkIDIdMappingWSSoapClient extends LinkIDWSSoapClient
     }
 
 }
-
-?>

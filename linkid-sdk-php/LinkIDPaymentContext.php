@@ -44,5 +44,3 @@ class LinkIDPaymentContext
         $this->allowDeferredPay = $allowDeferredPay;
     }
 }
-
-?>

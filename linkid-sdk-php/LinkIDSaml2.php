@@ -22,6 +22,11 @@ class LinkIDSaml2
         $this->expectedChallenge = $this->gen_uuid();
         $this->expectedAudience = $appName;
 
+        // ACS is required but in WS case not applicable
+        if (null == $loginPage) {
+            $loginPage = "http://foo.bar";
+        }
+
         $issueInstant = gmdate('Y-m-d\TH:i:s\Z');
 
         $authnRequest = "<saml2p:AuthnRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" ";
@@ -163,7 +168,7 @@ class LinkIDSaml2
         // check audience
         $audience = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->AudienceRestriction[0]->Audience[0];
         if ($audience != $this->expectedAudience) {
-            throw new Exception("Audience name not correct, expected: " . this . expectedAudience);
+            throw new Exception("Audience name not correct, expected: " . $this->expectedAudience);
         }
 
         // validate NotBefore/NotOnOrAfter conditions
@@ -189,9 +194,11 @@ class LinkIDSaml2
         $orderReference = null;
         $paymentState = null;
         foreach ($xmlPaymentResponse->Attribute as $xmlAttribute) {
+            /** @noinspection PhpUndefinedMethodInspection */
             if ($xmlAttribute->attributes()->Name == "PaymentResponse.txnId") {
                 $orderReference = (string)$xmlAttribute->AttributeValue[0];
-            } else if ($xmlAttribute->attributes()->Name == "PaymentResponse.state") {
+            } else /** @noinspection PhpUndefinedMethodInspection */
+            if ($xmlAttribute->attributes()->Name == "PaymentResponse.state") {
                 $paymentState = (string)$xmlAttribute->AttributeValue[0];
             }
         }
@@ -223,7 +230,9 @@ class LinkIDSaml2
     public function getAttribute($xmlAttribute)
     {
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $name = (string)$xmlAttribute->attributes()->Name;
+        /** @noinspection PhpUndefinedMethodInspection */
         $id = (string)$xmlAttribute->attributes("urn:net:lin-k:safe-online:saml")->attributeId;
 
         $value = null;
@@ -233,6 +242,7 @@ class LinkIDSaml2
             $value = array();
             foreach ($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
 
+                /** @noinspection PhpUndefinedMethodInspection */
                 $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
                 array_push($value, $memberAttribute);
 
@@ -244,6 +254,7 @@ class LinkIDSaml2
             $value = array();
             foreach ($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
 
+                /** @noinspection PhpUndefinedMethodInspection */
                 $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
                 array_push($value, $memberAttribute);
 
@@ -261,6 +272,7 @@ class LinkIDSaml2
 
         date_default_timezone_set('UTC'); // needed for parsing dates
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $type = $xmlAttributeValue->attributes("http://www.w3.org/2001/XMLSchema-instance")->type;
 
         if ($type == "xs:string") {
@@ -326,5 +338,3 @@ class LinkIDSaml2
     }
 
 }
-
-?>

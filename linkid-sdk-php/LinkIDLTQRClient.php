@@ -58,12 +58,14 @@ class LinkIDLTQRClient
 
         $requestParams->oneTimeUse = $oneTimeUse;
         if (null != $expiryDate) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $requestParams->expiryDate = $expiryDate->format(DateTime::ATOM);
         }
         if (null != $expiryDuration) {
             $requestParams->expiryDuration = $expiryDuration;
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->push($requestParams);
 
         if (null != $response->error) {
@@ -102,6 +104,7 @@ class LinkIDLTQRClient
             }
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->pull($requestParams);
 
         if (null != $response->error) {
@@ -141,6 +144,7 @@ class LinkIDLTQRClient
             }
         }
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->remove($requestParams);
 
         if (null != $response->error) {
@@ -151,5 +155,3 @@ class LinkIDLTQRClient
         return;
     }
 }
-
-?>
