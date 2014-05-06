@@ -8,23 +8,26 @@ require_once('LinkIDWSSoapClient.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDHawsClient {
+class LinkIDHawsClient
+{
 
     private $client;
 
     /**
      * Constructor
      */
-    public function __construct($linkIDHost, $username, $password) {
+    public function __construct($linkIDHost, $username, $password)
+    {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/haws?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
-        $this->client->__setUsernameToken($username,$password,'PasswordDigest');
+        $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
 
     }
 
-    public function push($authnRequest, $language) {
+    public function push($authnRequest, $language)
+    {
 
         $requestParams = array(
             'any' => $authnRequest,
@@ -39,7 +42,8 @@ class LinkIDHawsClient {
         return $response->sessionId;
     }
 
-    public function pull($sessionId) {
+    public function pull($sessionId)
+    {
 
         $requestParams = array(
             'sessionId' => $sessionId
@@ -53,4 +57,5 @@ class LinkIDHawsClient {
         return $response->success->any;
     }
 }
+
 ?>

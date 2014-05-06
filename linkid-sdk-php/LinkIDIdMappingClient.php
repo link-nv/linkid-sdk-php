@@ -8,22 +8,25 @@ require_once('LinkIDIdMappingWSSoapClient.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDIdMappingClient {
+class LinkIDIdMappingClient
+{
 
     private $client;
 
     /**
      * Constructor
      */
-    public function __construct($linkIDHost, $username, $password) {
+    public function __construct($linkIDHost, $username, $password)
+    {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/idmapping?wsdl";
 
         $this->client = new LinkIDIdMappingWSSoapClient($wsdlLocation);
-        $this->client->__setUsernameToken($username,$password,'PasswordDigest');
+        $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
     }
 
-    public function getUserId($attributeName, $identifier) {
+    public function getUserId($attributeName, $identifier)
+    {
 
         $requestParams = new stdClass;
         $requestParams->NameIDPolicy = new stdClass;
@@ -39,7 +42,7 @@ class LinkIDIdMappingClient {
         if ($statusCode != "urn:oasis:names:tc:SAML:2.0:status:Success") {
 
             $secondLevelStatusCode = $response->Status->StatusCode->StatusCode->Value;
-                throw new Exception("Failed to get userId: " . $secondLevelStatusCode);
+            throw new Exception("Failed to get userId: " . $secondLevelStatusCode);
         }
 
         return $response->NameID->_;

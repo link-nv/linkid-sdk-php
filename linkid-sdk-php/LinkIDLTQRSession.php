@@ -6,7 +6,8 @@
  * @author Wim Vandenhaute
  */
 
-class LinkIDLTQRSession {
+class LinkIDLTQRSession
+{
 
     public $qrCodeImage;
     public $qrCodeURL;
@@ -15,12 +16,14 @@ class LinkIDLTQRSession {
     /**
      * Constructor
      */
-    public function __construct($qrCodeImage,$qrCodeURL,$orderReference) {
+    public function __construct($qrCodeImage, $qrCodeURL, $orderReference)
+    {
 
-        $this->qrCodeImage      = $qrCodeImage;
-        $this->qrCodeURL        = $qrCodeURL;
-        $this->orderReference   = $orderReference;
+        $this->qrCodeImage = $qrCodeImage;
+        $this->qrCodeURL = $qrCodeURL;
+        $this->orderReference = $orderReference;
 
     }
 }
+
 ?>

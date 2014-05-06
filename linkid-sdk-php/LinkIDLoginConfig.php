@@ -9,7 +9,8 @@ require_once('LinkIDSaml2.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDLoginConfig {
+class LinkIDLoginConfig
+{
 
     public $forceRegistration;
     public $targetURI;
@@ -18,7 +19,8 @@ class LinkIDLoginConfig {
     /**
      * Constructor
      */
-    public function __construct($linkIDHost) {
+    public function __construct($linkIDHost)
+    {
 
         $this->forceRegistration = null != $_REQUEST["mobileForceReg"];
         $this->targetURI = $_REQUEST["return_uri"];
@@ -30,7 +32,8 @@ class LinkIDLoginConfig {
         }
     }
 
-    public function generateRedirectURL($sessionId) {
+    public function generateRedirectURL($sessionId)
+    {
         return $this->linkIDLandingPage . "?hawsId=" . $sessionId;
     }
 
@@ -39,7 +42,8 @@ class LinkIDLoginConfig {
 /**
  * Handles sending a linkID authentication request and validation/parsing a linkID authentication response
  */
-function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword) {
+function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLanguage, $loginPage, $linkIDWSUsername, $linkIDWSPassword)
+{
 
     date_default_timezone_set('UTC'); // needed for parsing dates
     if (!isset($_SESSION)) {
@@ -123,7 +127,8 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
 /**
  * Finalize the linkID authentication process and break out of the iframe redirecting to the targetURI
  */
-function finalize($loginConfig) {
+function finalize($loginConfig)
+{
 
     print("<html>");
     print("<head>");
@@ -142,7 +147,8 @@ function finalize($loginConfig) {
 /**
  * Specify a custom context to be shown on the linkID mobile app
  */
-function setLinkIDContext($context) {
+function setLinkIDContext($context)
+{
 
     if (!isset($_SESSION)) {
         session_start();
@@ -155,7 +161,8 @@ function setLinkIDContext($context) {
 /**
  * Returns the custom linkID context to be shown on the linkID mobile app ( if any )
  */
-function getLinkIDContext() {
+function getLinkIDContext()
+{
 
     if (!isset($_SESSION)) {
         session_start();
@@ -168,7 +175,8 @@ function getLinkIDContext() {
 /**
  * Specify an array of attribute suggestions to be used in the identity part of the linkID login process.
  */
-function setLinkIDAttributeSuggestions($attributeSuggestions) {
+function setLinkIDAttributeSuggestions($attributeSuggestions)
+{
 
     if (!isset($_SESSION)) {
         session_start();
@@ -181,7 +189,8 @@ function setLinkIDAttributeSuggestions($attributeSuggestions) {
 /**
  * Returns the array of attribute suggestions to be used in the identity part of the linkID login process.
  */
-function getLinkIDAttributeSuggestions() {
+function getLinkIDAttributeSuggestions()
+{
 
     if (!isset($_SESSION)) {
         session_start();
@@ -194,7 +203,8 @@ function getLinkIDAttributeSuggestions() {
 /**
  * Specify the linkID payment context
  */
-function setLinkIDPaymentContext($paymentContext) {
+function setLinkIDPaymentContext($paymentContext)
+{
 
     if (!isset($_SESSION)) {
         session_start();
@@ -207,7 +217,8 @@ function setLinkIDPaymentContext($paymentContext) {
 /**
  * Returns the linkID payment context to be piggy-backed on the linkID authentication request ( if any )
  */
-function getLinkIDPaymentContext() {
+function getLinkIDPaymentContext()
+{
 
     if (!isset($_SESSION)) {
         session_start();

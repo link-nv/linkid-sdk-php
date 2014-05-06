@@ -6,7 +6,8 @@
  * @author Wim Vandenhaute
  */
 
-class LinkIDAttribute {
+class LinkIDAttribute
+{
 
     public $id;
     public $name;
@@ -19,7 +20,8 @@ class LinkIDAttribute {
     /**
      * Constructor
      */
-    public function __construct($id, $name, $value) {
+    public function __construct($id, $name, $value)
+    {
 
         $this->id = $id;
         $this->name = $name;

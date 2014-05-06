@@ -9,7 +9,8 @@ require_once('LinkIDAttribute.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDAuthnContext {
+class LinkIDAuthnContext
+{
 
     public $userId;
     public $attributes;
@@ -18,11 +19,13 @@ class LinkIDAuthnContext {
     /**
      * Constructor
      */
-    public function __construct($userId,$attributes,$paymentResponse) {
+    public function __construct($userId, $attributes, $paymentResponse)
+    {
 
         $this->userId = $userId;
         $this->attributes = $attributes;
         $this->paymentResponse = $paymentResponse;
     }
 }
+
 ?>

@@ -16,34 +16,36 @@ class LinkIDDataWSSoapClient extends LinkIDWSSoapClient
 
     private $attribute;
 
-    public function __setAttribute($attribute) {
+    public function __setAttribute($attribute)
+    {
 
         $this->attribute = $attribute;
     }
 
-    public function __doRequest($request, $location, $action, $version) {
+    public function __doRequest($request, $location, $action, $version)
+    {
 
         /**
          * Modify operation is constructed here
          */
-         if ("urn:liberty:dst:2006-08:ref:Modify" == $action) {
+        if ("urn:liberty:dst:2006-08:ref:Modify" == $action) {
 
-             $dom = new DOMDocument('1.0');
+            $dom = new DOMDocument('1.0');
 
-             try {
+            try {
 
-                 //loads the SOAP request to the Document
-                 $dom->loadXML($request);
+                //loads the SOAP request to the Document
+                $dom->loadXML($request);
 
-             } catch (DOMException $e) {
-                 die('Parse error with code ' . $e->code);
-             }
+            } catch (DOMException $e) {
+                die('Parse error with code ' . $e->code);
+            }
 
-             $path = new DOMXPath($dom);
+            $path = new DOMXPath($dom);
 
-             // find ModifyItem element and fill in
-             $modifyItemList = $path->query('//*[local-name()="ModifyItem"]');
-             for ($i = 0; $i < $modifyItemList->length; $i++) {
+            // find ModifyItem element and fill in
+            $modifyItemList = $path->query('//*[local-name()="ModifyItem"]');
+            for ($i = 0; $i < $modifyItemList->length; $i++) {
                 $modifyItem = $modifyItemList->item($i);
 
                 $modifyItem->appendChild($dom->createElementNS($this->NS, 'Select', $this->attribute->name));
@@ -62,17 +64,17 @@ class LinkIDDataWSSoapClient extends LinkIDWSSoapClient
                 // check compound
                 if (is_array($this->attribute->value)) {
 
-                    $domAttributeValue->setAttributeNS($this->NS_XMLI , 'xsi:type', "saml:AttributeType");
+                    $domAttributeValue->setAttributeNS($this->NS_XMLI, 'xsi:type', "saml:AttributeType");
 
-                    foreach($this->attribute->value as $member) {
+                    foreach ($this->attribute->value as $member) {
 
                         $domMemberAttributeValue = $dom->createElementNS($this->NS_SAML, 'saml:AttributeValue');
                         $domAttributeValue->appendChild($domMemberAttributeValue);
                         $domMemberAttributeValue->setAttribute('Name', $member->name);
-                        $domMemberAttributeValue->setAttributeNS($this->NS_XMLI , 'xsi:type', "saml:AttributeType");
+                        $domMemberAttributeValue->setAttributeNS($this->NS_XMLI, 'xsi:type', "saml:AttributeType");
                         $domMemberValue = $dom->createElementNS($this->NS_SAML, 'saml:AttributeValue');
                         $domMemberAttributeValue->appendChild($domMemberValue);
-                        $domMemberValue->setAttributeNS($this->NS_XMLI , 'xsi:type', $this->__getValueType($member->value));
+                        $domMemberValue->setAttributeNS($this->NS_XMLI, 'xsi:type', $this->__getValueType($member->value));
                         $domMemberValue->setAttribute('xmlns:xs', $this->NS_XML);
                         $domValue = $dom->createTextNode($this->__getValue($member->value));
                         $domMemberValue->appendChild($domValue);
@@ -81,62 +83,62 @@ class LinkIDDataWSSoapClient extends LinkIDWSSoapClient
 
                 } else {
 
-                    $domAttributeValue->setAttributeNS($this->NS_XMLI , 'xsi:type', "saml:AttributeType");
-                    $domAttributeValue->setAttributeNS($this->NS_XMLI , 'xsi:type', $this->__getValueType($this->attribute->value));
+                    $domAttributeValue->setAttributeNS($this->NS_XMLI, 'xsi:type', "saml:AttributeType");
+                    $domAttributeValue->setAttributeNS($this->NS_XMLI, 'xsi:type', $this->__getValueType($this->attribute->value));
                     $domAttributeValue->setAttribute('xmlns:xs', $this->NS_XML);
                     $domValue = $dom->createTextNode($this->__getValue($this->attribute->value));
                     $domAttributeValue->appendChild($domValue);
                 }
 
 
-             }
+            }
 
             //save the modified SOAP request
             $request = $dom->saveXML();
 
-         }
+        }
 
         /**
          * Delete operation is constructed here
          */
-         if ("urn:liberty:dst:2006-08:ref:Delete" == $action) {
+        if ("urn:liberty:dst:2006-08:ref:Delete" == $action) {
 
-             $dom = new DOMDocument('1.0');
+            $dom = new DOMDocument('1.0');
 
-             try {
+            try {
 
-                 //loads the SOAP request to the Document
-                 $dom->loadXML($request);
+                //loads the SOAP request to the Document
+                $dom->loadXML($request);
 
-             } catch (DOMException $e) {
-                 die('Parse error with code ' . $e->code);
-             }
+            } catch (DOMException $e) {
+                die('Parse error with code ' . $e->code);
+            }
 
-             $path = new DOMXPath($dom);
+            $path = new DOMXPath($dom);
 
-             // find ModifyItem element and fill in
-             $deleteItemList = $path->query('//*[local-name()="DeleteItem"]');
-             for ($i = 0; $i < $deleteItemList->length; $i++) {
+            // find ModifyItem element and fill in
+            $deleteItemList = $path->query('//*[local-name()="DeleteItem"]');
+            for ($i = 0; $i < $deleteItemList->length; $i++) {
                 $deleteItem = $deleteItemList->item($i);
 
                 $select = $dom->createElementNS($this->NS, 'Select', $this->attribute->name);
                 $deleteItem->appendChild($select);
                 $select->setAttributeNS($this->NS_SOSAML, 'sosaml:attributeId', $this->attribute->id);
 
-             }
+            }
 
             //save the modified SOAP request
             $request = $dom->saveXML();
 
-         }
-
+        }
 
 
         $result = parent::__doRequest($request, $location, $action, $version);
         return $result;
     }
 
-    public function __getValueType($value) {
+    public function __getValueType($value)
+    {
 
         if (is_string($value)) {
             return "xs:string";
@@ -155,12 +157,13 @@ class LinkIDDataWSSoapClient extends LinkIDWSSoapClient
         }
     }
 
-    public function __getValue($value) {
+    public function __getValue($value)
+    {
 
         if ($value instanceof DateTime) {
             return $value->format(DateTime::ATOM);
         } else if (is_bool($value)) {
-            return $value? "true" : "false";
+            return $value ? "true" : "false";
         } else {
             return $value;
         }

@@ -10,19 +10,21 @@ require_once('LinkIDPaymentContext.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDSaml2 {
+class LinkIDSaml2
+{
 
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext) {
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext)
+    {
 
         $this->expectedChallenge = $this->gen_uuid();
         $this->expectedAudience = $appName;
 
         $issueInstant = gmdate('Y-m-d\TH:i:s\Z');
 
-        $authnRequest  = "<saml2p:AuthnRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" ";
+        $authnRequest = "<saml2p:AuthnRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" ";
         $authnRequest .= "AssertionConsumerServiceURL=\"" . $loginPage . "\" ";
         $authnRequest .= "Destination=\"" . $loginConfig->linkIDLandingPage . "\" ForceAuthn=\"false\" ";
         $authnRequest .= "ID=\"" . $this->expectedChallenge . "\" ";
@@ -121,11 +123,11 @@ class LinkIDSaml2 {
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addLinkKey\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->showAddPaymentMethodLink? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->showAddPaymentMethodLink ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->allowDeferredPay? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->allowDeferredPay ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "</saml2:PaymentContext>";
@@ -138,7 +140,8 @@ class LinkIDSaml2 {
         return $authnRequest;
     }
 
-    public function parseAuthnResponse($authnResponse) {
+    public function parseAuthnResponse($authnResponse)
+    {
 
         $xml = new SimpleXMLElement($authnResponse);
 
@@ -160,7 +163,7 @@ class LinkIDSaml2 {
         // check audience
         $audience = (string)$xml->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->AudienceRestriction[0]->Audience[0];
         if ($audience != $this->expectedAudience) {
-            throw new Exception("Audience name not correct, expected: " . this.expectedAudience);
+            throw new Exception("Audience name not correct, expected: " . this . expectedAudience);
         }
 
         // validate NotBefore/NotOnOrAfter conditions
@@ -178,13 +181,14 @@ class LinkIDSaml2 {
         return new LinkIDAuthnContext($userId, $attributes, $paymentResponse);
     }
 
-    public function getPaymentResponse($xmlPaymentResponse) {
+    public function getPaymentResponse($xmlPaymentResponse)
+    {
 
         if (null == $xmlPaymentResponse) return null;
 
         $orderReference = null;
         $paymentState = null;
-        foreach($xmlPaymentResponse->Attribute as $xmlAttribute) {
+        foreach ($xmlPaymentResponse->Attribute as $xmlAttribute) {
             if ($xmlAttribute->attributes()->Name == "PaymentResponse.txnId") {
                 $orderReference = (string)$xmlAttribute->AttributeValue[0];
             } else if ($xmlAttribute->attributes()->Name == "PaymentResponse.state") {
@@ -192,14 +196,15 @@ class LinkIDSaml2 {
             }
         }
 
-         return new LinkIDPaymentResponse($orderReference,$paymentState);
+        return new LinkIDPaymentResponse($orderReference, $paymentState);
     }
 
-    public function getAttributes($attributeStatement) {
+    public function getAttributes($attributeStatement)
+    {
 
         $attributes = array();
 
-        foreach($attributeStatement->Attribute as $xmlAttribute) {
+        foreach ($attributeStatement->Attribute as $xmlAttribute) {
 
             $attribute = $this->getAttribute($xmlAttribute);
 
@@ -215,7 +220,8 @@ class LinkIDSaml2 {
         return $attributes;
     }
 
-    public function getAttribute($xmlAttribute) {
+    public function getAttribute($xmlAttribute)
+    {
 
         $name = (string)$xmlAttribute->attributes()->Name;
         $id = (string)$xmlAttribute->attributes("urn:net:lin-k:safe-online:saml")->attributeId;
@@ -225,7 +231,7 @@ class LinkIDSaml2 {
 
             // compound
             $value = array();
-            foreach($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
+            foreach ($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
 
                 $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
                 array_push($value, $memberAttribute);
@@ -236,7 +242,7 @@ class LinkIDSaml2 {
 
             // ws compound
             $value = array();
-            foreach($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
+            foreach ($xmlAttribute->AttributeValue[0] as $xmlMemberAttribute) {
 
                 $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
                 array_push($value, $memberAttribute);
@@ -247,10 +253,11 @@ class LinkIDSaml2 {
             $value = $this->getAttributeValue($xmlAttribute->AttributeValue[0]);
         }
 
-        return new LinkIDAttribute($id,$name,$value);
+        return new LinkIDAttribute($id, $name, $value);
     }
 
-    public function getAttributeValue($xmlAttributeValue) {
+    public function getAttributeValue($xmlAttributeValue)
+    {
 
         date_default_timezone_set('UTC'); // needed for parsing dates
 
@@ -273,7 +280,8 @@ class LinkIDSaml2 {
         return null;
     }
 
-    public function checkConditionsTime($notBeforeString, $notOnOrAfterString) {
+    public function checkConditionsTime($notBeforeString, $notOnOrAfterString)
+    {
 
         $notBefore = new DateTime($notBeforeString);
         $notOnOrAfter = new DateTime($notOnOrAfterString);
@@ -282,9 +290,9 @@ class LinkIDSaml2 {
         if ($now <= $notBefore) {
 
             $now->add(new DateInterval('PT' . 5 . 'M'));
-            if ($now < $notBefore)      throw new Exception("SAML2 assertion invalid: invalid timeframe");
+            if ($now < $notBefore) throw new Exception("SAML2 assertion invalid: invalid timeframe");
             $now->sub(new DateInterval('PT' . 10 . 'M'));
-            if ($now > $notOnOrAfter)   throw new Exception("SAML2 assertion invalid: invalid timeframe");
+            if ($now > $notOnOrAfter) throw new Exception("SAML2 assertion invalid: invalid timeframe");
 
         } else {
             if ($now < $notBefore || $now > $notOnOrAfter) {
@@ -294,27 +302,29 @@ class LinkIDSaml2 {
 
     }
 
-    public function gen_uuid() {
-        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+    public function gen_uuid()
+    {
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
 
             // 16 bits for "time_mid"
-            mt_rand( 0, 0xffff ),
+            mt_rand(0, 0xffff),
 
             // 16 bits for "time_hi_and_version",
             // four most significant bits holds version number 4
-            mt_rand( 0, 0x0fff ) | 0x4000,
+            mt_rand(0, 0x0fff) | 0x4000,
 
             // 16 bits, 8 bits for "clk_seq_hi_res",
             // 8 bits for "clk_seq_low",
             // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand( 0, 0x3fff ) | 0x8000,
+            mt_rand(0, 0x3fff) | 0x8000,
 
             // 48 bits for "node"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
         );
     }
 
 }
+
 ?>

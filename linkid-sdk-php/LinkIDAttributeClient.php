@@ -9,14 +9,16 @@ require_once('LinkIDSaml2.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDAttributeClient {
+class LinkIDAttributeClient
+{
 
     private $client;
 
     /**
      * Constructor
      */
-    public function __construct($linkIDHost, $username, $password) {
+    public function __construct($linkIDHost, $username, $password)
+    {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/attrib?wsdl";
 
@@ -27,10 +29,11 @@ class LinkIDAttributeClient {
         );
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation, $options);
-        $this->client->__setUsernameToken($username,$password,'PasswordDigest');
+        $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
     }
 
-    public function getAttributes($userId, $attributeName=null) {
+    public function getAttributes($userId, $attributeName = null)
+    {
 
         $requestParams = null;
         if (null == $attributeName) {

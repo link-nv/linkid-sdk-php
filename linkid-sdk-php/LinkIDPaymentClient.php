@@ -9,21 +9,24 @@ require_once('LinkIDPaymentResponse.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDPaymentClient {
+class LinkIDPaymentClient
+{
 
     private $client;
 
     /**
      * Constructor
      */
-    public function __construct($linkIDHost) {
+    public function __construct($linkIDHost)
+    {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws/payment?wsdl";
 
         $this->client = new SoapClient($wsdlLocation);
     }
 
-    public function getStatus($orderReference) {
+    public function getStatus($orderReference)
+    {
 
         $requestParams = array(
             'orderReference' => $orderReference
@@ -38,4 +41,5 @@ class LinkIDPaymentClient {
     }
 
 }
+
 ?>

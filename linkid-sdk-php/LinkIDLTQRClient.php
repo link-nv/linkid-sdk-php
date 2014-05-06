@@ -11,19 +11,21 @@ require_once('LinkIDLTQRClientSession.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDLTQRClient {
+class LinkIDLTQRClient
+{
 
     private $client;
 
     /**
      * Constructor
      */
-    public function __construct($linkIDHost, $username, $password) {
+    public function __construct($linkIDHost, $username, $password)
+    {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
-        $this->client->__setUsernameToken($username,$password,'PasswordDigest');
+        $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
 
     }
 
@@ -39,7 +41,8 @@ class LinkIDLTQRClient {
      * Success object containing the QR in PNG format, the content of the QR code and a type 4 UUID session ID of the created long term session. This
      * session ID will be used in the notifications to the Service Provider.
      */
-    public function push($paymentContext, $oneTimeUse=false, $expiryDate=null, $expiryDuration=null) {
+    public function push($paymentContext, $oneTimeUse = false, $expiryDate = null, $expiryDuration = null)
+    {
 
         $requestParams = new stdClass;
         if (null != $paymentContext) {
@@ -80,23 +83,24 @@ class LinkIDLTQRClient {
      *
      * returns list of client sessions
      */
-    public function pull($orderReferences=null, $clientSessionIds=null) {
+    public function pull($orderReferences = null, $clientSessionIds = null)
+    {
 
         $requestParams = new stdClass;
 
         if (null != $orderReferences) {
             $requestParams->orderReferences = array();
-            foreach($orderReferences as $orderReference) {
+            foreach ($orderReferences as $orderReference) {
                 $requestParams->orderReferences[] = $orderReference;
             }
         }
 
-         if (null != $clientSessionIds) {
-             $requestParams->clientSessionIds = array();
-             foreach($clientSessionIds as $clientSessionId) {
-                 $requestParams->clientSessionIds[] = $clientSessionId;
-             }
-         }
+        if (null != $clientSessionIds) {
+            $requestParams->clientSessionIds = array();
+            foreach ($clientSessionIds as $clientSessionId) {
+                $requestParams->clientSessionIds[] = $clientSessionId;
+            }
+        }
 
         $response = $this->client->pull($requestParams);
 
@@ -105,7 +109,7 @@ class LinkIDLTQRClient {
         }
 
         $clientSessions = array();
-        foreach($response->success as $session) {
+        foreach ($response->success as $session) {
             $clientSessions[] = new LinkIDLTQRClientSession($session->orderReference, $session->clientSessionId, $session->userId, $session->created, $session->paymentStatus);
         }
 
@@ -118,23 +122,24 @@ class LinkIDLTQRClient {
      * orderReferences  List of orderReferences to remove. If none are specified all related client sessions will be removed.
      * clientSessionIds optional list of client session IDs to remove
      */
-    public function remove($orderReferences=null, $clientSessionIds=null) {
+    public function remove($orderReferences = null, $clientSessionIds = null)
+    {
 
         $requestParams = new stdClass;
 
         if (null != $orderReferences) {
             $requestParams->orderReferences = array();
-            foreach($orderReferences as $orderReference) {
+            foreach ($orderReferences as $orderReference) {
                 $requestParams->orderReferences[] = $orderReference;
             }
         }
 
-         if (null != $clientSessionIds) {
-             $requestParams->clientSessionIds = array();
-             foreach($clientSessionIds as $clientSessionId) {
-                 $requestParams->clientSessionIds[] = $clientSessionId;
-             }
-         }
+        if (null != $clientSessionIds) {
+            $requestParams->clientSessionIds = array();
+            foreach ($clientSessionIds as $clientSessionId) {
+                $requestParams->clientSessionIds[] = $clientSessionId;
+            }
+        }
 
         $response = $this->client->remove($requestParams);
 
@@ -146,4 +151,5 @@ class LinkIDLTQRClient {
         return;
     }
 }
+
 ?>

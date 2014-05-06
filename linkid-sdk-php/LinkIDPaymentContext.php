@@ -6,7 +6,8 @@
  * @author Wim Vandenhaute
  */
 
-class LinkIDPaymentContext {
+class LinkIDPaymentContext
+{
 
     public $amount;
     public $description;
@@ -30,7 +31,8 @@ class LinkIDPaymentContext {
     /**
      * Constructor
      */
-    public function __construct($amount,$description,$orderReference=null,$profile=null,$validationTime=5,$showAddPaymentMethodLink=true,$allowDeferredPay=false) {
+    public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5, $showAddPaymentMethodLink = true, $allowDeferredPay = false)
+    {
 
         $this->amount = $amount;
         $this->description = $description;
@@ -42,4 +44,5 @@ class LinkIDPaymentContext {
         $this->allowDeferredPay = $allowDeferredPay;
     }
 }
+
 ?>

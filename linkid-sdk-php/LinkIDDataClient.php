@@ -10,14 +10,16 @@ require_once('LinkIDSaml2.php');
  * @author Wim Vandenhaute
  */
 
-class LinkIDDataClient {
+class LinkIDDataClient
+{
 
     private $client;
 
     /**
      * Constructor
      */
-    public function __construct($linkIDHost, $username, $password) {
+    public function __construct($linkIDHost, $username, $password)
+    {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/data?wsdl";
 
@@ -28,10 +30,11 @@ class LinkIDDataClient {
         );
 
         $this->client = new LinkIDDataWSSoapClient($wsdlLocation, $options);
-        $this->client->__setUsernameToken($username,$password,'PasswordDigest');
+        $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
     }
 
-    public function getAttributes($userId, $attributeName) {
+    public function getAttributes($userId, $attributeName)
+    {
 
         $requestParams = new stdClass;
         $requestParams->QueryItem = new stdClass;
@@ -61,7 +64,8 @@ class LinkIDDataClient {
 
     }
 
-    public function setAttribute($userId, $attribute) {
+    public function setAttribute($userId, $attribute)
+    {
 
         $requestParams = new stdClass;
         $requestParams->ModifyItem = new stdClass;
@@ -78,7 +82,8 @@ class LinkIDDataClient {
         $this->validateResponse($response);
     }
 
-    public function removeAttribute($userId, $attribute) {
+    public function removeAttribute($userId, $attribute)
+    {
 
         $requestParams = new stdClass;
         $requestParams->DeleteItem = new stdClass;
@@ -95,13 +100,15 @@ class LinkIDDataClient {
         $this->validateResponse($response);
     }
 
-    public function addIdentityHeader($userId) {
+    public function addIdentityHeader($userId)
+    {
 
         $targetIdentityXml = '<nsTI:TargetIdentity xmlns:nsTI="urn:liberty:sb:2005-11" SOAP-ENV:mustUnderstand="1"><saml:Subject xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"><saml:NameID>' . $userId . '</saml:NameID></saml:Subject></nsTI:TargetIdentity>';
         $this->client->__addHeader(new SoapHeader('urn:liberty:sb:2005-11', 'TargetIdentity', new SoapVar($targetIdentityXml, XSD_ANYXML), true));
     }
 
-    public function validateResponse($response) {
+    public function validateResponse($response)
+    {
 
         $statusCode = $response->Status->code;
         if ($statusCode != "OK") {
