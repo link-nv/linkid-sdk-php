@@ -7,13 +7,13 @@
 $linkIDHost = "192.168.5.14:8443";
 // $linkIDHost = "demo.linkid.be";
 
-$linkIDAppName = "demo-test";
+$linkIDAppName = "example-mobile";
 
 $linkIDLanguage = "en";
 
 // username/password
-$linkIDWSUsername = "demo-test";
-$linkIDWSPassword = "08427E9F-6355-4DE4-B992-B1AB93CEE9D4";
+$linkIDWSUsername = "example-mobile";
+$linkIDWSPassword = "6E6C1CB7-965C-48A0-B2B0-6B65674BE19F";
 
 /*
  * linkID authentication context session attribute
