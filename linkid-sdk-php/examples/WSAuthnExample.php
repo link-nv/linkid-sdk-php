@@ -19,11 +19,12 @@ if (null == $linkIDAuthnSession) {
     $saml2Util = new LinkIDSaml2();
 
     $loginConfig = new LinkIDLoginConfig($linkIDHost);
-    $deviceContext = "PHP WS Example context";
+    $clientAuthnMessage = "PHP Authn Message";
+    $clientFinishedMessage = "PHP Finished Message";
     $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
     $paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
 //    $paymentContext = null;
-    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext);
+    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $attributeSuggestions, $paymentContext);
 
     $linkIDAuthnSession = $client->start($authnRequest, "en");
 

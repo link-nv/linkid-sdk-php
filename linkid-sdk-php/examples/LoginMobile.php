@@ -5,15 +5,16 @@ require_once('../LinkIDLoginConfig.php');
 date_default_timezone_set('UTC'); // needed for DateTime
 
 // set device context
-setLinkIDContext("PHP Example context");
+setLinkIDAuthnMessage("PHP Authn Message");
+setLinkIDFinishedMessage("PHP Finished Message");
 
 // set attribute suggestions
 $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
 setLinkIDAttributeSuggestions($attributeSuggestions);
 
 // set payment context
-$paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
-setLinkIDPaymentContext($paymentContext);
+//$paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
+//setLinkIDPaymentContext($paymentContext);
 
 ?>
 

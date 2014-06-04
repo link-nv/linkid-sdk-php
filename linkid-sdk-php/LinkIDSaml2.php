@@ -16,7 +16,7 @@ class LinkIDSaml2
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext)
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $attributeSuggestions, $paymentContext)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -43,18 +43,31 @@ class LinkIDSaml2
         $authnRequest .= "<saml2p:Extensions>";
 
         /*
-         * Optional linkID device context
+         * Optional linkID client messages
          */
-        if (null != $deviceContext) {
+        if (null != $clientAuthnMessage || null != $clientFinishedMessage) {
 
             $authnRequest .= "<saml2:DeviceContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
-            $authnRequest .= "<saml2:Attribute Name=\"linkID.contextTitle\">";
 
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-            $authnRequest .= $deviceContext;
-            $authnRequest .= "</saml2:AttributeValue>";
+            if (null != $clientAuthnMessage) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.authenticationMessage\">";
 
-            $authnRequest .= "</saml2:Attribute>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $clientAuthnMessage;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $clientFinishedMessage) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.finishedMessage\">";
+
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $clientFinishedMessage;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
             $authnRequest .= "</saml2:DeviceContext>";
 
         }
@@ -186,7 +199,10 @@ class LinkIDSaml2
 
         // parse payment response if any
         $extensions = $xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:protocol")->Extensions[0];
-        $paymentResponse = $this->getPaymentResponse($extensions->children("urn:oasis:names:tc:SAML:2.0:assertion")->PaymentResponse[0]);
+        $paymentResponse = null;
+        if (null != $extensions) {
+            $paymentResponse = $this->getPaymentResponse($extensions->children("urn:oasis:names:tc:SAML:2.0:assertion")->PaymentResponse[0]);
+        }
 
         return new LinkIDAuthnContext($userId, $attributes, $paymentResponse);
     }

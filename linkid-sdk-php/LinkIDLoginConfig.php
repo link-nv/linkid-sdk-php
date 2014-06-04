@@ -108,7 +108,8 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         $_SESSION["linkID.saml2Util"] = $saml2Util;
 
         // device context
-        $deviceContext = getLinkIDContext();
+        $clientAuthnMessage = getLinkIDAuthnMessage();
+        $clientFinishedMessage = getLinkIDFinishedMessage();
 
         // attribute suggestions
         $attributeSuggestions = getLinkIDAttributeSuggestions();
@@ -117,7 +118,7 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         $paymentContext = getLinkIDPaymentContext();
 
         // generate authn request
-        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $deviceContext, $attributeSuggestions, $paymentContext);
+        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $attributeSuggestions, $paymentContext);
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
@@ -151,28 +152,56 @@ function finalize($loginConfig)
 /**
  * Specify a custom context to be shown on the linkID mobile app
  */
-function setLinkIDContext($context)
+function setLinkIDAuthnMessage($context)
 {
 
     if (!isset($_SESSION)) {
         session_start();
     }
 
-    $_SESSION['linkID.deviceContext'] = $context;
+    $_SESSION['linkID.authenticationMessage'] = $context;
 
 }
 
 /**
  * Returns the custom linkID context to be shown on the linkID mobile app ( if any )
  */
-function getLinkIDContext()
+function getLinkIDAuthnMessage()
 {
 
     if (!isset($_SESSION)) {
         session_start();
     }
 
-    return $_SESSION['linkID.deviceContext'];
+    return $_SESSION['linkID.authenticationMessage'];
+
+}
+
+/**
+ * Specify a custom context to be shown on the linkID mobile app when finished
+ */
+function setLinkIDFinishedMessage($context)
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.finishedMessage'] = $context;
+
+}
+
+/**
+ * Returns the custom linkID context to be shown on the linkID mobile app when finished ( if any )
+ */
+function getLinkIDFinishedMessage()
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.finishedMessage'];
 
 }
 
