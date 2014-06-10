@@ -8,6 +8,9 @@ date_default_timezone_set('UTC'); // needed for DateTime
 setLinkIDAuthnMessage("PHP Authn Message");
 setLinkIDFinishedMessage("PHP Finished Message");
 
+// set identity profiles
+setLinkIDIdentityProfiles(array("linkid_basic", "linkid_payment"));
+
 // set attribute suggestions
 $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
 setLinkIDAttributeSuggestions($attributeSuggestions);

@@ -16,7 +16,7 @@ class LinkIDSaml2
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $attributeSuggestions, $paymentContext)
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -43,9 +43,9 @@ class LinkIDSaml2
         $authnRequest .= "<saml2p:Extensions>";
 
         /*
-         * Optional linkID client messages
+         * Optional linkID client messages / identity profiles
          */
-        if (null != $clientAuthnMessage || null != $clientFinishedMessage) {
+        if (null != $clientAuthnMessage || null != $clientFinishedMessage || null != $identityProfiles) {
 
             $authnRequest .= "<saml2:DeviceContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
 
@@ -66,6 +66,22 @@ class LinkIDSaml2
                 $authnRequest .= "</saml2:AttributeValue>";
 
                 $authnRequest .= "</saml2:Attribute>";
+            }
+
+            if (null != $identityProfiles) {
+
+                $i = 0;
+                foreach($identityProfiles as $identityProfile) {
+                    $authnRequest .= "<saml2:Attribute Name=\"linkID.identityProfile." . $i . "\">";
+
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                    $authnRequest .= $identityProfile;
+                    $authnRequest .= "</saml2:AttributeValue>";
+
+                    $authnRequest .= "</saml2:Attribute>";
+
+                    $i++;
+                }
             }
 
             $authnRequest .= "</saml2:DeviceContext>";

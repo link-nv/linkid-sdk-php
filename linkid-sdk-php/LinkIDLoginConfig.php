@@ -111,6 +111,9 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         $clientAuthnMessage = getLinkIDAuthnMessage();
         $clientFinishedMessage = getLinkIDFinishedMessage();
 
+        // identity profiles
+        $identityProfiles = getLinkIDIdentityProfiles();
+
         // attribute suggestions
         $attributeSuggestions = getLinkIDAttributeSuggestions();
 
@@ -118,7 +121,7 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         $paymentContext = getLinkIDPaymentContext();
 
         // generate authn request
-        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $attributeSuggestions, $paymentContext);
+        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext);
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
@@ -202,6 +205,34 @@ function getLinkIDFinishedMessage()
     }
 
     return $_SESSION['linkID.finishedMessage'];
+
+}
+
+/**
+ * Specify custom identity profile(s)
+ */
+function setLinkIDIdentityProfiles($identityProfiles)
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.identityProfiles'] = $identityProfiles;
+
+}
+
+/**
+ * Returns the custom linkID identity profiles
+ */
+function getLinkIDIdentityProfiles()
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.identityProfiles'];
 
 }
 
