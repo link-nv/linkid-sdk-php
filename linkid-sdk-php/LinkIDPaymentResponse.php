@@ -5,6 +5,9 @@ class LinkIDPaymentResponse
 
     public $orderReference;
     public $paymentState;
+    public $mandateReference;
+
+    public $docdataReference;
 
     // payment state constants
     const STARTED = 0; // payment is being processed
@@ -19,11 +22,13 @@ class LinkIDPaymentResponse
     /**
      * Constructor
      */
-    public function __construct($orderReference, $paymentState)
+    public function __construct($orderReference, $paymentState, $mandateReference = null, $docdateReference = null)
     {
 
         $this->orderReference = $orderReference;
         $this->paymentState = parseLinkIDPaymentState($paymentState);
+        $this->mandateReference = $mandateReference;
+        $this->docdataReference = $docdateReference;
     }
 }
 

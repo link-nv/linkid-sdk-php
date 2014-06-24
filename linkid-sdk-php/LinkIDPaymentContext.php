@@ -28,10 +28,16 @@ class LinkIDPaymentContext
     // linkID can allow for the user to make a deferred payment which he can complete later on from his browser.
     public $allowDeferredPay;
 
+    // mandates
+    public $mandate;
+    public $mandateDescription;
+    public $mandateReference;
+
     /**
      * Constructor
      */
-    public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5, $showAddPaymentMethodLink = true, $allowDeferredPay = false)
+    public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5, $showAddPaymentMethodLink = true, $allowDeferredPay = false,
+                                $mandate = false, $mandateDescription = null, $mandateReference = null)
     {
 
         $this->amount = $amount;
@@ -42,5 +48,9 @@ class LinkIDPaymentContext
         $this->validationTime = $validationTime;
         $this->showAddPaymentMethodLink = $showAddPaymentMethodLink;
         $this->allowDeferredPay = $allowDeferredPay;
+
+        $this->mandate = $mandate;
+        $this->mandateDescription = $mandateDescription;
+        $this->mandateReference = $mandateReference;
     }
 }
