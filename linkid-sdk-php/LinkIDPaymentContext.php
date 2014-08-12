@@ -28,6 +28,17 @@ class LinkIDPaymentContext
     // linkID can allow for the user to make a deferred payment which he can complete later on from his browser.
     public $allowDeferredPay;
 
+    // if so and linkID user selects add payment method, the payment menu URL to redirect to will be returned in the payment response
+    // this is an alternative to "showAddPaymentMethodLink" where the payment menu is loaded via the iframe/popup. popup blockers...
+    public $returnPaymentMenuURL;
+
+    // optional payment menu return URLs (returnPaymentMenuURL)
+    public $paymentMenuResultSuccess;
+    public $paymentMenuResultCanceled;
+    public $paymentMenuResultPending;
+    public $paymentMenuResultError;
+
+
     // mandates
     public $mandate;
     public $mandateDescription;
@@ -36,7 +47,8 @@ class LinkIDPaymentContext
     /**
      * Constructor
      */
-    public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5, $showAddPaymentMethodLink = true, $allowDeferredPay = false,
+    public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
+                                $showAddPaymentMethodLink = true, $returnPaymentMenuURL = false, $allowDeferredPay = false,
                                 $mandate = false, $mandateDescription = null, $mandateReference = null)
     {
 
@@ -47,6 +59,7 @@ class LinkIDPaymentContext
         $this->profile = $profile;
         $this->validationTime = $validationTime;
         $this->showAddPaymentMethodLink = $showAddPaymentMethodLink;
+        $this->returnPaymentMenuURL = $returnPaymentMenuURL;
         $this->allowDeferredPay = $allowDeferredPay;
 
         $this->mandate = $mandate;

@@ -7,6 +7,8 @@ class LinkIDPaymentResponse
     public $paymentState;
     public $mandateReference;
 
+    public $paymentMenuURL;
+
     public $docdataReference;
 
     // payment state constants
@@ -22,13 +24,14 @@ class LinkIDPaymentResponse
     /**
      * Constructor
      */
-    public function __construct($orderReference, $paymentState, $mandateReference = null, $docdateReference = null)
+    public function __construct($orderReference, $paymentState, $mandateReference = null, $docdateReference = null, $paymentMenuURL = null)
     {
 
         $this->orderReference = $orderReference;
         $this->paymentState = parseLinkIDPaymentState($paymentState);
         $this->mandateReference = $mandateReference;
         $this->docdataReference = $docdateReference;
+        $this->paymentMenuURL = $paymentMenuURL;
     }
 }
 

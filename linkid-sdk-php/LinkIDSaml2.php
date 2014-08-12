@@ -160,6 +160,10 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->showAddPaymentMethodLink ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.returnMenuURL\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->returnPaymentMenuURL ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->allowDeferredPay ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
@@ -176,6 +180,27 @@ class LinkIDSaml2
             if (null != $paymentContext->mandateReference) {
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateReference\">";
                 $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandateReference . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
+            if (null != $paymentContext->paymentMenuResultSuccess) {
+                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultSuccess\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenuResultSuccess . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $paymentContext->paymentMenuResultCanceled) {
+                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultCanceled\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenuResultCanceled . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $paymentContext->paymentMenuResultPending) {
+                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultPending\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenuResultPending . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $paymentContext->paymentMenuResultError) {
+                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultError\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenuResultError . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
             }
 
@@ -247,6 +272,7 @@ class LinkIDSaml2
         $paymentState = null;
         $mandateReference = null;
         $docdataReference = null;
+        $paymentMenuURL = null;
         foreach ($xmlPaymentResponse->Attribute as $xmlAttribute) {
             if ($xmlAttribute->attributes()->Name == "PaymentResponse.txnId") {
                 $orderReference = (string)$xmlAttribute->AttributeValue[0];
@@ -256,10 +282,12 @@ class LinkIDSaml2
                 $mandateReference = (string)$xmlAttribute->AttributeValue[0];
             } else if ($xmlAttribute->attributes()->Name == "PaymentResponse.docdataRef") {
                 $docdataReference = (string)$xmlAttribute->AttributeValue[0];
+            } else if ($xmlAttribute->attributes()->Name == "PaymentResponse.menuURL") {
+                $paymentMenuURL = (string)$xmlAttribute->AttributeValue[0];
             }
         }
 
-        return new LinkIDPaymentResponse($orderReference, $paymentState, $mandateReference, $docdataReference);
+        return new LinkIDPaymentResponse($orderReference, $paymentState, $mandateReference, $docdataReference, $paymentMenuURL);
     }
 
     public function getAttributes($attributeStatement)
