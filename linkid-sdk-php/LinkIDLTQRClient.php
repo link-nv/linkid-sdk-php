@@ -77,6 +77,38 @@ class LinkIDLTQRClient
         return new LinkIDLTQRSession($qrCodeImage, $response->success->qrContent, $response->success->orderReference);
     }
 
+    public function change($orderReference, $paymentContext, $expiryDate = null, $expiryDuration = null)
+    {
+        $requestParams = new stdClass;
+        $requestParams->orderReference = $orderReference;
+
+        if (null != $paymentContext) {
+            $requestParams->paymentContext = new stdClass;
+            $requestParams->paymentContext->amount = $paymentContext->amount;
+            $requestParams->paymentContext->currency = "EUR";
+            $requestParams->paymentContext->description = $paymentContext->description;
+            $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
+            $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
+            $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
+            $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
+        }
+
+        if (null != $expiryDate) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $requestParams->expiryDate = $expiryDate->format(DateTime::ATOM);
+        }
+        if (null != $expiryDuration) {
+            $requestParams->expiryDuration = $expiryDuration;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->change($requestParams);
+
+        if (null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
+
     /**
      * Fetch a set of client sessions.
      *

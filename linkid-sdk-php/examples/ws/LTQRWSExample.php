@@ -30,8 +30,8 @@ print("<img src='data:image/png;base64, $imgData' />");
 
 
 $orderReferences = array();
-$orderReferences[] = "c8b2bdcd-1782-474b-b9aa-22a4b864c57e";
-$orderReferences[] = "f00";
+$orderReferences[] = "149c4d88-8243-42ff-991f-0895f0487f6c";
+//$orderReferences[] = "f00";
 // $clientSessionIds = array();
 // $clientSessionIds[] = "f00";
 // $clientSessionIds[] = "bar";
@@ -44,6 +44,12 @@ print("<h2>LTQR Client Sessions</h2>");
 print("<pre>");
 print_r($clientSessions);
 print("</pre>");
+
+/**
+ * Change sessions
+ */
+$paymentContext = new LinkIDPaymentContext(9900, "Changed LTQR Test");
+$client->change("149c4d88-8243-42ff-991f-0895f0487f6c", $paymentContext);
 
 
 /**
