@@ -16,7 +16,7 @@ class LinkIDSaml2
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext)
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, LinkIDPaymentContext $paymentContext)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -156,12 +156,9 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->validationTime . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addLinkKey\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->showAddPaymentMethodLink ? "true" : "false") . "</saml2:AttributeValue>";
-            $authnRequest .= "</saml2:Attribute>";
-
-            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.returnMenuURL\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->returnPaymentMenuURL ? "true" : "false") . "</saml2:AttributeValue>";
+            // TODO: fixme
+            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addBrowser\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->convertPaymentAddBrowser() . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";

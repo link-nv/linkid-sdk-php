@@ -21,16 +21,12 @@ class LinkIDPaymentContext
     // maximum time to wait for payment validation, if not specified defaults to 5s
     public $validationTime;
 
-    // whether or not to display a link to linkID's add payment method page if the linkID user does not have any payment methods added, default is true.
-    public $showAddPaymentMethodLink;
+    // whether or not to allow to display the option in the client to add a payment method in the browser, default is not allowed
+    public $paymentAddBrowser;
 
     // whether or not deferred payments are allowed, if a user has no payment token attached to the linkID account
     // linkID can allow for the user to make a deferred payment which he can complete later on from his browser.
     public $allowDeferredPay;
-
-    // if so and linkID user selects add payment method, the payment menu URL to redirect to will be returned in the payment response
-    // this is an alternative to "showAddPaymentMethodLink" where the payment menu is loaded via the iframe/popup. popup blockers...
-    public $returnPaymentMenuURL;
 
     // optional payment menu return URLs (returnPaymentMenuURL)
     public $paymentMenuResultSuccess;
@@ -38,17 +34,20 @@ class LinkIDPaymentContext
     public $paymentMenuResultPending;
     public $paymentMenuResultError;
 
-
     // mandates
     public $mandate;
     public $mandateDescription;
     public $mandateReference;
 
+    // PaymentAddBrowser constants
+    const PAYMENT_ADD_BROWSER_NOT_ALLOWED = 0;
+    const PAYMENT_ADD_BROWSER_REDIRECT = 1;
+
     /**
      * Constructor
      */
     public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
-                                $showAddPaymentMethodLink = true, $returnPaymentMenuURL = false, $allowDeferredPay = false,
+                                $paymentAddBrowser = LinkIDPaymentContext::PAYMENT_ADD_BROWSER_NOT_ALLOWED, $allowDeferredPay = false,
                                 $mandate = false, $mandateDescription = null, $mandateReference = null)
     {
 
@@ -58,12 +57,22 @@ class LinkIDPaymentContext
         $this->orderReference = $orderReference;
         $this->profile = $profile;
         $this->validationTime = $validationTime;
-        $this->showAddPaymentMethodLink = $showAddPaymentMethodLink;
-        $this->returnPaymentMenuURL = $returnPaymentMenuURL;
+        $this->paymentAddBrowser = $paymentAddBrowser;
         $this->allowDeferredPay = $allowDeferredPay;
 
         $this->mandate = $mandate;
         $this->mandateDescription = $mandateDescription;
         $this->mandateReference = $mandateReference;
+    }
+
+    public function convertPaymentAddBrowser()
+    {
+
+        if (LinkIDPaymentContext::PAYMENT_ADD_BROWSER_REDIRECT == $this->paymentAddBrowser) {
+            return "REDIRECT";
+        }
+
+        // default
+        return "NOT_ALLOWED";
     }
 }
