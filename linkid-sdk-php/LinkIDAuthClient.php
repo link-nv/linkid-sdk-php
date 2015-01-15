@@ -47,7 +47,7 @@ class LinkIDAuthClient
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->start($requestParams);
 
-        if (null != $response->error) {
+        if (isset($response->error) && null != $response->error) {
             throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
         }
 
@@ -74,18 +74,21 @@ class LinkIDAuthClient
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->poll($requestParams);
 
-        if (null != $response->error) {
+        if (isset($response->error) && null != $response->error) {
             throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
         }
 
         $authenticationContext = null;
-        if (null != $response->success->authenticationResponse->any) {
+        if (isset($response->success->authenticationResponse) && null != $response->success->authenticationResponse->any) {
 
             $xml = new SimpleXMLElement($response->success->authenticationResponse->any);
             $authenticationContext = $saml2Util->parseXmlAuthnResponse($xml);
         }
 
-        return new LinkIDPollResponse($response->success->authenticationState, $response->success->paymentState, $response->success->paymentMenuURL, $authenticationContext);
+        return new LinkIDPollResponse($response->success->authenticationState,
+            isset($response->success->paymentState) ? $response->success->paymentState : null,
+            isset($response->success->paymentMenuURL) ? $response->success->paymentMenuURL : null,
+            $authenticationContext);
     }
 
 }

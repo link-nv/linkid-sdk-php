@@ -10,10 +10,11 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+$loginPage = "http://localhost/~wvdhaute/linkid-sdk-php/examples/LinkIDLogin.php";
+
 $client = new LinkIDAuthClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 
-$linkIDAuthnSession = $_SESSION["linkIDSession"];
-if (null == $linkIDAuthnSession) {
+if (!isset($_SESSION["linkIDSession"])) {
 
     // start new linkID authentication session
     $saml2Util = new LinkIDSaml2();
@@ -27,7 +28,7 @@ if (null == $linkIDAuthnSession) {
     $paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
 //    $paymentContext = null;
 
-    $callback = new LinkIDCallback("google.be");
+    $callback = new LinkIDCallback("https://www.google.be");
 //    $callback = null;
 
 

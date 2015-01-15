@@ -22,8 +22,14 @@ class LinkIDLoginConfig
     public function __construct($linkIDHost, $targetURI = null)
     {
 
-        $this->forceRegistration = null != $_REQUEST["mobileForceReg"];
-        $this->targetURI = $_REQUEST["return_uri"];
+        if (isset($_REQUEST["mobileForceReg"])) {
+            $this->forceRegistration = null != $_REQUEST["mobileForceReg"];
+        } else {
+            $this->forceRegistration = false;
+        }
+        if (isset($_REQUEST["return_uri"])) {
+            $this->targetURI = $_REQUEST["return_uri"];
+        }
         if (null == $this->targetURI) {
             $this->targetURI = $targetURI;
         }

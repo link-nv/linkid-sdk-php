@@ -72,7 +72,7 @@ class LinkIDWSSoapClient extends SoapClient
         $this->headers[] = $this->generateWSSecurityHeader();
 
         $this->__setSoapHeaders($this->headers);
-        return parent::__call($function_name, $arguments);
+        return parent::__soapCall($function_name, $arguments);
     }
 
     /**
