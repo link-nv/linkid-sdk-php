@@ -2,6 +2,7 @@
 
 require_once('LinkIDWSSoapClient.php');
 require_once('LinkIDPaymentResponse.php');
+require_once('LinkIDPaymentStatus.php');
 
 /*
  * linkID Payment WS client
@@ -20,7 +21,7 @@ class LinkIDPaymentClient
     public function __construct($linkIDHost)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws/payment?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws/payment20?wsdl";
 
         $this->client = new SoapClient($wsdlLocation);
     }
@@ -32,13 +33,13 @@ class LinkIDPaymentClient
             'orderReference' => $orderReference
         );
         /** @noinspection PhpUndefinedMethodInspection */
-        $response = $this->client->getStatus($requestParams);
+        $response = $this->client->status($requestParams);
 
         if (null == $response) throw new Exception("Failed to get payment status...");
 
         if (null == $response->paymentStatus) return LinkIDPaymentResponse::STARTED;
 
-        return parseLinkIDPaymentState($response->paymentStatus);
+        return new LinkIDPaymentStatus(parseLinkIDPaymentState($response->paymentStatus), $response->captured);
     }
 
 }
