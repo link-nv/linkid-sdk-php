@@ -3,20 +3,26 @@
 require_once('ExampleConfig.php');
 require_once('../LinkIDLTQRClient.php');
 
-// get order reference
-if (!isset($_REQUEST['orderRef'])) {
+// get LTQR reference
+if (!isset($_REQUEST['ltqrRef'])) {
     return;
 }
-$orderReference = $_REQUEST['orderRef'];
+$ltqrReference = $_REQUEST['ltqrRef'];
 
-// get order reference
+// get client session ID
 if (!isset($_REQUEST['clientSessionId'])) {
     return;
 }
 $clientSessionId = $_REQUEST['clientSessionId'];
 
+// get paymentOrderRef
+if (!isset($_REQUEST['paymentOrderRef'])) {
+    return;
+}
+$paymentOrderRef = $_REQUEST['paymentOrderRef'];
+
 $client = new LinkIDLTQRClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
-$clientSessions = $client->pull(array($orderReference), array($clientSessionId));
+$clientSessions = $client->pull(array($ltqrReference));
 
 print("<h2>LTQR Client Sessions</h2>");
 
