@@ -120,8 +120,11 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         // payment context
         $paymentContext = getLinkIDPaymentContext();
 
+        // callback
+        $callback = getLinkIDCallback();
+
         // generate authn request
-        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext);
+        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback);
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
@@ -289,5 +292,33 @@ function getLinkIDPaymentContext()
     }
 
     return $_SESSION['linkID.paymentContext'];
+
+}
+
+/**
+ * Specify the linkID callback config
+ */
+function setLinkIDCallback($callback)
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.callback'] = $callback;
+
+}
+
+/**
+ * Returns the linkID callback config to be piggy-backed on the linkID authentication request ( if any )
+ */
+function getLinkIDCallback()
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.callback'];
 
 }

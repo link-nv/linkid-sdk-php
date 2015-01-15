@@ -20,6 +20,10 @@ setLinkIDAttributeSuggestions($attributeSuggestions);
 $paymentContext = new LinkIDPaymentContext(500, "PHP Payment description", null, null, 5, LinkIDPaymentContext::PAYMENT_ADD_BROWSER_NOT_ALLOWED);
 setLinkIDPaymentContext($paymentContext);
 
+// set callback config
+$callback = new LinkIDCallback("https://www.linkid.be");
+setLinkIDCallback($callback);
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

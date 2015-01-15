@@ -23,9 +23,15 @@ if (null == $linkIDAuthnSession) {
     $clientFinishedMessage = "PHP Finished Message";
     $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
     $identityProfiles = array("linkid_basic");
+
     $paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
 //    $paymentContext = null;
-    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext);
+
+    $callback = new LinkIDCallback("google.be");
+//    $callback = null;
+
+
+    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback);
 
     $linkIDAuthnSession = $client->start($authnRequest, "en");
 

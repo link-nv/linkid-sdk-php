@@ -3,6 +3,7 @@
 require_once('LinkIDAuthnContext.php');
 require_once('LinkIDAttribute.php');
 require_once('LinkIDPaymentContext.php');
+require_once('LinkIDCallback.php');
 
 /*
  * LinkID SAML v2.0 Utility class
@@ -16,7 +17,7 @@ class LinkIDSaml2
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, LinkIDPaymentContext $paymentContext)
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, LinkIDPaymentContext $paymentContext, LinkIDCallback $callback)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -42,7 +43,7 @@ class LinkIDSaml2
 
         $authnRequest .= "<saml2p:Extensions>";
 
-        /*
+        /**
          * Optional linkID client messages / identity profiles
          */
         if (null != $clientAuthnMessage || null != $clientFinishedMessage || null != $identityProfiles) {
@@ -88,7 +89,7 @@ class LinkIDSaml2
 
         }
 
-        /*
+        /**
          * Optional linkID attribute suggestions
          */
         if (null != $attributeSuggestions) {
@@ -128,6 +129,31 @@ class LinkIDSaml2
         }
 
         /**
+         * Optional callback
+         */
+        if (null != $callback) {
+
+            $authnRequest .= "<saml2:Callback xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
+
+            $authnRequest .= "<saml2:Attribute Name=\"Callback.location\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $callback->location . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            $authnRequest .= "<saml2:Attribute Name=\"Callback.inApp\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($callback->inApp ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "</saml2:Attribute>";
+
+            if (null != $callback->appSessionId) {
+                $authnRequest .= "<saml2:Attribute Name=\"Callback.appSessionId\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $callback->appSessionId . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
+            $authnRequest .= "</saml2:Callback>";
+
+        }
+
+        /**
          * Optional payment context
          */
         if (null != $paymentContext) {
@@ -139,7 +165,7 @@ class LinkIDSaml2
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.currency\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">EUR</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . "EUR" . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.description\">";
@@ -156,17 +182,16 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->validationTime . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            // TODO: fixme
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addBrowser\">";
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->convertPaymentAddBrowser() . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->allowDeferredPay ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($paymentContext->allowDeferredPay ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandate\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . ($paymentContext->mandate ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($paymentContext->mandate ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             if (null != $paymentContext->mandateDescription) {
