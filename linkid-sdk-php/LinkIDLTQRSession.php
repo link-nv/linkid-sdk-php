@@ -11,17 +11,20 @@ class LinkIDLTQRSession
 
     public $qrCodeImage;
     public $qrCodeURL;
-    public $orderReference;
+    public $ltqrReference;
+
+    public $paymentOrderReference;
 
     /**
      * Constructor
      */
-    public function __construct($qrCodeImage, $qrCodeURL, $orderReference)
+    public function __construct($qrCodeImage, $qrCodeURL, $ltqrReference, $paymentOrderReference)
     {
 
         $this->qrCodeImage = $qrCodeImage;
         $this->qrCodeURL = $qrCodeURL;
-        $this->orderReference = $orderReference;
+        $this->ltqrReference = $ltqrReference;
 
+        $this->paymentOrderReference = $paymentOrderReference;
     }
 }

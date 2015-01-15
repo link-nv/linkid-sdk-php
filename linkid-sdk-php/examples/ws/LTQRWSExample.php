@@ -10,15 +10,20 @@ date_default_timezone_set('UTC'); // needed for parsing dates
  */
 
 
+$ltqrReference = "261d60e6-9a02-4736-924b-1d1631d5bc99";
+
 $paymentContext = new LinkIDPaymentContext(500, "LTQR Test");
 
 $client = new LinkIDLTQRClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 //$client->push($paymentContext, $true, new DateTime(), 500);
-$ltqrSession = $client->push($paymentContext);
+$authenticationMessage = "PHP LTQR";
+$finishedMessage = "PHP LTQR Finished";
+$callback = new LinkIDCallback("https://www.linkid.be");
+$ltqrSession = $client->push($authenticationMessage, $finishedMessage, $paymentContext, false, null, null, $callback, null);
 
 print("<h2>LTQR Session</h2>");
 print("<ul><li>URL : " . $ltqrSession->qrCodeURL);
-print("<li>Orderreference: " . $ltqrSession->orderReference . "</ul>");
+print("<li>LTQR reference: " . $ltqrSession->ltqrReference . "</ul>");
 
 $imgData = base64_encode($ltqrSession->qrCodeImage);
 print("<img src='data:image/png;base64, $imgData' />");
@@ -29,15 +34,11 @@ print("<img src='data:image/png;base64, $imgData' />");
  */
 
 
-$orderReferences = array();
-$orderReferences[] = "149c4d88-8243-42ff-991f-0895f0487f6c";
-//$orderReferences[] = "f00";
-// $clientSessionIds = array();
-// $clientSessionIds[] = "f00";
-// $clientSessionIds[] = "bar";
-print("<h2>Fetch client sessions for " . $orderReferences[0] . "</h2>");
+$ltqrReferences = array();
+$ltqrReferences[] = $ltqrReference;
+print("<h2>Fetch client sessions for " . $ltqrReferences[0] . "</h2>");
 
-$clientSessions = $client->pull($orderReferences, $clientSessionIds);
+$clientSessions = $client->pull($ltqrReferences);
 
 print("<h2>LTQR Client Sessions</h2>");
 
@@ -49,17 +50,16 @@ print("</pre>");
  * Change sessions
  */
 $paymentContext = new LinkIDPaymentContext(9900, "Changed LTQR Test");
-$client->change("149c4d88-8243-42ff-991f-0895f0487f6c", $paymentContext);
+$client->change($ltqrReference, null, null, $paymentContext);
 
 
 /**
  * Remove client sessions
  */
 
-$orderReferences = array();
-$orderReferences[] = "c8b2bdcd-1782-474b-b9aa-22a4b864c57e";
-$orderReferences[] = "f00";
+$ltqrReferences = array();
+$ltqrReferences[] = $ltqrReference;
 
-$client->remove($orderReferences, $clientSessionIds);
+//$client->remove($ltqrReferences);
 
 ?>

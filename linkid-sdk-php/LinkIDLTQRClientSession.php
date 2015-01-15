@@ -8,11 +8,14 @@
 
 class LinkIDLTQRClientSession
 {
-
-    public $orderReference;
+    public $qrCodeImage;
+    public $qrCodeURL;
+    public $ltqrReference;
     public $clientSessionId;
     public $userId;
     public $created;
+
+    public $paymentOrderReference;
     public $paymentState;
 
     const STARTED = 0; // payment is being processed
@@ -22,13 +25,18 @@ class LinkIDLTQRClientSession
     /**
      * Constructor
      */
-    public function __construct($orderReference, $clientSessionId, $userId, $created, $paymentState)
+    public function __construct($qrCodeImage, $qrCodeURL, $ltqrReference, $clientSessionId, $userId, $created,
+                                $paymentOrderReference, $paymentState)
     {
 
-        $this->orderReference = $orderReference;
+        $this->qrCodeImage = $qrCodeImage;
+        $this->qrCodeURL = $qrCodeURL;
+        $this->ltqrReference = $ltqrReference;
         $this->clientSessionId = $clientSessionId;
         $this->userId = $userId;
         $this->created = $created;
+
+        $this->paymentOrderReference = $paymentOrderReference;
         $this->paymentState = parseLinkIDLTQRPaymentState($paymentState);
     }
 }
