@@ -17,7 +17,7 @@ class LinkIDSaml2
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, LinkIDPaymentContext $paymentContext, LinkIDCallback $callback)
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, LinkIDPaymentContext $paymentContext = null, LinkIDCallback $callback = null)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -384,7 +384,7 @@ class LinkIDSaml2
         if ($type == "xs:string") {
             return (string)$xmlAttributeValue;
         } else if ($type == "xs:boolean") {
-            return (boolean)$xmlAttributeValue;
+            return filter_var($xmlAttributeValue, FILTER_VALIDATE_BOOLEAN);
         } else if ($type == "xs:integer" || $type == "xs:int") {
             return (integer)$xmlAttributeValue;
         } else if ($type == "xs:long") {
