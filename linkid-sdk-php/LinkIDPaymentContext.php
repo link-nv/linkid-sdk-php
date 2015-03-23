@@ -33,11 +33,13 @@ class LinkIDPaymentContext
     public $paymentMenuResultCanceled;
     public $paymentMenuResultPending;
     public $paymentMenuResultError;
-
     // mandates
     public $mandate;
     public $mandateDescription;
     public $mandateReference;
+
+    public $allowPartial; // allow partial payments via wallets, this flag does make sense if you allow normal payment methods
+    public $onlyWallets; // allow only wallets for this payment
 
     // PaymentAddBrowser constants
     const PAYMENT_ADD_BROWSER_NOT_ALLOWED = 0;
@@ -48,7 +50,7 @@ class LinkIDPaymentContext
      */
     public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
                                 $paymentAddBrowser = LinkIDPaymentContext::PAYMENT_ADD_BROWSER_NOT_ALLOWED, $allowDeferredPay = false,
-                                $mandate = false, $mandateDescription = null, $mandateReference = null)
+                                $mandate = false, $mandateDescription = null, $mandateReference = null, $allowPartial = false, $onlyWallets = false)
     {
 
         $this->amount = $amount;
@@ -63,6 +65,9 @@ class LinkIDPaymentContext
         $this->mandate = $mandate;
         $this->mandateDescription = $mandateDescription;
         $this->mandateReference = $mandateReference;
+
+        $this->allowPartial = $allowPartial;
+        $this->onlyWallets = $onlyWallets;
     }
 
     public function convertPaymentAddBrowser()

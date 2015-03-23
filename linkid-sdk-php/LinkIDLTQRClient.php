@@ -65,6 +65,8 @@ class LinkIDLTQRClient
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
             $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
             $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
+            $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
+            $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
         }
 
         if (null != $callback) {
@@ -134,6 +136,8 @@ class LinkIDLTQRClient
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
             $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
             $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
+            $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
+            $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
         }
 
         if (null != $callback) {
