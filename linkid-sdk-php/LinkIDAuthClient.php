@@ -91,4 +91,26 @@ class LinkIDAuthClient
             $authenticationContext);
     }
 
+    /**
+     * Cancel a linkID authentication / payment session
+     *
+     * @param $sessionId string ID of session to cancel
+     *
+     * @throws Exception
+     */
+    public function cancel($sessionId)
+    {
+
+        $requestParams = array(
+            'sessionId' => $sessionId,
+        );
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->cancel($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
+        }
+
+    }
+
 }
