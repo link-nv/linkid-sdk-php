@@ -129,8 +129,14 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         // callback
         $callback = getLinkIDCallback();
 
+        // session expiry override
+        $sessionExpiryOverride = getSessionExpiryOverride();
+
+        // theme
+        $theme = getTheme();
+
         // generate authn request
-        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback);
+        $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback, $sessionExpiryOverride, $theme);
 
         // push authn request to linkID
         $hawsClient = new LinkIDHawsClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
@@ -326,5 +332,61 @@ function getLinkIDCallback()
     }
 
     return $_SESSION['linkID.callback'];
+
+}
+
+/**
+ * Specify the optional linkID session expiry override (seconds)
+ */
+function setSessionExpiryOverride($sessionExpiryOverride)
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.sessionExpiryOverride'] = $sessionExpiryOverride;
+
+}
+
+/**
+ * Returns the optional linkID session expiry override
+ */
+function getSessionExpiryOverride()
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.sessionExpiryOverride'];
+
+}
+
+/**
+ * Specify the optional linkID theme
+ */
+function setTheme($theme)
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    $_SESSION['linkID.theme'] = $theme;
+
+}
+
+/**
+ * Returns the optional linkID theme
+ */
+function getTheme()
+{
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    return $_SESSION['linkID.theme'];
 
 }

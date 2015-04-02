@@ -19,7 +19,9 @@ $client = new LinkIDLTQRClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword
 $authenticationMessage = "PHP LTQR";
 $finishedMessage = "PHP LTQR Finished";
 $callback = new LinkIDCallback("https://www.linkid.be");
-$ltqrSession = $client->push($authenticationMessage, $finishedMessage, $paymentContext, false, null, null, $callback, null);
+$sessionExpiryOverride = 10;
+$theme = "ugent";
+$ltqrSession = $client->push($authenticationMessage, $finishedMessage, $paymentContext, false, null, null, $callback, null, $sessionExpiryOverride, $theme);
 
 print("<h2>LTQR Session</h2>");
 print("<ul><li>URL : " . $ltqrSession->qrCodeURL);

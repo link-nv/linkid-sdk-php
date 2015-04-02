@@ -17,7 +17,8 @@ class LinkIDSaml2
     public $expectedChallenge;
     public $expectedAudience;
 
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, LinkIDPaymentContext $paymentContext = null, LinkIDCallback $callback = null)
+    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions,
+                                         LinkIDPaymentContext $paymentContext = null, LinkIDCallback $callback = null, $sessionExpiryOverride = null, $theme = null)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -84,6 +85,25 @@ class LinkIDSaml2
                     $i++;
                 }
             }
+            if (null != $sessionExpiryOverride) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.sessionExpiryOverride\">";
+
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $sessionExpiryOverride;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $theme) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.theme\">";
+
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $theme;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
 
             $authnRequest .= "</saml2:DeviceContext>";
 

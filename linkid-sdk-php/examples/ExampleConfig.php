@@ -4,8 +4,8 @@
  * Configuration for the example pages, linkID hostname, appname, username/password, ...
  */
 
-//$linkIDHost = "192.168.5.14:8443";
-$linkIDHost = "demo.linkid.be";
+$linkIDHost = "192.168.5.14:8443";
+//$linkIDHost = "demo.linkid.be";
 
 $linkIDAppName = "example-mobile";
 

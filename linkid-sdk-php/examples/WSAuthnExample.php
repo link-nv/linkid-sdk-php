@@ -31,8 +31,10 @@ if (!isset($_SESSION["linkIDSession"])) {
     $callback = new LinkIDCallback("https://www.google.be");
 //    $callback = null;
 
+    $sessionExpiryOverride = null;
+    $theme = null;
 
-    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback);
+    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback, $sessionExpiryOverride, $theme);
 
     $linkIDAuthnSession = $client->start($authnRequest, "en");
 

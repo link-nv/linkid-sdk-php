@@ -42,13 +42,15 @@ class LinkIDLTQRClient
      *                       Do not mix this attribute with expiryDate. If so, expiryDate will be preferred.
      * callback Optional callback config
      * identityProfiles Optional identity profiles
+     * sessionExpiryOverride optional session expiry (seconds)
+     * theme optional theme, if not specified default application theme will be chosen
      *
      * Success object containing the QR in PNG format, the content of the QR code and a type 4 UUID session ID of the created long term session. This
      * session ID will be used in the notifications to the Service Provider.
      */
     public function push($authenticationMessage, $finishedMessage, $paymentContext = null,
                          $oneTimeUse = false, $expiryDate = null, $expiryDuration = null,
-                         $callback = null, $identityProfiles = null)
+                         $callback = null, $identityProfiles = null, $sessionExpiryOverride = null, $theme = null)
     {
 
         $requestParams = new stdClass;
@@ -92,6 +94,13 @@ class LinkIDLTQRClient
             $requestParams->expiryDuration = $expiryDuration;
         }
 
+        if (null != $sessionExpiryOverride) {
+            $requestParams->sessionExpiryOverride = $sessionExpiryOverride;
+        }
+        if (null != $theme) {
+            $requestParams->theme = $theme;
+        }
+
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->push($requestParams);
 
@@ -115,11 +124,14 @@ class LinkIDLTQRClient
      *                              Do not mix this attribute with expiryDate. If so, expiryDate will be preferred.
      * @param LinkIDCallback $callback Optional callback config
      * @param $identityProfiles String[] identity profiles
+     * @param $sessionExpiryOverride int session expiry (seconds)
+     * @param $theme string theme, if not specified default application theme will be chosen
      * @return \LinkIDLTQRSession
      * @throws Exception
      */
     public function change($ltqrReference, $authenticationMessage, $finishedMessage, $paymentContext = null,
-                           $expiryDate = null, $expiryDuration = null, $callback = null, $identityProfiles = null)
+                           $expiryDate = null, $expiryDuration = null, $callback = null, $identityProfiles = null,
+                           $sessionExpiryOverride = null, $theme = null)
     {
         $requestParams = new stdClass;
         $requestParams->ltqrReference = $ltqrReference;
@@ -160,6 +172,13 @@ class LinkIDLTQRClient
         }
         if (null != $expiryDuration) {
             $requestParams->expiryDuration = $expiryDuration;
+        }
+
+        if (null != $sessionExpiryOverride) {
+            $requestParams->sessionExpiryOverride = $sessionExpiryOverride;
+        }
+        if (null != $theme) {
+            $requestParams->theme = $theme;
         }
 
         /** @noinspection PhpUndefinedMethodInspection */
