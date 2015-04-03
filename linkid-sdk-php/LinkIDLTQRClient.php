@@ -61,7 +61,7 @@ class LinkIDLTQRClient
         if (null != $paymentContext) {
             $requestParams->paymentContext = new stdClass;
             $requestParams->paymentContext->amount = $paymentContext->amount;
-            $requestParams->paymentContext->currency = "EUR";
+            $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
             $requestParams->paymentContext->description = $paymentContext->description;
             $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
@@ -142,7 +142,7 @@ class LinkIDLTQRClient
         if (null != $paymentContext) {
             $requestParams->paymentContext = new stdClass;
             $requestParams->paymentContext->amount = $paymentContext->amount;
-            $requestParams->paymentContext->currency = "EUR";
+            $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
             $requestParams->paymentContext->description = $paymentContext->description;
             $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;

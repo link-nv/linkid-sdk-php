@@ -17,7 +17,7 @@ setLinkIDAttributeSuggestions($attributeSuggestions);
 
 // set payment context
 //$paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
-$paymentContext = new LinkIDPaymentContext(500, "PHP Payment description", null, null, 5, LinkIDPaymentContext::PAYMENT_ADD_BROWSER_NOT_ALLOWED);
+$paymentContext = new LinkIDPaymentContext(500, LinkIDCurrency::EUR, "PHP Payment description", null, null, 5, LinkIDPaymentAddBrowser::NOT_ALLOWED);
 setLinkIDPaymentContext($paymentContext);
 
 // set callback config

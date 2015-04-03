@@ -185,7 +185,7 @@ class LinkIDSaml2
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.currency\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . "EUR" . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDCurrencyToString($paymentContext->currency) . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.description\">";
@@ -203,7 +203,7 @@ class LinkIDSaml2
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addBrowser\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->convertPaymentAddBrowser() . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDPaymentAddBrowserToString($paymentContext->paymentAddBrowser) . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";

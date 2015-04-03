@@ -58,19 +58,19 @@ function parseLinkIDWSPaymentState($paymentState)
     if (null == $paymentState) return null;
 
     if ($paymentState == "linkid.payment.state.started") {
-        return LinkIDPaymentResponse::STARTED;
+        return LinkIDPaymentState::STARTED;
     } else if ($paymentState == "linkid.payment.state.deferred") {
-        return LinkIDPaymentResponse::DEFERRED;
+        return LinkIDPaymentState::DEFERRED;
     } else if ($paymentState == "linkid.payment.state.waiting") {
-        return LinkIDPaymentResponse::WAITING_FOR_UPDATE;
+        return LinkIDPaymentState::WAITING_FOR_UPDATE;
     } else if ($paymentState == "linkid.payment.state.failed") {
-        return LinkIDPaymentResponse::FAILED;
+        return LinkIDPaymentState::FAILED;
     } else if ($paymentState == "linkid.payment.state.refunded") {
-        return LinkIDPaymentResponse::REFUNDED;
+        return LinkIDPaymentState::REFUNDED;
     } else if ($paymentState == "linkid.payment.state.refund_started") {
-        return LinkIDPaymentResponse::REFUND_STARTED;
+        return LinkIDPaymentState::REFUND_STARTED;
     } else if ($paymentState == "linkid.payment.state.payed") {
-        return LinkIDPaymentResponse::PAYED;
+        return LinkIDPaymentState::PAYED;
     }
 
     throw new Exception("Unexpected payment state: " . $paymentState);

@@ -1,5 +1,8 @@
 <?php
 
+require_once('LinkIDCurrency.php');
+require_once('LinkIDPaymentAddBrowser.php');
+
 /*
  * LinkID Payment context
  *
@@ -10,6 +13,7 @@ class LinkIDPaymentContext
 {
 
     public $amount;
+    public $currency;
     public $description;
 
     // optional order reference, if not specified linkID will generate one in UUID format
@@ -41,19 +45,16 @@ class LinkIDPaymentContext
     public $allowPartial; // allow partial payments via wallets, this flag does make sense if you allow normal payment methods
     public $onlyWallets; // allow only wallets for this payment
 
-    // PaymentAddBrowser constants
-    const PAYMENT_ADD_BROWSER_NOT_ALLOWED = 0;
-    const PAYMENT_ADD_BROWSER_REDIRECT = 1;
-
     /**
      * Constructor
      */
-    public function __construct($amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
-                                $paymentAddBrowser = LinkIDPaymentContext::PAYMENT_ADD_BROWSER_NOT_ALLOWED, $allowDeferredPay = false,
+    public function __construct($amount, $currency, $description, $orderReference = null, $profile = null, $validationTime = 5,
+                                $paymentAddBrowser = LinkIDPaymentAddBrowser::NOT_ALLOWED, $allowDeferredPay = false,
                                 $mandate = false, $mandateDescription = null, $mandateReference = null, $allowPartial = false, $onlyWallets = false)
     {
 
         $this->amount = $amount;
+        $this->currency = $currency;
         $this->description = $description;
 
         $this->orderReference = $orderReference;
@@ -70,14 +71,4 @@ class LinkIDPaymentContext
         $this->onlyWallets = $onlyWallets;
     }
 
-    public function convertPaymentAddBrowser()
-    {
-
-        if (LinkIDPaymentContext::PAYMENT_ADD_BROWSER_REDIRECT == $this->paymentAddBrowser) {
-            return "REDIRECT";
-        }
-
-        // default
-        return "NOT_ALLOWED";
-    }
 }

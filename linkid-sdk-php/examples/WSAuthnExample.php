@@ -25,7 +25,7 @@ if (!isset($_SESSION["linkIDSession"])) {
     $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
     $identityProfiles = array("linkid_basic");
 
-    $paymentContext = new LinkIDPaymentContext(500, "PHP Payment description");
+    $paymentContext = new LinkIDPaymentContext(500, LinkIDCurrency::EUR, "PHP Payment description");
 //    $paymentContext = null;
 
     $callback = new LinkIDCallback("https://www.google.be");
