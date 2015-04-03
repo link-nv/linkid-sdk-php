@@ -21,7 +21,7 @@ class LinkIDPaymentClient
     public function __construct($linkIDHost, $username, $password)
     {
 
-        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/payment30?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/payment30?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
