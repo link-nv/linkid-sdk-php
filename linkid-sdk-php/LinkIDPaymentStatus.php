@@ -1,6 +1,5 @@
 <?php
 
-require_once('LinkIDPaymentResponse.php');
 require_once('LinkIDPaymentDetails.php');
 
 /*

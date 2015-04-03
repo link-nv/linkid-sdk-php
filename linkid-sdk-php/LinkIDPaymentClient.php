@@ -21,7 +21,7 @@ class LinkIDPaymentClient
     public function __construct($linkIDHost, $username, $password)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/payment30?wsdl";
+        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/payment30?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -40,45 +40,36 @@ class LinkIDPaymentClient
 
         if (null == $response->paymentStatus) return LinkIDPaymentState::STARTED;
 
-        $xmlPaymentTransactions = $response->paymentDetails->paymentTransactions;
-        $xmlWalletTransactions = $response->paymentDetails->walletTransactions;
+        $paymentTransactions = array();
+        $walletTransactions = array();
 
         // payment transactions
-        $paymentTransactions = array();
-        if (is_array($xmlPaymentTransactions)) {
-            foreach ($xmlPaymentTransactions as $xmlPaymentTransaction) {
-                $paymentTransactions[] = $this->convertPaymentTransaction($xmlPaymentTransaction);
+        if (isset($response->paymentDetails->paymentTransactions)) {
+            $xmlPaymentTransactions = $response->paymentDetails->paymentTransactions;
+            if (is_array($xmlPaymentTransactions)) {
+                foreach ($xmlPaymentTransactions as $xmlPaymentTransaction) {
+                    $paymentTransactions[] = parseLinkIDPaymentTransaction($xmlPaymentTransaction);
+                }
+            } else {
+                $paymentTransactions[] = parseLinkIDPaymentTransaction($xmlPaymentTransactions);
             }
-        } else {
-            $paymentTransactions[] = $this->convertPaymentTransaction($xmlPaymentTransactions);
         }
 
         // wallet transactions
-        $walletTransactions = array();
-        if (is_array($xmlWalletTransactions)) {
-            foreach ($xmlWalletTransactions as $xmlWalletTransaction) {
-                $walletTransactions[] = $this->convertWalletTransaction($xmlWalletTransaction);
+        if (isset($response->paymentDetails->walletTransactions)) {
+            $xmlWalletTransactions = $response->paymentDetails->walletTransactions;
+            if (is_array($xmlWalletTransactions)) {
+                foreach ($xmlWalletTransactions as $xmlWalletTransaction) {
+                    $walletTransactions[] = parseLinkIDWalletTransaction($xmlWalletTransaction);
+                }
+            } else {
+                $walletTransactions[] = parseLinkIDWalletTransaction($xmlWalletTransactions);
             }
-        } else {
-            $walletTransactions[] = $this->convertPaymentTransaction($xmlWalletTransactions);
         }
 
         $paymentDetails = new LinkIDPaymentDetails($paymentTransactions, $walletTransactions);
 
         return new LinkIDPaymentStatus(parseLinkIDPaymentState($response->paymentStatus), $response->captured, $response->amountPayed, $paymentDetails);
-    }
-
-    private function convertPaymentTransaction($xmlPaymentTransaction)
-    {
-        return new LinkIDPaymentTransaction(parseLinkIDPaymentMethodType($xmlPaymentTransaction->paymentMethodType), $xmlPaymentTransaction->paymentMethod,
-            parseLinkIDPaymentState($xmlPaymentTransaction->paymentState), $xmlPaymentTransaction->creationDate, $xmlPaymentTransaction->authorizationDate,
-            $xmlPaymentTransaction->capturedDate, $xmlPaymentTransaction->docdataReference, $xmlPaymentTransaction->amount, parseLinkIDCurrency($xmlPaymentTransaction->currency));
-    }
-
-    private function convertWalletTransaction($xmlWalletTransaction)
-    {
-        return new LinkIDWalletTransaction($xmlWalletTransaction->walletId, $xmlWalletTransaction->creationDate, $xmlWalletTransaction->transactionId,
-            $xmlWalletTransaction->amount, parseLinkIDCurrency($xmlWalletTransaction->currency));
     }
 
 }

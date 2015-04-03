@@ -18,5 +18,14 @@ class LinkIDWalletTransaction
         $this->currency = $currency;
     }
 
+}
 
+function parseLinkIDWalletTransaction($xmlWalletTransaction)
+{
+    return new LinkIDWalletTransaction(
+        isset($xmlWalletTransaction->walletId) ? $xmlWalletTransaction->walletId : null,
+        isset($xmlWalletTransaction->creationDate) ? $xmlWalletTransaction->creationDate : null,
+        isset($xmlWalletTransaction->transactionId) ? $xmlWalletTransaction->transactionId : null,
+        isset($xmlWalletTransaction->amount) ? $xmlWalletTransaction->amount : null,
+        isset($xmlWalletTransaction->currency) ? parseLinkIDCurrency($xmlWalletTransaction->currency) : null);
 }

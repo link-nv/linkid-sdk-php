@@ -14,4 +14,6 @@ $client = new LinkIDPaymentClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassw
 $linkIDPaymentStatus = $client->getStatus($orderReference);
 
 print("<h2>LinkID Payment Status</h2>");
+print("<pre>");
 print_r($linkIDPaymentStatus);
+print("</pre>");

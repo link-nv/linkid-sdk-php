@@ -30,5 +30,18 @@ class LinkIDPaymentTransaction
         $this->currency = $currency;
     }
 
+}
 
+function parseLinkIDPaymentTransaction($xmlPaymentTransaction)
+{
+    return new LinkIDPaymentTransaction(
+        isset($xmlPaymentTransaction->paymentMethodType) ? parseLinkIDPaymentMethodType($xmlPaymentTransaction->paymentMethodType) : null,
+        isset($xmlPaymentTransaction->paymentMethod) ? $xmlPaymentTransaction->paymentMethod : null,
+        isset($xmlPaymentTransaction->paymentState) ? parseLinkIDPaymentState($xmlPaymentTransaction->paymentState) : null,
+        isset($xmlPaymentTransaction->creationDate) ? $xmlPaymentTransaction->creationDate : null,
+        isset($xmlPaymentTransaction->authorizationDate) ? $xmlPaymentTransaction->authorizationDate : null,
+        isset($xmlPaymentTransaction->capturedDate) ? $xmlPaymentTransaction->capturedDate : null,
+        isset($xmlPaymentTransaction->docdataReference) ? $xmlPaymentTransaction->docdataReference : null,
+        isset($xmlPaymentTransaction->amount) ? $xmlPaymentTransaction->amount : null,
+        isset($xmlPaymentTransaction->currency) ? parseLinkIDCurrency($xmlPaymentTransaction->currency) : null);
 }
