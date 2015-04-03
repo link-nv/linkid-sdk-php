@@ -12,10 +12,8 @@ $linkIDAppName = "example-mobile";
 $linkIDLanguage = "en";
 
 // username/password
-//$linkIDWSUsername = "example-mobile";
-//$linkIDWSPassword = "6E6C1CB7-965C-48A0-B2B0-6B65674BE19F";
-$linkIDWSUsername = "test-shop";
-$linkIDWSPassword = "5E017416-23B2-47E1-A9E0-43EE3C75A1B0";
+$linkIDWSUsername = "example-mobile";
+$linkIDWSPassword = "6E6C1CB7-965C-48A0-B2B0-6B65674BE19F";
 
 /*
  * linkID authentication context session attribute
