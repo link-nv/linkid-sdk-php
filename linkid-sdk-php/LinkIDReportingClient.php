@@ -3,6 +3,10 @@
 require_once('LinkIDWSSoapClient.php');
 require_once('LinkIDPaymentOrder.php');
 require_once('LinkIDParkingSession.php');
+require_once('LinkIDReportDateFilter.php');
+require_once('LinkIDReportApplicationFilter.php');
+require_once('LinkIDReportWalletFilter.php');
+require_once('LinkIDWalletReportTransaction.php');
 
 /*
  * linkID Reporting WS client
@@ -21,7 +25,7 @@ class LinkIDReportingClient
     public function __construct($linkIDHost, $username, $password)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/reporting20?wsdl";
+        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/reporting20?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -34,6 +38,7 @@ class LinkIDReportingClient
      * @param $orderReferences array optional list of order references
      * @param $mandateReferences array optional list of mandate references
      *
+     * @throws Exception something went wrong, check the error code in the exception
      * @return LinkIDPaymentOrder[] list of payment orders matching your search.
      */
     public function getPaymentReport($startDate = null, $endDate = null, $orderReferences = null, $mandateReferences = null)
@@ -61,6 +66,10 @@ class LinkIDReportingClient
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->paymentReport($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
 
         if (!isset($response->orders)) {
             return null;
@@ -90,6 +99,7 @@ class LinkIDReportingClient
      * @param $dtaKeys array optional list of dta keys
      * @param $parkings array optional list of parkings
      *
+     * @throws Exception something went wrong, check the error code in the exception
      * @return LinkIDParkingSession[] list of parking sessions matching your search.
      */
     public function getParkingReport($startDate = null, $endDate = null, $barCodes = null, $ticketNumbers = null, $dtaKeys = null, $parkings = null)
@@ -131,6 +141,10 @@ class LinkIDReportingClient
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->parkingReport($requestParams);
 
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
         if (!isset($response->sessions)) {
             return null;
         }
@@ -148,5 +162,66 @@ class LinkIDReportingClient
 
 
         return $sessions;
+    }
+
+    /**
+     * @param $walletOrganizationId String the wallet OrganizationID
+     * @param null $dateFilter LinkIDReportDateFilter optional date filter
+     * @param null $applicationFilter
+     * @param null $walletFilter
+     *
+     * @throws Exception something went wrong, check the error code in the exception
+     * @return LinkIDWalletReportTransaction[] list of wallet transactions matching your search.
+     */
+    public function getWalletReport($walletOrganizationId, $dateFilter = null, $applicationFilter = null, $walletFilter = null)
+    {
+        $requestParams = new stdClass;
+
+        $requestParams->walletOrganizationId = $walletOrganizationId;
+
+        if (null != $dateFilter) {
+            $requestParams->dateFilter = new stdClass;
+            $requestParams->dateFilter->startDate = $dateFilter->startDate->format(DateTime::ATOM);
+            if (null != $dateFilter->endDate) {
+                $requestParams->dateFilter->endDate = $dateFilter->endDate->format(DateTime::ATOM);
+            }
+        }
+
+        if (null != $applicationFilter) {
+            $requestParams->applicationFilter = new stdClass;
+            $requestParams->applicationFilter->applicationName = $applicationFilter->applicationName;
+        }
+
+        if (null != $walletFilter) {
+            $requestParams->walletFilter = new stdClass;
+            $requestParams->walletFilter->walletId = $walletFilter->walletId;
+            $requestParams->walletFilter->userId = $walletFilter->userId;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletReport($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        if (!isset($response->transactions)) {
+            return null;
+        }
+        $xmlTransactions = $response->transactions;
+
+        // payment transactions
+        $transactions = array();
+        if (is_array($xmlTransactions)) {
+            foreach ($xmlTransactions as $xmlTransaction) {
+                $transactions[] = parseLinkIDWalletReportTransaction($xmlTransaction);
+            }
+        } else {
+            $transactions[] = parseLinkIDWalletReportTransaction($xmlTransactions);
+        }
+
+
+        return $transactions;
+
     }
 }

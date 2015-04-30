@@ -49,4 +49,40 @@ print("<pre>");
 print_r($sessions);
 print("</pre>");
 
+// Wallet transactions lookup on date
+
+$walletOrganizationId = "f508212c-9189-4402-ab76-6e26110697b4";
+
+$transactions = $client->getWalletReport($walletOrganizationId, new LinkIDReportDateFilter(new DateTime('2014-01-01')), null, null);
+
+print("<h2>Wallet transactions sessions since 2014-01-01</h2>");
+print("<pre>");
+print_r($transactions);
+print("</pre>");
+
+// Wallet transactions lookup on application name
+
+$walletOrganizationId = "f508212c-9189-4402-ab76-6e26110697b4";
+$applicationName = "test-shop";
+
+$transactions = $client->getWalletReport($walletOrganizationId, null, new LinkIDReportApplicationFilter($applicationName), null);
+
+print("<h2>Wallet transactions for application " . $applicationName . "</h2>");
+print("<pre>");
+print_r($transactions);
+print("</pre>");
+
+// Wallet transactions lookup on wallet
+
+$walletOrganizationId = "f508212c-9189-4402-ab76-6e26110697b4";
+$walletId = "ff52177f-8f80-4640-9e86-558f6b1b24c3";
+$userId = "e4269366-ddfb-43dc-838d-01569a8c4c22";
+
+$transactions = $client->getWalletReport($walletOrganizationId, null, null, new LinkIDReportWalletFilter($walletId, $userId));
+
+print("<h2>Wallet transactions for walletId " . $walletId . " and userId " . $userId . "</h2>");
+print("<pre>");
+print_r($transactions);
+print("</pre>");
+
 ?>
