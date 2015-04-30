@@ -69,7 +69,20 @@ class LinkIDPaymentClient
 
         $paymentDetails = new LinkIDPaymentDetails($paymentTransactions, $walletTransactions);
 
-        return new LinkIDPaymentStatus(parseLinkIDPaymentState($response->paymentStatus), $response->captured, $response->amountPayed, $paymentDetails);
+        return new LinkIDPaymentStatus(
+            isset($response->orderReference) ? $response->orderReference : null,
+            isset($response->userId) ? $response->userId : null,
+            isset($response->paymentStatus) ? parseLinkIDPaymentState($response->paymentStatus) : null,
+            isset($response->authorized) ? $response->authorized : false,
+            isset($response->captured) ? $response->captured : false,
+            isset($response->amountPayed) ? $response->amountPayed : null,
+            isset($response->amount) ? $response->amount : null,
+            isset($response->currency) ? parseLinkIDCurrency($response->currency) : null,
+            isset($response->description) ? $response->description : null,
+            isset($response->profile) ? $response->profile : null,
+            isset($response->created) ? $response->created : null,
+            isset($response->mandateReference) ? $response->mandateReference : null,
+            $paymentDetails);
     }
 
 }
