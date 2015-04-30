@@ -25,7 +25,7 @@ class LinkIDReportingClient
     public function __construct($linkIDHost, $username, $password)
     {
 
-        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/reporting20?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/reporting20?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
