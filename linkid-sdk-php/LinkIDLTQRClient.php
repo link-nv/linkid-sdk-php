@@ -69,6 +69,9 @@ class LinkIDLTQRClient
             $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
             $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
             $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
+            $requestParams->paymentContext->mandate = $paymentContext->mandate;
+            $requestParams->paymentContext->mandateDescription = $paymentContext->mandateDescription;
+            $requestParams->paymentContext->mandateReference = $paymentContext->mandateReference;
         }
 
         if (null != $callback) {
@@ -150,6 +153,9 @@ class LinkIDLTQRClient
             $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
             $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
             $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
+            $requestParams->paymentContext->mandate = $paymentContext->mandate;
+            $requestParams->paymentContext->mandateDescription = $paymentContext->mandateDescription;
+            $requestParams->paymentContext->mandateReference = $paymentContext->mandateReference;
         }
 
         if (null != $callback) {
