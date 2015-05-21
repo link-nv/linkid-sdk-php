@@ -18,7 +18,8 @@ class LinkIDSaml2
     public $expectedAudience;
 
     public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions,
-                                         LinkIDPaymentContext $paymentContext = null, LinkIDCallback $callback = null, $sessionExpiryOverride = null, $theme = null)
+                                         LinkIDPaymentContext $paymentContext = null, LinkIDCallback $callback = null, $sessionExpiryOverride = null, $theme = null,
+                                         $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null)
     {
 
         $this->expectedChallenge = $this->gen_uuid();
@@ -99,6 +100,34 @@ class LinkIDSaml2
 
                 $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
                 $authnRequest .= $theme;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
+            if (null != $mobileLandingSuccess) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingSuccess\">";
+
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $mobileLandingSuccess;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $mobileLandingError) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingError\">";
+
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $mobileLandingError;
+                $authnRequest .= "</saml2:AttributeValue>";
+
+                $authnRequest .= "</saml2:Attribute>";
+            }
+            if (null != $mobileLandingCancel) {
+                $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingCancel\">";
+
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+                $authnRequest .= $mobileLandingCancel;
                 $authnRequest .= "</saml2:AttributeValue>";
 
                 $authnRequest .= "</saml2:Attribute>";
