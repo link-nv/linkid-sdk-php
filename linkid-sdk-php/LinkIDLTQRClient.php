@@ -50,7 +50,8 @@ class LinkIDLTQRClient
      */
     public function push($authenticationMessage, $finishedMessage, $paymentContext = null,
                          $oneTimeUse = false, $expiryDate = null, $expiryDuration = null,
-                         $callback = null, $identityProfiles = null, $sessionExpiryOverride = null, $theme = null)
+                         $callback = null, $identityProfiles = null, $sessionExpiryOverride = null, $theme = null,
+                         $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null)
     {
 
         $requestParams = new stdClass;
@@ -102,6 +103,16 @@ class LinkIDLTQRClient
         }
         if (null != $theme) {
             $requestParams->theme = $theme;
+        }
+
+        if (null != $mobileLandingSuccess) {
+            $requestParams->mobileLandingSuccess = $mobileLandingSuccess;
+        }
+        if (null != $mobileLandingError) {
+            $requestParams->mobileLandingError = $mobileLandingError;
+        }
+        if (null != $mobileLandingCancel) {
+            $requestParams->mobileLandingCancel = $mobileLandingCancel;
         }
 
         /** @noinspection PhpUndefinedMethodInspection */
