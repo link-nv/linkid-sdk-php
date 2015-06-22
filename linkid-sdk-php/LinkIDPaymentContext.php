@@ -72,3 +72,22 @@ class LinkIDPaymentContext
     }
 
 }
+
+function parseLinkIDPaymentContext($xmlPaymentContext)
+{
+    return new LinkIDPaymentContext(
+        isset($xmlPaymentContext->amount) ? $xmlPaymentContext->amount : null,
+        isset($xmlPaymentContext->currency) ? parseLinkIDCurrency($xmlPaymentContext->currency) : null,
+        isset($xmlPaymentContext->description) ? $xmlPaymentContext->description : null,
+        isset($xmlPaymentContext->orderReference) ? $xmlPaymentContext->orderReference : null,
+        isset($xmlPaymentContext->profile) ? $xmlPaymentContext->profile : null,
+        isset($xmlPaymentContext->validationTime) ? $xmlPaymentContext->validationTime : null,
+        isset($xmlPaymentContext->paymentAddBrowser) ? $xmlPaymentContext->paymentAddBrowser : null,
+        isset($xmlPaymentContext->allowDeferredPay) ? $xmlPaymentContext->allowDeferredPay : null,
+        isset($xmlPaymentContext->allowPartial) ? $xmlPaymentContext->allowPartial : false,
+        isset($xmlPaymentContext->onlyWallets) ? $xmlPaymentContext->onlyWallets : false,
+        isset($xmlPaymentContext->mandate) ? $xmlPaymentContext->mandate : false,
+        isset($xmlPaymentContext->mandateDescription) ? $xmlPaymentContext->mandateDescription : null,
+        isset($xmlPaymentContext->mandateReference) ? $xmlPaymentContext->mandateReference : null
+    );
+}
