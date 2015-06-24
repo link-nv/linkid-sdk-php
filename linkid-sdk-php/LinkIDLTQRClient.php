@@ -141,12 +141,13 @@ class LinkIDLTQRClient
      * @param $identityProfiles String[] identity profiles
      * @param $sessionExpiryOverride int session expiry (seconds)
      * @param $theme string theme, if not specified default application theme will be chosen
+     * @param $resetUsed bool Optional flag for single use LTQR codes to let them be used again one time. If multi use this flag does nothing.
      * @return \LinkIDLTQRSession
      * @throws Exception
      */
     public function change($ltqrReference, $authenticationMessage, $finishedMessage, $paymentContext = null,
                            $expiryDate = null, $expiryDuration = null, $callback = null, $identityProfiles = null,
-                           $sessionExpiryOverride = null, $theme = null)
+                           $sessionExpiryOverride = null, $theme = null, $resetUsed = false)
     {
         $requestParams = new stdClass;
         $requestParams->ltqrReference = $ltqrReference;
@@ -198,6 +199,8 @@ class LinkIDLTQRClient
         if (null != $theme) {
             $requestParams->theme = $theme;
         }
+
+        $requestParams->resetUsed = $resetUsed;
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->change($requestParams);
