@@ -17,6 +17,7 @@ class LinkIDPaymentOrder
     public $date;
     public $amount;
     public $currency;
+    public $walletCoin;
     public $description;
     public $paymentState;
     public $amountPayed;
@@ -30,11 +31,12 @@ class LinkIDPaymentOrder
     public $transactions;
     public $walletTransactions;
 
-    function __construct($date, $amount, $currency, $description, $paymentState, $amountPayed, $authorized, $captured, $orderReference, $userId, $email, $givenName, $familyName, $transactions, $walletTransactions)
+    function __construct($date, $amount, $currency, $walletCoin, $description, $paymentState, $amountPayed, $authorized, $captured, $orderReference, $userId, $email, $givenName, $familyName, $transactions, $walletTransactions)
     {
         $this->date = $date;
         $this->amount = $amount;
         $this->currency = $currency;
+        $this->walletCoin = $walletCoin;
         $this->description = $description;
         $this->paymentState = $paymentState;
         $this->amountPayed = $amountPayed;
@@ -84,6 +86,7 @@ function parseLinkIDPaymentOrder($xmlPaymentOrder)
         isset($xmlPaymentOrder->date) ? $xmlPaymentOrder->date : null,
         isset($xmlPaymentOrder->amount) ? $xmlPaymentOrder->amount : null,
         isset($xmlPaymentOrder->currency) ? parseLinkIDCurrency($xmlPaymentOrder->currency) : null,
+        isset($xmlPaymentOrder->walletCoin) ? $xmlPaymentOrder->walletCoin : null,
         isset($xmlPaymentOrder->description) ? $xmlPaymentOrder->description : null,
         isset($xmlPaymentOrder->paymentState) ? parseLinkIDPaymentState($xmlPaymentOrder->paymentState) : null,
         isset($xmlPaymentOrder->amountPayed) ? $xmlPaymentOrder->amountPayed : null,

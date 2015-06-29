@@ -21,7 +21,7 @@ class LinkIDPaymentClient
     public function __construct($linkIDHost, $username, $password)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/payment30?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/payment40?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -78,6 +78,7 @@ class LinkIDPaymentClient
             isset($response->amountPayed) ? $response->amountPayed : null,
             isset($response->amount) ? $response->amount : null,
             isset($response->currency) ? parseLinkIDCurrency($response->currency) : null,
+            isset($response->walletCoin) ? $response->walletCoin : null,
             isset($response->description) ? $response->description : null,
             isset($response->profile) ? $response->profile : null,
             isset($response->created) ? $response->created : null,

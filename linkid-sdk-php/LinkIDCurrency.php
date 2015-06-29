@@ -9,6 +9,7 @@ abstract class LinkIDCurrency
 
 function linkIDCurrencyToString($currency)
 {
+    if (null == $currency) return null;
 
     if (0 == $currency) return "EUR";
 }

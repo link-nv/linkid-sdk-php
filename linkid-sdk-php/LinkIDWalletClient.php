@@ -31,19 +31,21 @@ class LinkIDWalletClient
      * @param $walletOrganizationId string the linkID wallet organization ID
      * @param $amount double optional start balance
      * @param $currency LinkIDCurrency optional start balance currency
+     * @param $walletCoin string optional wallet coin
      *
      * @throws Exception something went wrong enrolling
      *
      * @return string the ID of the linkID wallet that was created
      */
-    public function enroll($userId, $walletOrganizationId, $amount, $currency)
+    public function enroll($userId, $walletOrganizationId, $amount, $currency, $walletCoin)
     {
 
         $requestParams = array(
             'userId' => $userId,
             'walletOrganizationId' => $walletOrganizationId,
             'amount' => $amount,
-            'currency' => $currency
+            'currency' => $currency,
+            'walletCoin' => $walletCoin
         );
 
         /** @noinspection PhpUndefinedMethodInspection */
@@ -61,17 +63,19 @@ class LinkIDWalletClient
      * @param $walletId string the linkID wallet ID
      * @param $amount double amount to add
      * @param $currency LinkIDCurrency currency of amount to add
+     * @param $walletCoin string optional wallet coin
      *
      * @throws Exception something went wrong
      */
-    public function addCredit($userId, $walletId, $amount, $currency)
+    public function addCredit($userId, $walletId, $amount, $currency, $walletCoin)
     {
 
         $requestParams = array(
             'userId' => $userId,
             'walletId' => $walletId,
             'amount' => $amount,
-            'currency' => $currency
+            'currency' => $currency,
+            'walletCoin' => $walletCoin
         );
 
         /** @noinspection PhpUndefinedMethodInspection */
@@ -87,17 +91,19 @@ class LinkIDWalletClient
      * @param $walletId string the linkID wallet ID
      * @param $amount double amount to remove
      * @param $currency LinkIDCurrency currency of amount to remove
+     * @param $walletCoin string optional wallet coin
      *
      * @throws Exception something went wrong
      */
-    public function removeCredit($userId, $walletId, $amount, $currency)
+    public function removeCredit($userId, $walletId, $amount, $currency, $walletCoin)
     {
 
         $requestParams = array(
             'userId' => $userId,
             'walletId' => $walletId,
             'amount' => $amount,
-            'currency' => $currency
+            'currency' => $currency,
+            'walletCoin' => $walletCoin
         );
 
         /** @noinspection PhpUndefinedMethodInspection */

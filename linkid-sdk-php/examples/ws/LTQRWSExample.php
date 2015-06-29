@@ -12,7 +12,7 @@ date_default_timezone_set('UTC'); // needed for parsing dates
 
 $ltqrReference = "261d60e6-9a02-4736-924b-1d1631d5bc99";
 
-$paymentContext = new LinkIDPaymentContext(500, LinkIDCurrency::EUR, "LTQR Test");
+$paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(500, LinkIDCurrency::EUR, null), "LTQR Test");
 
 $client = new LinkIDLTQRClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 //$client->push($paymentContext, $true, new DateTime(), 500);
@@ -51,7 +51,7 @@ print("</pre>");
 /**
  * Change sessions
  */
-$paymentContext = new LinkIDPaymentContext(9900, LinkIDCurrency::EUR, "Changed LTQR Test");
+$paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(9900, LinkIDCurrency::EUR, null), "Changed LTQR Test");
 $client->change($ltqrReference, null, null, $paymentContext);
 
 

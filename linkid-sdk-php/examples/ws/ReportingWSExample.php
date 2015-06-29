@@ -9,7 +9,7 @@ $client = new LinkIDReportingClient($linkIDHost, $linkIDWSUsername, $linkIDWSPas
 
 // Orders lookup on date
 
-$orders = $client->getPaymentReport(new DateTime('2015-04-01'));
+$orders = $client->getPaymentReport(new DateTime('2015-06-20'));
 
 print("<h2>Payment orders since 2015-04-01</h2>");
 print("<pre>");
@@ -51,7 +51,7 @@ print("</pre>");
 
 // Wallet transactions lookup on date
 
-$walletOrganizationId = "f508212c-9189-4402-ab76-6e26110697b4";
+$walletOrganizationId = "urn:linkid:wallet:leaseplan";
 
 $transactions = $client->getWalletReport($walletOrganizationId, new LinkIDReportDateFilter(new DateTime('2014-01-01')), null, null);
 
@@ -62,7 +62,7 @@ print("</pre>");
 
 // Wallet transactions lookup on application name
 
-$walletOrganizationId = "f508212c-9189-4402-ab76-6e26110697b4";
+$walletOrganizationId = "urn:linkid:wallet:leaseplan";
 $applicationName = "test-shop";
 
 $transactions = $client->getWalletReport($walletOrganizationId, null, new LinkIDReportApplicationFilter($applicationName), null);
@@ -74,7 +74,7 @@ print("</pre>");
 
 // Wallet transactions lookup on wallet
 
-$walletOrganizationId = "f508212c-9189-4402-ab76-6e26110697b4";
+$walletOrganizationId = "urn:linkid:wallet:leaseplan";
 $walletId = "ff52177f-8f80-4640-9e86-558f6b1b24c3";
 $userId = "e4269366-ddfb-43dc-838d-01569a8c4c22";
 
@@ -85,4 +85,4 @@ print("<pre>");
 print_r($transactions);
 print("</pre>");
 
-?>
+

@@ -25,7 +25,8 @@ if (!isset($_SESSION["linkIDSession"])) {
     $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
     $identityProfiles = array("linkid_basic");
 
-    $paymentContext = new LinkIDPaymentContext(500, LinkIDCurrency::EUR, "PHP Payment description");
+    $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(1, null, "urn:linkid:wallet:coin:coffee"), "PHP Payment description");
+//    $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(500, LinkIDCurrency::EUR, null), "PHP Payment description");
 //    $paymentContext = null;
 
     $callback = new LinkIDCallback("https://www.google.be");
@@ -44,9 +45,13 @@ if (!isset($_SESSION["linkIDSession"])) {
 
     // show QR code
     $qrCodeImage = imagecreatefromstring($linkIDAuthnSession->qrCodeImage);
-    header('Content-Type: image/png');
-    imagepng($qrCodeImage);
-    imagedestroy($qrCodeImage);
+    if ($qrCodeImage != false) {
+        header('Content-Type: image/png');
+        imagepng($qrCodeImage);
+        imagedestroy($qrCodeImage);
+    } else {
+        echo "Not a valid QR code";
+    }
 
 } else {
 
@@ -86,3 +91,5 @@ if (!isset($_SESSION["linkIDSession"])) {
     }
 
 }
+
+?>

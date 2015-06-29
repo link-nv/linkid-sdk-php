@@ -1,6 +1,8 @@
 <?php
 
-require_once('LinkIDCurrency.php');
+require_once('LinkIDPaymentAmount.php');
+require_once('LinkIDPaymentMandate.php');
+require_once('LinkIDPaymentMenu.php');
 require_once('LinkIDPaymentAddBrowser.php');
 
 /*
@@ -12,8 +14,8 @@ require_once('LinkIDPaymentAddBrowser.php');
 class LinkIDPaymentContext
 {
 
+    /* @var $amount LinkIDPaymentAmount */
     public $amount;
-    public $currency;
     public $description;
 
     // optional order reference, if not specified linkID will generate one in UUID format
@@ -33,14 +35,12 @@ class LinkIDPaymentContext
     public $allowDeferredPay;
 
     // optional payment menu return URLs (returnPaymentMenuURL)
-    public $paymentMenuResultSuccess;
-    public $paymentMenuResultCanceled;
-    public $paymentMenuResultPending;
-    public $paymentMenuResultError;
+    /* @var $paymentMenu LinkIDPaymentMenu */
+    public $paymentMenu;
+
     // mandates
+    /* @var $mandate LinkIDPaymentMandate */
     public $mandate;
-    public $mandateDescription;
-    public $mandateReference;
 
     public $allowPartial; // allow partial payments via wallets, this flag does make sense if you allow normal payment methods
     public $onlyWallets; // allow only wallets for this payment
@@ -48,13 +48,12 @@ class LinkIDPaymentContext
     /**
      * Constructor
      */
-    public function __construct($amount, $currency, $description, $orderReference = null, $profile = null, $validationTime = 5,
+    public function __construct(LinkIDPaymentAmount $amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
                                 $paymentAddBrowser = LinkIDPaymentAddBrowser::NOT_ALLOWED, $allowDeferredPay = false,
-                                $mandate = false, $mandateDescription = null, $mandateReference = null, $allowPartial = false, $onlyWallets = false)
+                                LinkIDPaymentMandate $mandate = null, $allowPartial = false, $onlyWallets = false)
     {
 
         $this->amount = $amount;
-        $this->currency = $currency;
         $this->description = $description;
 
         $this->orderReference = $orderReference;
@@ -64,8 +63,6 @@ class LinkIDPaymentContext
         $this->allowDeferredPay = $allowDeferredPay;
 
         $this->mandate = $mandate;
-        $this->mandateDescription = $mandateDescription;
-        $this->mandateReference = $mandateReference;
 
         $this->allowPartial = $allowPartial;
         $this->onlyWallets = $onlyWallets;
@@ -75,8 +72,25 @@ class LinkIDPaymentContext
 
 function parseLinkIDPaymentContext($xmlPaymentContext)
 {
+
+    $amount = isset($xmlPaymentContext->amount) ? $xmlPaymentContext->amount : null;
+    $currency = isset($xmlPaymentContext->currency) ? parseLinkIDCurrency($xmlPaymentContext->currency) : null;
+    $walletCoin = isset($xmlPaymentContext->walletCoin) ? $xmlPaymentContext->walletCoin : null;
+
+    /* @var $linkIDPaymentAmount LinkIDPaymentAmount */
+    $linkIDPaymentAmount = new LinkIDPaymentAmount($amount, $currency, $walletCoin);
+
+    $mandateDescription = isset($xmlPaymentContext->mandateDescription) ? $xmlPaymentContext->mandateDescription : null;
+    $mandateReference = isset($xmlPaymentContext->mandateReference) ? $xmlPaymentContext->mandateReference : null;
+
+    /* @var $linkIDPaymentMandate LinkIDPaymentMandate */
+    $linkIDPaymentMandate = null;
+    if (null != $mandateDescription) {
+        $linkIDPaymentMandate = new LinkIDPaymentMandate($mandateDescription, $mandateReference);
+    }
+
     return new LinkIDPaymentContext(
-        isset($xmlPaymentContext->amount) ? $xmlPaymentContext->amount : null,
+        $linkIDPaymentAmount,
         isset($xmlPaymentContext->currency) ? parseLinkIDCurrency($xmlPaymentContext->currency) : null,
         isset($xmlPaymentContext->description) ? $xmlPaymentContext->description : null,
         isset($xmlPaymentContext->orderReference) ? $xmlPaymentContext->orderReference : null,
@@ -84,10 +98,8 @@ function parseLinkIDPaymentContext($xmlPaymentContext)
         isset($xmlPaymentContext->validationTime) ? $xmlPaymentContext->validationTime : null,
         isset($xmlPaymentContext->paymentAddBrowser) ? $xmlPaymentContext->paymentAddBrowser : null,
         isset($xmlPaymentContext->allowDeferredPay) ? $xmlPaymentContext->allowDeferredPay : null,
+        $linkIDPaymentMandate,
         isset($xmlPaymentContext->allowPartial) ? $xmlPaymentContext->allowPartial : false,
-        isset($xmlPaymentContext->onlyWallets) ? $xmlPaymentContext->onlyWallets : false,
-        isset($xmlPaymentContext->mandate) ? $xmlPaymentContext->mandate : false,
-        isset($xmlPaymentContext->mandateDescription) ? $xmlPaymentContext->mandateDescription : null,
-        isset($xmlPaymentContext->mandateReference) ? $xmlPaymentContext->mandateReference : null
+        isset($xmlPaymentContext->onlyWallets) ? $xmlPaymentContext->onlyWallets : false
     );
 }
