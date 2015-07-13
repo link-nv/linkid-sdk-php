@@ -4,12 +4,11 @@ abstract class LinkIDPaymentState
 {
 
     const STARTED = 0; // payment is being processed
-    const DEFERRED = 1; // deferred payment
-    const WAITING_FOR_UPDATE = 2; // linkID stopped waiting for status update, SP will be informed on payment status change
-    const FAILED = 3; // payment has failed
-    const REFUNDED = 4; // payment has been refunded
-    const REFUND_STARTED = 5; // payment refund has started
-    const PAYED = 6; // completed
+    const WAITING_FOR_UPDATE = 1; // linkID stopped waiting for status update, SP will be informed on payment status change
+    const FAILED = 2; // payment has failed
+    const REFUNDED = 3; // payment has been refunded
+    const REFUND_STARTED = 4; // payment refund has started
+    const PAYED = 5; // completed
 
 }
 
@@ -20,8 +19,6 @@ function parseLinkIDPaymentState($paymentState)
 
     if ($paymentState == "STARTED") {
         return LinkIDPaymentState::STARTED;
-    } else if ($paymentState == "DEFERRED") {
-        return LinkIDPaymentState::DEFERRED;
     } else if ($paymentState == "WAITING_FOR_UPDATE") {
         return LinkIDPaymentState::WAITING_FOR_UPDATE;
     } else if ($paymentState == "FAILED") {

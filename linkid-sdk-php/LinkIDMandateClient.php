@@ -26,7 +26,7 @@ class LinkIDMandateClient
     public function __construct($linkIDHost, $username, $password, array $options = null)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/mandate?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/mandate20?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');

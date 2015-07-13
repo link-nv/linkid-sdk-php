@@ -30,7 +30,7 @@ class LinkIDLTQRClient
     public function __construct($linkIDHost, $username, $password, array $options = null)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr20?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr30?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -40,20 +40,26 @@ class LinkIDLTQRClient
     /**
      * Push a long term QR session to linkID.
      *
-     * authenticationMessage Optional authentication message to be shown in the pin view in the mobile app. If there is a payment, this will be ignored.
-     * finishedMessage Optional finished message on the final view in the mobile app.
-     * paymentContext Optional payment context
-     * oneTimeUse     Long term QR session can only be used once
-     * expiryDate     Optional expiry date of the long term session.
-     * expiryDuration Optional expiry duration of the long term session. Expressed in number of seconds starting from the creation.
+     * @param $authenticationMessage [optional] authentication message to be shown in the pin view in the mobile app. If there is a payment, this will be ignored.
+     * @param $finishedMessage [optional] finished message on the final view in the mobile app.
+     * @param null $paymentContext LinkIDPaymentContext Optional payment context
+     * @param false bool Long $oneTimeUse Long term QR session can only be used once
+     * @param null $expiryDate Optional expiry date of the long term session.
+     * @param null $expiryDuration Optional expiry duration of the long term session. Expressed in number of seconds starting from the creation.
      *                       Do not mix this attribute with expiryDate. If so, expiryDate will be preferred.
-     * callback Optional callback config
-     * identityProfiles Optional identity profiles
-     * sessionExpiryOverride optional session expiry (seconds)
-     * theme optional theme, if not specified default application theme will be chosen
+     * @param null $callback Optional callback config
+     * @param null $identityProfiles Optional identity profiles
+     * @param null $sessionExpiryOverride optional session expiry (seconds)
+     * @param null $theme optional theme, if not specified default application theme will be chosen
+     *
+     * @param null $mobileLandingSuccess
+     * @param null $mobileLandingError
+     * @param null $mobileLandingCancel
      *
      * Success object containing the QR in PNG format, the content of the QR code and a type 4 UUID session ID of the created long term session. This
      * session ID will be used in the notifications to the Service Provider.
+     * @return LinkIDLTQRSession the created linkID LTQR session
+     * @throws Exception
      */
     public function push($authenticationMessage, $finishedMessage, $paymentContext = null,
                          $oneTimeUse = false, $expiryDate = null, $expiryDuration = null,
@@ -74,7 +80,6 @@ class LinkIDLTQRClient
             $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
             $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
-            $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
             $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
             $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
             $requestParams->paymentContext->mandate = $paymentContext->mandate;
@@ -169,7 +174,6 @@ class LinkIDLTQRClient
             $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
             $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
-            $requestParams->paymentContext->allowDeferredPay = $paymentContext->allowDeferredPay;
             $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
             $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
             $requestParams->paymentContext->mandate = $paymentContext->mandate;
@@ -225,12 +229,14 @@ class LinkIDLTQRClient
     /**
      * Fetch a set of client sessions.
      *
-     * ltqrReferences  Optional list of ltqrReferences to fetch. If none are specified, all LTQR sessions and client session are returned.
-     * paymentOrderReferences Optional list of Payment order References to fetch. If none are specified, all are fetched for the LTQR References
+     * @param null $ltqrReferences Optional list of ltqrReferences to fetch. If none are specified, all LTQR sessions and client session are returned.
+     * @param null $paymentOrderReferences Optional list of Payment order References to fetch. If none are specified, all are fetched for the LTQR References
      *                               specified above.
-     * clientSessionIds optional list of client session IDs
+     * @param null $clientSessionIds optional list of client session IDs
      *
      * returns list of client sessions
+     * @return array
+     * @throws Exception
      */
     public function pull($ltqrReferences = null, $paymentOrderReferences = null, $clientSessionIds = null)
     {
@@ -281,9 +287,10 @@ class LinkIDLTQRClient
     /**
      * Remove a set of client sessions.
      *
-     * ltqrReferences         Optional list of LTQR References to remove. If none are specified, all LTQR sessions and client session are removed.
-     * paymentOrderReferences Optional list of Payment order References to remove. If none are specified, all are removed for the LTQR References specified above.
-     * clientSessionIds optional list of client session IDs to remove
+     * @param null $ltqrReferences Optional list of LTQR References to remove. If none are specified, all LTQR sessions and client session are removed.
+     * @param null $paymentOrderReferences Optional list of Payment order References to remove. If none are specified, all are removed for the LTQR References specified above.
+     * @param null $clientSessionIds optional list of client session IDs to remove
+     * @throws Exception
      */
     public function remove($ltqrReferences = null, $paymentOrderReferences = null, $clientSessionIds = null)
     {
@@ -322,6 +329,11 @@ class LinkIDLTQRClient
         return;
     }
 
+    /**
+     * @param null $ltqrReferences
+     * @return array
+     * @throws Exception
+     */
     public function info($ltqrReferences = null)
     {
         $requestParams = new stdClass;
