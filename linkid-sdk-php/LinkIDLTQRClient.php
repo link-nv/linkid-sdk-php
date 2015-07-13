@@ -20,8 +20,14 @@ class LinkIDLTQRClient
 
     /**
      * Constructor
+     *
+     * @param $linkIDHost string the linkID host ( https://<linkIDHost>/linkid-ws-username
+     * @param $username string the WS-Security username
+     * @param $password string the WS-Security password
+     * @param array $options [optional]
+     *
      */
-    public function __construct($linkIDHost, $username, $password)
+    public function __construct($linkIDHost, $username, $password, array $options = null)
     {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr20?wsdl";
