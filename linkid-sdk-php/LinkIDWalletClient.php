@@ -164,4 +164,28 @@ class LinkIDWalletClient
             throw new Exception('Error: ' . $response->error->errorCode);
         }
     }
+
+    /**
+     * @param $userId string the linkID user ID
+     * @param $walletId string the linkID wallet ID
+     * @param $walletTransactionId string the linkID wallet transaction to release
+     *
+     * @throws Exception something went wrong
+     */
+    public function release($userId, $walletId, $walletTransactionId)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletId' => $walletId,
+            'walletTransactionId' => $walletTransactionId
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->release($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
 }
