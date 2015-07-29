@@ -6,6 +6,7 @@ require_once('LinkIDCallback.php');
 require_once('LinkIDLTQRSession.php');
 require_once('LinkIDLTQRClientSession.php');
 require_once('LinkIDLTQRInfo.php');
+require_once('LinkIDLTQRPollingConfiguration.php');
 
 /*
  * linkID LTQR WS client
@@ -55,6 +56,7 @@ class LinkIDLTQRClient
      * @param null $mobileLandingSuccess
      * @param null $mobileLandingError
      * @param null $mobileLandingCancel
+     * @param null $pollingConfiguration LinkIDLTQRPollingConfiguration optional polling configuration
      * @param bool|false $waitForUnlock Marks the LTQR to wait for an explicit unlock call. This only makes sense for single-use LTQR codes. Unlock the LTQR with the change operation with unlock=true
      *
      * Success object containing the QR in PNG format, the content of the QR code and a type 4 UUID session ID of the created long term session. This
@@ -67,7 +69,7 @@ class LinkIDLTQRClient
                          $oneTimeUse = false, $expiryDate = null, $expiryDuration = null,
                          $callback = null, $identityProfiles = null, $sessionExpiryOverride = null, $theme = null,
                          $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null,
-                         $waitForUnlock = false)
+                         $pollingConfiguration = null, $waitForUnlock = false)
     {
 
         $requestParams = new stdClass;
@@ -102,6 +104,14 @@ class LinkIDLTQRClient
             foreach ($identityProfiles as $identityProfile) {
                 $requestParams->identityProfiles[] = $identityProfile;
             }
+        }
+
+        if (null != $pollingConfiguration) {
+            $requestParams->pollingConfiguration = new stdClass;
+            $requestParams->pollingConfiguration->pollAttempts = $pollingConfiguration->pollAttempts;
+            $requestParams->pollingConfiguration->pollInterval = $pollingConfiguration->pollInterval;
+            $requestParams->pollingConfiguration->paymentPollAttempts = $pollingConfiguration->paymentPollAttempts;
+            $requestParams->pollingConfiguration->paymentPollInterval = $pollingConfiguration->paymentPollInterval;
         }
 
         $requestParams->oneTimeUse = $oneTimeUse;
@@ -158,6 +168,7 @@ class LinkIDLTQRClient
      * @param $sessionExpiryOverride int session expiry (seconds)
      * @param $theme string theme, if not specified default application theme will be chosen
      * @param $resetUsed bool Optional flag for single use LTQR codes to let them be used again one time. If multi use this flag does nothing.
+     * @param null $pollingConfiguration LinkIDLTQRPollingConfiguration optional polling configuration
      * @param bool|false $waitForUnlock Marks the LTQR to wait for an explicit unlock call. This only makes sense for single-use LTQR codes. Unlock the LTQR with the change operation with unlock=true
      * @param bool|false $unlock Unlocks the LTQR. When the first linkID user has finished for this LTQR, it will go back to locked if waitForUnlock=true.
      * @return LinkIDLTQRSession
@@ -166,7 +177,7 @@ class LinkIDLTQRClient
     public function change($ltqrReference, $authenticationMessage, $finishedMessage, $paymentContext = null,
                            $expiryDate = null, $expiryDuration = null, $callback = null, $identityProfiles = null,
                            $sessionExpiryOverride = null, $theme = null, $resetUsed = false,
-                           $waitForUnlock = false, $unlock = false)
+                           $pollingConfiguration = null, $waitForUnlock = false, $unlock = false)
     {
         $requestParams = new stdClass;
         $requestParams->ltqrReference = $ltqrReference;
@@ -201,6 +212,14 @@ class LinkIDLTQRClient
             foreach ($identityProfiles as $identityProfile) {
                 $requestParams->identityProfiles[] = $identityProfile;
             }
+        }
+
+        if (null != $pollingConfiguration) {
+            $requestParams->pollingConfiguration = new stdClass;
+            $requestParams->pollingConfiguration->pollAttempts = $pollingConfiguration->pollAttempts;
+            $requestParams->pollingConfiguration->pollInterval = $pollingConfiguration->pollInterval;
+            $requestParams->pollingConfiguration->paymentPollAttempts = $pollingConfiguration->paymentPollAttempts;
+            $requestParams->pollingConfiguration->paymentPollInterval = $pollingConfiguration->paymentPollInterval;
         }
 
         if (null != $expiryDate) {
@@ -379,6 +398,12 @@ class LinkIDLTQRClient
                 $callback = parseLinkIDCallback($ltqrInfo->callback);
             }
 
+            // polling configuration
+            $pollingConfiguration = null;
+            if (isset($ltqrInfo->pollingConfiguration)) {
+                $pollingConfiguration = parseLinkIDLTQRPollingConfiguration($ltqrInfo->pollingConfiguration);
+            }
+
             $infos[] = new LinkIDLTQRInfo(
                 isset($ltqrInfo->ltqrReference) ? $ltqrInfo->ltqrReference : null,
                 isset($ltqrInfo->sessionId) ? $ltqrInfo->sessionId : null,
@@ -398,6 +423,7 @@ class LinkIDLTQRClient
                 isset($ltqrInfo->mobileLandingSuccess) ? $ltqrInfo->mobileLandingSuccess : null,
                 isset($ltqrInfo->mobileLandingError) ? $ltqrInfo->mobileLandingError : null,
                 isset($ltqrInfo->mobileLandingCancel) ? $ltqrInfo->mobileLandingCancel : null,
+                $pollingConfiguration,
                 isset($ltqrInfo->waitForUnlock) ? $ltqrInfo->waitForUnlock : false,
                 isset($ltqrInfo->locked) ? $ltqrInfo->locked : false
             );
