@@ -34,8 +34,11 @@ class LinkIDLTQRInfo
     public $mobileLandingSuccess;
     public $mobileLandingError;
     public $mobileLandingCancel;
+    //
+    public $waitForUnlock;
+    public $locked;
 
-    function __construct($ltqrReference, $sessionId, $created, $qrCodeImage, $qrCodeURL, $authenticationMessage, $finishedMessage, $oneTimeUse, $expiryDate, $expiryDuration, $paymentContext, $callback, $identityProfiles, $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel)
+    function __construct($ltqrReference, $sessionId, $created, $qrCodeImage, $qrCodeURL, $authenticationMessage, $finishedMessage, $oneTimeUse, $expiryDate, $expiryDuration, $paymentContext, $callback, $identityProfiles, $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel, $waitForUnlock, $locked)
     {
         $this->ltqrReference = $ltqrReference;
         $this->sessionId = $sessionId;
@@ -55,6 +58,8 @@ class LinkIDLTQRInfo
         $this->mobileLandingSuccess = $mobileLandingSuccess;
         $this->mobileLandingError = $mobileLandingError;
         $this->mobileLandingCancel = $mobileLandingCancel;
+        $this->waitForUnlock = $waitForUnlock;
+        $this->locked = $locked;
     }
 
 

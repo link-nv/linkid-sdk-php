@@ -30,7 +30,7 @@ class LinkIDLTQRClient
     public function __construct($linkIDHost, $username, $password, array $options = null)
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr30?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr40?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -43,7 +43,7 @@ class LinkIDLTQRClient
      * @param $authenticationMessage [optional] authentication message to be shown in the pin view in the mobile app. If there is a payment, this will be ignored.
      * @param $finishedMessage [optional] finished message on the final view in the mobile app.
      * @param null $paymentContext LinkIDPaymentContext Optional payment context
-     * @param false bool Long $oneTimeUse Long term QR session can only be used once
+     * @param bool|false $oneTimeUse
      * @param null $expiryDate Optional expiry date of the long term session.
      * @param null $expiryDuration Optional expiry duration of the long term session. Expressed in number of seconds starting from the creation.
      *                       Do not mix this attribute with expiryDate. If so, expiryDate will be preferred.
@@ -55,16 +55,19 @@ class LinkIDLTQRClient
      * @param null $mobileLandingSuccess
      * @param null $mobileLandingError
      * @param null $mobileLandingCancel
+     * @param bool|false $waitForUnlock Marks the LTQR to wait for an explicit unlock call. This only makes sense for single-use LTQR codes. Unlock the LTQR with the change operation with unlock=true
      *
      * Success object containing the QR in PNG format, the content of the QR code and a type 4 UUID session ID of the created long term session. This
      * session ID will be used in the notifications to the Service Provider.
      * @return LinkIDLTQRSession the created linkID LTQR session
      * @throws Exception
+     * @internal param bool $false Long $oneTimeUse Long term QR session can only be used once
      */
     public function push($authenticationMessage, $finishedMessage, $paymentContext = null,
                          $oneTimeUse = false, $expiryDate = null, $expiryDuration = null,
                          $callback = null, $identityProfiles = null, $sessionExpiryOverride = null, $theme = null,
-                         $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null)
+                         $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null,
+                         $waitForUnlock = false)
     {
 
         $requestParams = new stdClass;
@@ -127,6 +130,8 @@ class LinkIDLTQRClient
             $requestParams->mobileLandingCancel = $mobileLandingCancel;
         }
 
+        $requestParams->waitForUnlock = $waitForUnlock;
+
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->push($requestParams);
 
@@ -153,12 +158,15 @@ class LinkIDLTQRClient
      * @param $sessionExpiryOverride int session expiry (seconds)
      * @param $theme string theme, if not specified default application theme will be chosen
      * @param $resetUsed bool Optional flag for single use LTQR codes to let them be used again one time. If multi use this flag does nothing.
-     * @return \LinkIDLTQRSession
+     * @param bool|false $waitForUnlock Marks the LTQR to wait for an explicit unlock call. This only makes sense for single-use LTQR codes. Unlock the LTQR with the change operation with unlock=true
+     * @param bool|false $unlock Unlocks the LTQR. When the first linkID user has finished for this LTQR, it will go back to locked if waitForUnlock=true.
+     * @return LinkIDLTQRSession
      * @throws Exception
      */
     public function change($ltqrReference, $authenticationMessage, $finishedMessage, $paymentContext = null,
                            $expiryDate = null, $expiryDuration = null, $callback = null, $identityProfiles = null,
-                           $sessionExpiryOverride = null, $theme = null, $resetUsed = false)
+                           $sessionExpiryOverride = null, $theme = null, $resetUsed = false,
+                           $waitForUnlock = false, $unlock = false)
     {
         $requestParams = new stdClass;
         $requestParams->ltqrReference = $ltqrReference;
@@ -211,6 +219,8 @@ class LinkIDLTQRClient
         }
 
         $requestParams->resetUsed = $resetUsed;
+        $requestParams->waitForUnlock = $waitForUnlock;
+        $requestParams->unlock = $unlock;
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->change($requestParams);
@@ -387,7 +397,9 @@ class LinkIDLTQRClient
                 isset($ltqrInfo->theme) ? $ltqrInfo->theme : null,
                 isset($ltqrInfo->mobileLandingSuccess) ? $ltqrInfo->mobileLandingSuccess : null,
                 isset($ltqrInfo->mobileLandingError) ? $ltqrInfo->mobileLandingError : null,
-                isset($ltqrInfo->mobileLandingCancel) ? $ltqrInfo->mobileLandingCancel : null
+                isset($ltqrInfo->mobileLandingCancel) ? $ltqrInfo->mobileLandingCancel : null,
+                isset($ltqrInfo->waitForUnlock) ? $ltqrInfo->waitForUnlock : false,
+                isset($ltqrInfo->locked) ? $ltqrInfo->locked : false
             );
         }
 
