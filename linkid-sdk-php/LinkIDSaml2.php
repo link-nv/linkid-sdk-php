@@ -247,12 +247,12 @@ class LinkIDSaml2
 
             if (null != $paymentContext->mandate->description) {
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateDescription\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandateDescription . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->description . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
             }
             if (null != $paymentContext->mandate->reference) {
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateReference\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandateReference . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->reference . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
             }
 
