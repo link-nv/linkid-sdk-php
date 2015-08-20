@@ -213,14 +213,17 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->amount->amount . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $paymentContext->amount->walletCoin) {
-                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.walletCoin\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->amount->walletCoin . "</saml2:AttributeValue>";
-                $authnRequest .= "</saml2:Attribute>";
-            } else {
-                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.currency\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDCurrencyToString($paymentContext->amount->currency) . "</saml2:AttributeValue>";
-                $authnRequest .= "</saml2:Attribute>";
+            if (null != $paymentContext->amount) {
+
+                if (null != $paymentContext->amount->walletCoin) {
+                    $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.walletCoin\">";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->amount->walletCoin . "</saml2:AttributeValue>";
+                    $authnRequest .= "</saml2:Attribute>";
+                } else {
+                    $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.currency\">";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDCurrencyToString($paymentContext->amount->currency) . "</saml2:AttributeValue>";
+                    $authnRequest .= "</saml2:Attribute>";
+                }
             }
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.description\">";
@@ -245,15 +248,19 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . (null != $paymentContext->mandate ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $paymentContext->mandate->description) {
-                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateDescription\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->description . "</saml2:AttributeValue>";
-                $authnRequest .= "</saml2:Attribute>";
-            }
-            if (null != $paymentContext->mandate->reference) {
-                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateReference\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->reference . "</saml2:AttributeValue>";
-                $authnRequest .= "</saml2:Attribute>";
+            if (null != $paymentContext->mandate) {
+
+                if (null != $paymentContext->mandate->description) {
+                    $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateDescription\">";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->description . "</saml2:AttributeValue>";
+                    $authnRequest .= "</saml2:Attribute>";
+                }
+                if (null != $paymentContext->mandate->reference) {
+                    $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateReference\">";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->reference . "</saml2:AttributeValue>";
+                    $authnRequest .= "</saml2:Attribute>";
+
+                }
             }
 
             if (null != $paymentContext->paymentMenu) {

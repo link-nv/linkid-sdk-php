@@ -79,17 +79,24 @@ class LinkIDLTQRClient
 
         if (null != $paymentContext) {
             $requestParams->paymentContext = new stdClass;
-            $requestParams->paymentContext->amount = $paymentContext->amount;
-            $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
+            $requestParams->paymentContext->amount = $paymentContext->amount->amount;
+            if (null != $paymentContext->amount && null != $paymentContext->amount->currency) {
+                $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
+            }
+            if (null != $paymentContext->amount && null != $paymentContext->amount->walletCoin) {
+                $requestParams->paymentContext->walletCoin = linkIDCurrencyToString($paymentContext->walletCoin);
+            }
             $requestParams->paymentContext->description = $paymentContext->description;
             $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
             $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
             $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
             $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
-            $requestParams->paymentContext->mandate = $paymentContext->mandate;
-            $requestParams->paymentContext->mandateDescription = $paymentContext->mandateDescription;
-            $requestParams->paymentContext->mandateReference = $paymentContext->mandateReference;
+            $requestParams->paymentContext->mandate = null != $paymentContext->mandate;
+            if (null != $paymentContext->mandate) {
+                $requestParams->paymentContext->mandateDescription = $paymentContext->mandate->description;
+                $requestParams->paymentContext->mandateReference = $paymentContext->mandate->reference;
+            }
         }
 
         if (null != $callback) {
@@ -187,17 +194,24 @@ class LinkIDLTQRClient
 
         if (null != $paymentContext) {
             $requestParams->paymentContext = new stdClass;
-            $requestParams->paymentContext->amount = $paymentContext->amount;
-            $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
+            $requestParams->paymentContext->amount = $paymentContext->amount->amount;
+            if (null != $paymentContext->amount && null != $paymentContext->amount->currency) {
+                $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
+            }
+            if (null != $paymentContext->amount && null != $paymentContext->amount->walletCoin) {
+                $requestParams->paymentContext->walletCoin = linkIDCurrencyToString($paymentContext->walletCoin);
+            }
             $requestParams->paymentContext->description = $paymentContext->description;
             $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
             $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
             $requestParams->paymentContext->validationTime = $paymentContext->validationTime;
             $requestParams->paymentContext->allowPartial = $paymentContext->allowPartial;
             $requestParams->paymentContext->onlyWallets = $paymentContext->onlyWallets;
-            $requestParams->paymentContext->mandate = $paymentContext->mandate;
-            $requestParams->paymentContext->mandateDescription = $paymentContext->mandateDescription;
-            $requestParams->paymentContext->mandateReference = $paymentContext->mandateReference;
+            $requestParams->paymentContext->mandate = null != $paymentContext->mandate;
+            if (null != $paymentContext->mandate) {
+                $requestParams->paymentContext->mandateDescription = $paymentContext->mandate->description;
+                $requestParams->paymentContext->mandateReference = $paymentContext->mandate->reference;
+            }
         }
 
         if (null != $callback) {
