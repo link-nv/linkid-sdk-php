@@ -241,10 +241,6 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDPaymentAddBrowserToString($paymentContext->paymentAddBrowser) . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.deferredPay\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($paymentContext->allowDeferredPay ? "true" : "false") . "</saml2:AttributeValue>";
-            $authnRequest .= "</saml2:Attribute>";
-
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandate\">";
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . (null != $paymentContext->mandate ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
