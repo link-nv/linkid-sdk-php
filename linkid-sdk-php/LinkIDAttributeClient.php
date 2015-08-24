@@ -16,8 +16,12 @@ class LinkIDAttributeClient
 
     /**
      * Constructor
+     * @param $linkIDHost
+     * @param $username
+     * @param $password
+     * @param array $options
      */
-    public function __construct($linkIDHost, $username, $password)
+    public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/attrib?wsdl";

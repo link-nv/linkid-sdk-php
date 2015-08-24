@@ -28,7 +28,7 @@ class LinkIDReportingClient
      * @param array $options [optional]
      *
      */
-    public function __construct($linkIDHost, $username, $password, array $options = null)
+    public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/reporting30?wsdl";

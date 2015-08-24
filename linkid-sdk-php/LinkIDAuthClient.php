@@ -24,7 +24,7 @@ class LinkIDAuthClient
      * @param array $options [optional]
      *
      */
-    public function __construct($linkIDHost, $username, $password, array $options = null)
+    public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
         $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/auth?wsdl";
