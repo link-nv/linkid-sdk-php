@@ -38,17 +38,15 @@ class LinkIDAuthClient
      * @param object $authnRequest the SAML v2.0 authentication request
      * @param string $language optional language (default is en)
      * @param null $userAgent optional user agent string, for adding e.g. callback params to the QR code URL, android chrome URL needs to be http://linkidmauthurl/MAUTH/2/zUC8oA/eA==, ...
-     * @param bool $forceRegistration
      * @return \LinkIDAuthnSession the linkID authentication session containing the QR code image, URL, sessionId and client authentication context
      * @throws Exception something went wrong...
      */
-    public function start($authnRequest, $language = "en", $userAgent = null, $forceRegistration = false)
+    public function start($authnRequest, $language = "en", $userAgent = null)
     {
         $requestParams = array(
             'any' => $authnRequest,
             'language' => $language,
             'userAgent' => $userAgent,
-            'forceRegistration' => $forceRegistration
         );
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->start($requestParams);

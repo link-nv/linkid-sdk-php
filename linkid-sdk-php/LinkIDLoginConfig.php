@@ -12,7 +12,6 @@ require_once('LinkIDSaml2.php');
 class LinkIDLoginConfig
 {
 
-    public $forceRegistration;
     public $targetURI;
     public $linkIDLandingPage;
 
@@ -22,11 +21,6 @@ class LinkIDLoginConfig
     public function __construct($linkIDHost, $targetURI = null)
     {
 
-        if (isset($_REQUEST["mobileForceReg"])) {
-            $this->forceRegistration = null != $_REQUEST["mobileForceReg"];
-        } else {
-            $this->forceRegistration = false;
-        }
         if (isset($_REQUEST["return_uri"])) {
             $this->targetURI = $_REQUEST["return_uri"];
         }
@@ -34,11 +28,7 @@ class LinkIDLoginConfig
             $this->targetURI = $targetURI;
         }
 
-        if ($this->forceRegistration) {
-            $this->linkIDLandingPage = "https://" . $linkIDHost . "/linkid-mobile/reg-min";
-        } else {
-            $this->linkIDLandingPage = "https://" . $linkIDHost . "/linkid-mobile/auth-min";
-        }
+        $this->linkIDLandingPage = "https://" . $linkIDHost . "/linkid-mobile/auth-min";
     }
 
     public function generateRedirectURL($sessionId)
@@ -107,7 +97,7 @@ function handleLinkID($authnContextParam, $linkIDHost, $linkIDAppName, $linkIDLa
         $loginConfig = new LinkIDLoginConfig($linkIDHost);
         $_SESSION["linkID.loginConfig"] = $loginConfig;
 
-        // print("LoginConfig: " . $loginConfig->forceRegistration . "," . $loginConfig->targetURI . "," . $loginConfig->linkIDLandingPage);
+        // print("LoginConfig: " . $loginConfig->targetURI . "," . $loginConfig->linkIDLandingPage);
 
         // construct the authentication request
         $saml2Util = new LinkIDSaml2();
