@@ -415,8 +415,7 @@ class LinkIDSaml2
 
                 /** @noinspection PhpUndefinedMethodInspection */
                 $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
-                array_push($value, $memberAttribute);
-
+                $value[$memberAttribute->name] = $memberAttribute;
             }
 
         } else if (isset($xmlAttribute->AttributeValue[0]->AttributeValue[0])) {
@@ -427,7 +426,7 @@ class LinkIDSaml2
 
                 /** @noinspection PhpUndefinedMethodInspection */
                 $memberAttribute = new LinkIDAttribute($id, (string)$xmlMemberAttribute->attributes()->Name, $this->getAttributeValue($xmlMemberAttribute->AttributeValue[0]));
-                array_push($value, $memberAttribute);
+                $value[$memberAttribute->name] = $memberAttribute;
 
             }
 
