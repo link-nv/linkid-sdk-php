@@ -27,7 +27,7 @@ class LinkIDAuthClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/auth?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/auth30?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation, $options);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');

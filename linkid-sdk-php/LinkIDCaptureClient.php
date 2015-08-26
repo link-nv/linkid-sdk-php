@@ -25,7 +25,7 @@ class LinkIDCaptureClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/capture?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/capture20?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');

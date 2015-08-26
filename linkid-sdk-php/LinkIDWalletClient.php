@@ -25,7 +25,7 @@ class LinkIDWalletClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/wallet?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/wallet20?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation, $options);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
