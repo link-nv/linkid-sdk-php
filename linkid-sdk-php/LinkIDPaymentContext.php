@@ -41,6 +41,8 @@ class LinkIDPaymentContext
     public $allowPartial; // allow partial payments via wallets, this flag does make sense if you allow normal payment methods
     public $onlyWallets; // allow only wallets for this payment
 
+    public $paymentStatusLocation; // optional payment status location, if not specified the default location(s) in the linkID application configuration will be used
+
     /**
      * Constructor
      * @param LinkIDPaymentAmount $amount
@@ -52,10 +54,11 @@ class LinkIDPaymentContext
      * @param LinkIDPaymentMandate $mandate
      * @param bool $allowPartial
      * @param bool $onlyWallets
+     * @param null $paymentStatusLocation
      */
     public function __construct(LinkIDPaymentAmount $amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
                                 $paymentAddBrowser = LinkIDPaymentAddBrowser::NOT_ALLOWED, LinkIDPaymentMandate $mandate = null,
-                                $allowPartial = false, $onlyWallets = false)
+                                $allowPartial = false, $onlyWallets = false, $paymentStatusLocation = null)
     {
 
         $this->amount = $amount;
@@ -70,6 +73,8 @@ class LinkIDPaymentContext
 
         $this->allowPartial = $allowPartial;
         $this->onlyWallets = $onlyWallets;
+
+        $this->paymentStatusLocation = $paymentStatusLocation;
     }
 
 }
@@ -103,6 +108,7 @@ function parseLinkIDPaymentContext($xmlPaymentContext)
         isset($xmlPaymentContext->paymentAddBrowser) ? $xmlPaymentContext->paymentAddBrowser : null,
         $linkIDPaymentMandate,
         isset($xmlPaymentContext->allowPartial) ? $xmlPaymentContext->allowPartial : false,
-        isset($xmlPaymentContext->onlyWallets) ? $xmlPaymentContext->onlyWallets : false
+        isset($xmlPaymentContext->onlyWallets) ? $xmlPaymentContext->onlyWallets : false,
+        isset($xmlPaymentContext->paymentStatusLocation) ? $xmlPaymentContext->paymentStatusLocation : null
     );
 }

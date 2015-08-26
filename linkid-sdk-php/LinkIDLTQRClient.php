@@ -31,7 +31,7 @@ class LinkIDLTQRClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr40?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/ltqr50?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -61,6 +61,7 @@ class LinkIDLTQRClient
      *
      * Success object containing the QR in PNG format, the content of the QR code and a type 4 UUID session ID of the created long term session. This
      * session ID will be used in the notifications to the Service Provider.
+     * @param null $ltqrStatusLocation
      * @return LinkIDLTQRSession the created linkID LTQR session
      * @throws Exception
      * @internal param bool $false Long $oneTimeUse Long term QR session can only be used once
@@ -69,7 +70,7 @@ class LinkIDLTQRClient
                          $oneTimeUse = false, $expiryDate = null, $expiryDuration = null,
                          $callback = null, $identityProfiles = null, $sessionExpiryOverride = null, $theme = null,
                          $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null,
-                         $pollingConfiguration = null, $waitForUnlock = false)
+                         $pollingConfiguration = null, $waitForUnlock = false, $ltqrStatusLocation = null)
     {
 
         $requestParams = new stdClass;
@@ -97,6 +98,7 @@ class LinkIDLTQRClient
                 $requestParams->paymentContext->mandateDescription = $paymentContext->mandate->description;
                 $requestParams->paymentContext->mandateReference = $paymentContext->mandate->reference;
             }
+            $requestParams->paymentContext->paymentStatusLocation = $paymentContext->paymentStatusLocation;
         }
 
         if (null != $callback) {
@@ -149,6 +151,10 @@ class LinkIDLTQRClient
 
         $requestParams->waitForUnlock = $waitForUnlock;
 
+        if (null != $ltqrStatusLocation) {
+            $requestParams->ltqrStatusLocation = $ltqrStatusLocation;
+        }
+
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->push($requestParams);
 
@@ -178,13 +184,14 @@ class LinkIDLTQRClient
      * @param null $pollingConfiguration LinkIDLTQRPollingConfiguration optional polling configuration
      * @param bool|false $waitForUnlock Marks the LTQR to wait for an explicit unlock call. This only makes sense for single-use LTQR codes. Unlock the LTQR with the change operation with unlock=true
      * @param bool|false $unlock Unlocks the LTQR. When the first linkID user has finished for this LTQR, it will go back to locked if waitForUnlock=true.
+     * @param null $ltqrStatusLocation
      * @return LinkIDLTQRSession
      * @throws Exception
      */
     public function change($ltqrReference, $authenticationMessage, $finishedMessage, $paymentContext = null,
                            $expiryDate = null, $expiryDuration = null, $callback = null, $identityProfiles = null,
                            $sessionExpiryOverride = null, $theme = null, $resetUsed = false,
-                           $pollingConfiguration = null, $waitForUnlock = false, $unlock = false)
+                           $pollingConfiguration = null, $waitForUnlock = false, $unlock = false, $ltqrStatusLocation = null)
     {
         $requestParams = new stdClass;
         $requestParams->ltqrReference = $ltqrReference;
@@ -212,6 +219,7 @@ class LinkIDLTQRClient
                 $requestParams->paymentContext->mandateDescription = $paymentContext->mandate->description;
                 $requestParams->paymentContext->mandateReference = $paymentContext->mandate->reference;
             }
+            $requestParams->paymentContext->paymentStatusLocation = $paymentContext->paymentStatusLocation;
         }
 
         if (null != $callback) {
@@ -254,6 +262,10 @@ class LinkIDLTQRClient
         $requestParams->resetUsed = $resetUsed;
         $requestParams->waitForUnlock = $waitForUnlock;
         $requestParams->unlock = $unlock;
+
+        if (null != $ltqrStatusLocation) {
+            $requestParams->ltqrStatusLocation = $ltqrStatusLocation;
+        }
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->change($requestParams);
@@ -439,7 +451,8 @@ class LinkIDLTQRClient
                 isset($ltqrInfo->mobileLandingCancel) ? $ltqrInfo->mobileLandingCancel : null,
                 $pollingConfiguration,
                 isset($ltqrInfo->waitForUnlock) ? $ltqrInfo->waitForUnlock : false,
-                isset($ltqrInfo->locked) ? $ltqrInfo->locked : false
+                isset($ltqrInfo->locked) ? $ltqrInfo->locked : false,
+                isset($ltqrInfo->ltqrStatusLocation) ? $ltqrInfo->ltqrStatusLocation : null
             );
         }
 

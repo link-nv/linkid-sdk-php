@@ -39,8 +39,13 @@ class LinkIDLTQRInfo
     //
     public $waitForUnlock;
     public $locked;
+    //
+    public $ltqrStatusLocation;
 
-    function __construct($ltqrReference, $sessionId, $created, $qrCodeImage, $qrCodeURL, $authenticationMessage, $finishedMessage, $oneTimeUse, $expiryDate, $expiryDuration, $paymentContext, $callback, $identityProfiles, $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel, $pollingConfiguration, $waitForUnlock, $locked)
+    function __construct($ltqrReference, $sessionId, $created, $qrCodeImage, $qrCodeURL, $authenticationMessage, $finishedMessage,
+                         $oneTimeUse, $expiryDate, $expiryDuration, $paymentContext, $callback, $identityProfiles,
+                         $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel,
+                         $pollingConfiguration, $waitForUnlock, $locked, $ltqrStatusLocation)
     {
         $this->ltqrReference = $ltqrReference;
         $this->sessionId = $sessionId;
@@ -63,6 +68,7 @@ class LinkIDLTQRInfo
         $this->pollingConfiguration = $pollingConfiguration;
         $this->waitForUnlock = $waitForUnlock;
         $this->locked = $locked;
+        $this->ltqrStatusLocation = $ltqrStatusLocation;
     }
 
 

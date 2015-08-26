@@ -291,6 +291,12 @@ class LinkIDSaml2
             $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($paymentContext->onlyWallets ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
+            if (null != $paymentContext->paymentStatusLocation) {
+                $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.statusLocation\">";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentStatusLocation . "</saml2:AttributeValue>";
+                $authnRequest .= "</saml2:Attribute>";
+            }
+
             $authnRequest .= "</saml2:PaymentContext>";
         }
 

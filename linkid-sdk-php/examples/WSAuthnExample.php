@@ -26,6 +26,7 @@ if (!isset($_SESSION["linkIDSession"])) {
     $identityProfiles = array("linkid_basic");
 
     $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(1, null, "urn:linkid:wallet:coin:coffee"), "PHP Payment description");
+    $paymentContext->paymentStatusLocation = "https://www.linkid.be";
 //    $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(500, LinkIDCurrency::EUR, null), "PHP Payment description");
 //    $paymentContext = null;
 

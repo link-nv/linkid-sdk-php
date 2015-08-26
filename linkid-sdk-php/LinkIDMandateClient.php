@@ -44,6 +44,7 @@ class LinkIDMandateClient
         $requestParams->paymentContext->description = $paymentContext->description;
         $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
         $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
+        $requestParams->paymentContext->paymentStatusLocation = $paymentContext->paymentStatusLocation;
 
         $requestParams->mandateReference = $mandateReference;
         $requestParams->language = $language;
