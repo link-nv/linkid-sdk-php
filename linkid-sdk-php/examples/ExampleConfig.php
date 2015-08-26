@@ -4,19 +4,19 @@
  * Configuration for the example pages, linkID hostname, appname, username/password, ...
  */
 
-$linkIDHost = "192.168.5.14:8080";
-//$linkIDHost = "demo.linkid.be";
+//$linkIDHost = "192.168.5.14:8080";
+$linkIDHost = "demo.linkid.be";
 
-//$linkIDAppName = "example-mobile";
-$linkIDAppName = "test-shop";
+$linkIDAppName = "example-mobile";
+//$linkIDAppName = "test-shop";
 
 $linkIDLanguage = "en";
 
 // username/password
-//$linkIDWSUsername = "example-mobile";
-$linkIDWSUsername = "test-shop";
-//$linkIDWSPassword = "6E6C1CB7-965C-48A0-B2B0-6B65674BE19F";
-$linkIDWSPassword = "5E017416-23B2-47E1-A9E0-43EE3C75A1B0";
+$linkIDWSUsername = "example-mobile";
+//$linkIDWSUsername = "test-shop";
+$linkIDWSPassword = "6E6C1CB7-965C-48A0-B2B0-6B65674BE19F";
+//$linkIDWSPassword = "5E017416-23B2-47E1-A9E0-43EE3C75A1B0";
 
 /*
  * linkID authentication context session attribute
