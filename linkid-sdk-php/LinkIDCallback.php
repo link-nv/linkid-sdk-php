@@ -5,6 +5,7 @@
  *
  * @author Wim Vandenhaute
  */
+
 class LinkIDCallback
 {
     public $location;
@@ -12,7 +13,9 @@ class LinkIDCallback
     public $inApp;
 
     /**
-     * Constructor
+     * @param $location
+     * @param null $appSessionId
+     * @param bool|true $inApp
      */
     public function __construct($location, $appSessionId = null, $inApp = true)
     {

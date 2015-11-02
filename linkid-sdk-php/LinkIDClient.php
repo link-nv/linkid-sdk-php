@@ -118,6 +118,29 @@ class LinkIDClient
 
     }
 
+    /**
+     * @param $sessionId callback sessionId
+     * @return LinkIDAuthPollResponse
+     * @throws Exception
+     */
+    public function callbackPull($sessionId)
+    {
+
+        $requestParams = array(
+            'sessionId' => $sessionId
+        );
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->callbackPull($requestParams);
+
+        if (null != $response->error) {
+            throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
+        }
+
+        $saml2 = new LinkIDSaml2();
+        return $saml2->parseAuthnResponse($response->success->any);
+    }
+
+
     // Helper methods
 
     public function convertQRCodeInfo($xmlQrCodeInfo)
