@@ -1,7 +1,7 @@
 <?php
 
 require_once('ExampleConfig.php');
-require_once('../LinkIDAuthClient.php');
+require_once('../LinkIDClient.php');
 require_once('../LinkIDSaml2.php');
 require_once('../LinkIDLoginConfig.php');
 
@@ -10,42 +10,25 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-$loginPage = "http://localhost/~wvdhaute/linkid-sdk-php/examples/LinkIDLogin.php";
-
-$client = new LinkIDAuthClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
+$client = new LinkIDClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 
 if (!isset($_SESSION["linkIDSession"])) {
 
-    // start new linkID authentication session
-    $saml2Util = new LinkIDSaml2();
-
-    $loginConfig = new LinkIDLoginConfig($linkIDHost);
-    $clientAuthnMessage = "PHP Authn Message";
-    $clientFinishedMessage = "PHP Finished Message";
-    $attributeSuggestions = array("profile.familyName" => "Test", "profile.givenName" => "Mister", "profile.dob" => new DateTime());
-    $identityProfiles = array("linkid_basic");
-
-    $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(1, null, "urn:linkid:wallet:coin:coffee"), "PHP Payment description");
+    $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(100, LinkIDCurrency::EUR, null), "PHP Payment description");
     $paymentContext->paymentStatusLocation = "https://www.linkid.be";
-//    $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(500, LinkIDCurrency::EUR, null), "PHP Payment description");
-//    $paymentContext = null;
 
-    $callback = new LinkIDCallback("https://www.google.be");
-//    $callback = null;
+    $authenticationContext = new LinkIDAuthenticationContext("example-mobile", null, "en",
+        "PHP Authn Message", "PHP Finished Message",
+        $paymentContext, new LinkIDCallback("https://www.google.be"),
+        "linkid_basic", 60, "ugent", null, null, null, null);
 
-    $sessionExpiryOverride = 60;
-    $theme = "ugent";
-
-    $authnRequest = $saml2Util->generateAuthnRequest($linkIDAppName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions, $paymentContext, $callback, $sessionExpiryOverride, $theme);
-
-    $linkIDAuthnSession = $client->start($authnRequest, "en");
+    $linkIDAuthnSession = $client->authStart($authenticationContext, null);
 
     // store on session
     $_SESSION["linkIDSession"] = $linkIDAuthnSession;
-    $_SESSION["linkIDSaml2Util"] = $saml2Util;
 
     // show QR code
-    $qrCodeImage = imagecreatefromstring($linkIDAuthnSession->qrCodeImage);
+    $qrCodeImage = imagecreatefromstring($linkIDAuthnSession->qrCodeInfo->qrImage);
     if ($qrCodeImage != false) {
         header('Content-Type: image/png');
         imagepng($qrCodeImage);
@@ -57,10 +40,9 @@ if (!isset($_SESSION["linkIDSession"])) {
 } else {
 
     // poll existing linkID authentication session
-    $saml2Util = $_SESSION["linkIDSaml2Util"];
     $linkIDAuthnSession = $_SESSION["linkIDSession"];
 
-    $linkIDPollResponse = $client->poll($saml2Util, $linkIDAuthnSession->sessionId);
+    $linkIDPollResponse = $client->authPoll($linkIDAuthnSession->sessionId, "en");
 
     // output linkID poll response
     if (null != $linkIDPollResponse->authenticationContext) {

@@ -14,138 +14,116 @@ require_once('LinkIDCallback.php');
 class LinkIDSaml2
 {
 
-    public $expectedChallenge;
-    public $expectedAudience;
-
-    public function generateAuthnRequest($appName, $loginConfig, $loginPage, $clientAuthnMessage, $clientFinishedMessage, $identityProfiles, $attributeSuggestions,
-                                         LinkIDPaymentContext $paymentContext = null, LinkIDCallback $callback = null, $sessionExpiryOverride = null, $theme = null,
-                                         $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null)
+    /**
+     * @param LinkIDAuthenticationContext $authenticationContext
+     * @return string the SAML v2.0 authentication request
+     */
+    public function generateAuthnRequest($authenticationContext)
     {
 
-        $this->expectedChallenge = $this->gen_uuid();
-        $this->expectedAudience = $appName;
-
-        // ACS is required but in WS case not applicable
-        if (null == $loginPage) {
-            $loginPage = "http://foo.bar";
-        }
+        $requestID = $this->gen_uuid();
 
         $issueInstant = gmdate('Y-m-d\TH:i:s\Z');
 
         $authnRequest = "<saml2p:AuthnRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" ";
-        $authnRequest .= "AssertionConsumerServiceURL=\"" . $loginPage . "\" ";
-        $authnRequest .= "Destination=\"" . $loginConfig->linkIDLandingPage . "\" ForceAuthn=\"false\" ";
-        $authnRequest .= "ID=\"" . $this->expectedChallenge . "\" ";
+        $authnRequest .= "AssertionConsumerServiceURL=\"http://foo.bar\" ForceAuthn=\"false\" ";
+        $authnRequest .= "ID=\"" . $requestID . "\" ";
         $authnRequest .= "IssueInstant=\"" . $issueInstant . "\" ";
         $authnRequest .= "ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Version=\"2.0\">";
 
-        $authnRequest .= "<saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">" . $appName . "</saml2:Issuer>";
+        $authnRequest .= "<saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">" . $authenticationContext->applicationName . "</saml2:Issuer>";
 
         $authnRequest .= "<saml2p:NameIDPolicy AllowCreate=\"true\"/>";
 
         $authnRequest .= "<saml2p:Extensions>";
 
-        /**
-         * Optional linkID client messages / identity profiles
-         */
-        if (null != $clientAuthnMessage || null != $clientFinishedMessage || null != $identityProfiles) {
+        $authnRequest .= "<saml2:DeviceContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
 
-            $authnRequest .= "<saml2:DeviceContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
+        if (null != $authenticationContext->authenticationMessage) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.authenticationMessage\">";
 
-            if (null != $clientAuthnMessage) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.authenticationMessage\">";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->authenticationMessage;
+            $authnRequest .= "</saml2:AttributeValue>";
 
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $clientAuthnMessage;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-            if (null != $clientFinishedMessage) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.finishedMessage\">";
-
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $clientFinishedMessage;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-
-            if (null != $identityProfiles) {
-
-                $i = 0;
-                foreach ($identityProfiles as $identityProfile) {
-                    $authnRequest .= "<saml2:Attribute Name=\"linkID.identityProfile." . $i . "\">";
-
-                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                    $authnRequest .= $identityProfile;
-                    $authnRequest .= "</saml2:AttributeValue>";
-
-                    $authnRequest .= "</saml2:Attribute>";
-
-                    $i++;
-                }
-            }
-            if (null != $sessionExpiryOverride) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.sessionExpiryOverride\">";
-
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $sessionExpiryOverride;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-            if (null != $theme) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.theme\">";
-
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $theme;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-
-            if (null != $mobileLandingSuccess) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingSuccess\">";
-
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $mobileLandingSuccess;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-            if (null != $mobileLandingError) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingError\">";
-
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $mobileLandingError;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-            if (null != $mobileLandingCancel) {
-                $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingCancel\">";
-
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
-                $authnRequest .= $mobileLandingCancel;
-                $authnRequest .= "</saml2:AttributeValue>";
-
-                $authnRequest .= "</saml2:Attribute>";
-            }
-
-
-            $authnRequest .= "</saml2:DeviceContext>";
-
+            $authnRequest .= "</saml2:Attribute>";
         }
+        if (null != $authenticationContext->finishedMessage) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.finishedMessage\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->finishedMessage;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+
+        if (null != $authenticationContext->identityProfile) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.identityProfile\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->identityProfile;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+        if (null != $authenticationContext->sessionExpiryOverride) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.sessionExpiryOverride\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->sessionExpiryOverride;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+        if (null != $authenticationContext->theme) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.theme\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->theme;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+
+        if (null != $authenticationContext->mobileLandingSuccess) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingSuccess\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->mobileLandingSuccess;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+        if (null != $authenticationContext->mobileLandingError) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingError\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->mobileLandingError;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+        if (null != $authenticationContext->mobileLandingCancel) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingCancel\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->mobileLandingCancel;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
+
+        $authnRequest .= "</saml2:DeviceContext>";
 
         /**
          * Optional linkID attribute suggestions
          */
-        if (null != $attributeSuggestions) {
+        if (null != $authenticationContext->attributeSuggestions) {
 
             $authnRequest .= "<saml2:SubjectAttributes xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
 
-            foreach ($attributeSuggestions as $key => $value) {
+            foreach ($authenticationContext->attributeSuggestions as $key => $value) {
 
                 // determine type
                 $type = gettype($value);
@@ -180,21 +158,21 @@ class LinkIDSaml2
         /**
          * Optional callback
          */
-        if (null != $callback) {
+        if (null != $authenticationContext->callback) {
 
             $authnRequest .= "<saml2:Callback xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
 
             $authnRequest .= "<saml2:Attribute Name=\"Callback.location\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $callback->location . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->callback->location . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"Callback.inApp\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($callback->inApp ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($authenticationContext->callback->inApp ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $callback->appSessionId) {
+            if (null != $authenticationContext->callback->appSessionId) {
                 $authnRequest .= "<saml2:Attribute Name=\"Callback.appSessionId\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $callback->appSessionId . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->callback->appSessionId . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
             }
 
@@ -205,95 +183,95 @@ class LinkIDSaml2
         /**
          * Optional payment context
          */
-        if (null != $paymentContext) {
+        if (null != $authenticationContext->paymentContext) {
 
             $authnRequest .= "<saml2:PaymentContext xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.amount\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->amount->amount . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->amount->amount . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $paymentContext->amount) {
+            if (null != $authenticationContext->paymentContext->amount) {
 
-                if (null != $paymentContext->amount->walletCoin) {
+                if (null != $authenticationContext->paymentContext->amount->walletCoin) {
                     $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.walletCoin\">";
-                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->amount->walletCoin . "</saml2:AttributeValue>";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->amount->walletCoin . "</saml2:AttributeValue>";
                     $authnRequest .= "</saml2:Attribute>";
                 } else {
                     $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.currency\">";
-                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDCurrencyToString($paymentContext->amount->currency) . "</saml2:AttributeValue>";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDCurrencyToString($authenticationContext->paymentContext->amount->currency) . "</saml2:AttributeValue>";
                     $authnRequest .= "</saml2:Attribute>";
                 }
             }
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.description\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->description . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->description . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $paymentContext->orderReference) {
+            if (null != $authenticationContext->paymentContext->orderReference) {
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.orderReference\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->orderReference . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->orderReference . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
             }
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.validationTime\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->validationTime . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->validationTime . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.addBrowser\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDPaymentAddBrowserToString($paymentContext->paymentAddBrowser) . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . linkIDPaymentAddBrowserToString($authenticationContext->paymentContext->paymentAddBrowser) . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandate\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . (null != $paymentContext->mandate ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . (null != $authenticationContext->paymentContext->mandate ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $paymentContext->mandate) {
+            if (null != $authenticationContext->paymentContext->mandate) {
 
-                if (null != $paymentContext->mandate->description) {
+                if (null != $authenticationContext->paymentContext->mandate->description) {
                     $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateDescription\">";
-                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->description . "</saml2:AttributeValue>";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->mandate->description . "</saml2:AttributeValue>";
                     $authnRequest .= "</saml2:Attribute>";
                 }
-                if (null != $paymentContext->mandate->reference) {
+                if (null != $authenticationContext->paymentContext->mandate->reference) {
                     $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.mandateReference\">";
-                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->mandate->reference . "</saml2:AttributeValue>";
+                    $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->mandate->reference . "</saml2:AttributeValue>";
                     $authnRequest .= "</saml2:Attribute>";
 
                 }
             }
 
-            if (null != $paymentContext->paymentMenu) {
+            if (null != $authenticationContext->paymentContext->paymentMenu) {
 
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultSuccess\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenu->menuResultSuccess . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->paymentMenu->menuResultSuccess . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
 
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultCanceled\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenu->menuResultCancel . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->paymentMenu->menuResultCancel . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
 
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultPending\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenu->menuResultPending . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->paymentMenu->menuResultPending . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
 
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.menuResultError\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentMenu->menuResultError . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->paymentMenu->menuResultError . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
 
             }
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.allowPartial\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($paymentContext->allowPartial ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($authenticationContext->paymentContext->allowPartial ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
             $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.onlyWallets\">";
-            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($paymentContext->onlyWallets ? "true" : "false") . "</saml2:AttributeValue>";
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:boolean\">" . ($authenticationContext->paymentContext->onlyWallets ? "true" : "false") . "</saml2:AttributeValue>";
             $authnRequest .= "</saml2:Attribute>";
 
-            if (null != $paymentContext->paymentStatusLocation) {
+            if (null != $authenticationContext->paymentContext->paymentStatusLocation) {
                 $authnRequest .= "<saml2:Attribute Name=\"PaymentContext.statusLocation\">";
-                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $paymentContext->paymentStatusLocation . "</saml2:AttributeValue>";
+                $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">" . $authenticationContext->paymentContext->paymentStatusLocation . "</saml2:AttributeValue>";
                 $authnRequest .= "</saml2:Attribute>";
             }
 
@@ -307,21 +285,10 @@ class LinkIDSaml2
         return $authnRequest;
     }
 
-    public function parseAuthnResponse($authnResponse)
-    {
-
-        $xml = new SimpleXMLElement($authnResponse);
-        return $this->parseXmlAuthnResponse($xml);
-    }
-
     public function parseXmlAuthnResponse($xmlAuthnResponse)
     {
 
-        // validate challenge
         $inResponseTo = $xmlAuthnResponse->attributes()->InResponseTo;
-        if ($inResponseTo != $this->expectedChallenge) {
-            throw new Exception("SAML response is not a response belonging to the original request.");
-        }
 
         // check status success
         $statusValue = $xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:protocol")->Status[0]->StatusCode[0]->attributes()->Value;
@@ -334,9 +301,6 @@ class LinkIDSaml2
 
         // check audience
         $audience = (string)$xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->AudienceRestriction[0]->Audience[0];
-        if ($audience != $this->expectedAudience) {
-            throw new Exception("Audience name not correct, expected: " . $this->expectedAudience);
-        }
 
         // validate NotBefore/NotOnOrAfter conditions
         $notBeforeString = (string)$xmlAuthnResponse->children("urn:oasis:names:tc:SAML:2.0:assertion")->Assertion[0]->Conditions[0]->attributes()->NotBefore;

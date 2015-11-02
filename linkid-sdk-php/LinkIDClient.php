@@ -1,16 +1,18 @@
 <?php
 
 require_once('LinkIDWSSoapClient.php');
+require_once('LinkIDAuthenticationContext.php');
+require_once('LinkIDSaml2.php');
 require_once('LinkIDAuthnSession.php');
-require_once('LinkIDPollResponse.php');
+require_once('LinkIDAuthPollResponse.php');
 
 /*
- * linkID Auth WS client
+ * linkID WS client
  *
  * @author Wim Vandenhaute
  */
 
-class LinkIDAuthClient
+class LinkIDClient
 {
 
     private $client;
@@ -27,7 +29,7 @@ class LinkIDAuthClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/auth30?wsdl";
+        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/linkid30?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation, $options);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -35,40 +37,38 @@ class LinkIDAuthClient
     }
 
     /**
-     * @param object $authnRequest the SAML v2.0 authentication request
-     * @param string $language optional language (default is en)
+     * @param LinkIDAuthenticationContext $authenticationContext the linkID authentication context
      * @param null $userAgent optional user agent string, for adding e.g. callback params to the QR code URL, android chrome URL needs to be http://linkidmauthurl/MAUTH/2/zUC8oA/eA==, ...
-     * @return \LinkIDAuthnSession the linkID authentication session containing the QR code image, URL, sessionId and client authentication context
+     * @return LinkIDAuthnSession the linkID authentication session containing the QR code image, URL, sessionId and client authentication context
      * @throws Exception something went wrong...
      */
-    public function start($authnRequest, $language = "en", $userAgent = null)
+    public function authStart($authenticationContext, $userAgent = null)
     {
+        $saml2 = new LinkIDSaml2();
+        $authnRequest = $saml2->generateAuthnRequest($authenticationContext);
+
         $requestParams = array(
             'any' => $authnRequest,
-            'language' => $language,
+            'language' => $authenticationContext->language,
             'userAgent' => $userAgent,
         );
         /** @noinspection PhpUndefinedMethodInspection */
-        $response = $this->client->start($requestParams);
+        $response = $this->client->authStart($requestParams);
 
         if (isset($response->error) && null != $response->error) {
             throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
         }
 
-        $qrCodeImage = base64_decode($response->success->encodedQRCode);
-
-        return new LinkIDAuthnSession($response->success->sessionId, $qrCodeImage, $response->success->encodedQRCode, $response->success->qrCodeURL, $response->success->authenticationContext);
-
+        return new LinkIDAuthnSession($response->success->sessionId, $this->convertQRCodeInfo($response->success->qrCodeInfo));
     }
 
     /**
-     * @param LinkIDSaml2 $saml2Util
-     * @param $sessionId
+     * @param string $sessionId
      * @param string $language
-     * @return LinkIDPollResponse
+     * @return LinkIDAuthPollResponse
      * @throws Exception
      */
-    public function poll($saml2Util, $sessionId, $language = "en")
+    public function authPoll($sessionId, $language = "en")
     {
 
         $requestParams = array(
@@ -76,7 +76,7 @@ class LinkIDAuthClient
             'language' => $language
         );
         /** @noinspection PhpUndefinedMethodInspection */
-        $response = $this->client->poll($requestParams);
+        $response = $this->client->authPoll($requestParams);
 
         if (isset($response->error) && null != $response->error) {
             throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
@@ -86,10 +86,11 @@ class LinkIDAuthClient
         if (isset($response->success->authenticationResponse) && null != $response->success->authenticationResponse->any) {
 
             $xml = new SimpleXMLElement($response->success->authenticationResponse->any);
-            $authenticationContext = $saml2Util->parseXmlAuthnResponse($xml);
+            $saml2 = new LinkIDSaml2();
+            $authenticationContext = $saml2->parseXmlAuthnResponse($xml);
         }
 
-        return new LinkIDPollResponse($response->success->authenticationState,
+        return new LinkIDAuthPollResponse($response->success->authenticationState,
             isset($response->success->paymentState) ? $response->success->paymentState : null,
             isset($response->success->paymentMenuURL) ? $response->success->paymentMenuURL : null,
             $authenticationContext);
@@ -102,7 +103,7 @@ class LinkIDAuthClient
      *
      * @throws Exception
      */
-    public function cancel($sessionId)
+    public function authCancel($sessionId)
     {
 
         $requestParams = array(
@@ -117,4 +118,10 @@ class LinkIDAuthClient
 
     }
 
+    // Helper methods
+
+    public function convertQRCodeInfo($xmlQrCodeInfo)
+    {
+        return new LinkIDQRInfo(base64_decode($xmlQrCodeInfo->qrEncoded), $xmlQrCodeInfo->qrEncoded, $xmlQrCodeInfo->qrURL, $xmlQrCodeInfo->qrContent, $xmlQrCodeInfo->mobile, $xmlQrCodeInfo->targetBlank);
+    }
 }

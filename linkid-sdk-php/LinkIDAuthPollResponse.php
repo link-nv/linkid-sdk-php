@@ -1,6 +1,6 @@
 <?php
 
-class LinkIDPollResponse
+class LinkIDAuthPollResponse
 {
 
     public $authenticationState;
@@ -35,17 +35,17 @@ function parseLinkIDAuthenticationState($authenticationState)
     if (null == $authenticationState) return null;
 
     if ($authenticationState == "linkid.state.started") {
-        return LinkIDPollResponse::AUTH_STATE_STARTED;
+        return LinkIDAuthPollResponse::AUTH_STATE_STARTED;
     } else if ($authenticationState == "linkid.state.retrieved") {
-        return LinkIDPollResponse::AUTH_STATE_RETRIEVED;
+        return LinkIDAuthPollResponse::AUTH_STATE_RETRIEVED;
     } else if ($authenticationState == "linkid.state.authenticated") {
-        return LinkIDPollResponse::AUTH_STATE_AUTHENTICATED;
+        return LinkIDAuthPollResponse::AUTH_STATE_AUTHENTICATED;
     } else if ($authenticationState == "linkid.state.expired") {
-        return LinkIDPollResponse::AUTH_STATE_EXPIRED;
+        return LinkIDAuthPollResponse::AUTH_STATE_EXPIRED;
     } else if ($authenticationState == "linkid.state.failed") {
-        return LinkIDPollResponse::AUTH_STATE_FAILED;
+        return LinkIDAuthPollResponse::AUTH_STATE_FAILED;
     } else if ($authenticationState == "linkid.state.payment.add") {
-        return LinkIDPollResponse::AUTH_STATE_PAYMENT_ADD;
+        return LinkIDAuthPollResponse::AUTH_STATE_PAYMENT_ADD;
     }
 
     throw new Exception("Unexpected authentication state: " . $authenticationState);
@@ -57,19 +57,17 @@ function parseLinkIDWSPaymentState($paymentState)
 
     if (null == $paymentState) return null;
 
-    if ($paymentState == "linkid.payment.state.started") {
+    if ($paymentState == "STARTED") {
         return LinkIDPaymentState::STARTED;
-    } else if ($paymentState == "linkid.payment.state.deferred") {
-        return LinkIDPaymentState::DEFERRED;
-    } else if ($paymentState == "linkid.payment.state.waiting") {
+    } else if ($paymentState == "WAITING_FOR_UPDATE") {
         return LinkIDPaymentState::WAITING_FOR_UPDATE;
-    } else if ($paymentState == "linkid.payment.state.failed") {
+    } else if ($paymentState == "FAILED") {
         return LinkIDPaymentState::FAILED;
-    } else if ($paymentState == "linkid.payment.state.refunded") {
+    } else if ($paymentState == "REFUNDED") {
         return LinkIDPaymentState::REFUNDED;
-    } else if ($paymentState == "linkid.payment.state.refund_started") {
+    } else if ($paymentState == "REFUND_STARTED") {
         return LinkIDPaymentState::REFUND_STARTED;
-    } else if ($paymentState == "linkid.payment.state.payed") {
+    } else if ($paymentState == "AUTHORIZED") {
         return LinkIDPaymentState::PAYED;
     }
 

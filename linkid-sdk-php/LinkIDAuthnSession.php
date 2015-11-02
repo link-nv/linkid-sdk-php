@@ -1,29 +1,23 @@
 <?php
 
-/*
- * LinkID LTQR Session
- *
- * @author Wim Vandenhaute
- */
+require_once('LinkIDQRInfo.php');
 
 class LinkIDAuthnSession
 {
 
     public $sessionId;
-    public $qrCodeImage;
-    public $qrCodeImageEncoded;
-    public $qrCodeURL;
-    public $authenticationContext;
+    public $qrCodeInfo;
 
     /**
-     * Constructor
+     * LinkIDAuthnSession constructor.
+     * @param $sessionId
+     * @param $qrCodeInfo
      */
-    public function __construct($sessionId, $qrCodeImage, $qrCodeImageEncoded, $qrCodeURL, $authenticationContext)
+    public function __construct($sessionId, $qrCodeInfo)
     {
         $this->sessionId = $sessionId;
-        $this->qrCodeImage = $qrCodeImage;
-        $this->qrCodeImageEncoded = $qrCodeImageEncoded;
-        $this->qrCodeURL = $qrCodeURL;
-        $this->authenticationContext = $authenticationContext;
+        $this->qrCodeInfo = $qrCodeInfo;
     }
+
+
 }

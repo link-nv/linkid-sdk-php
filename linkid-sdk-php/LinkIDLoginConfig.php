@@ -158,20 +158,6 @@ function finalize($loginConfig)
 }
 
 /**
- * Specify a custom context to be shown on the linkID mobile app
- */
-function setLinkIDAuthnMessage($context)
-{
-
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-
-    $_SESSION['linkID.authenticationMessage'] = $context;
-
-}
-
-/**
  * Returns the custom linkID context to be shown on the linkID mobile app ( if any )
  */
 function getLinkIDAuthnMessage()
@@ -182,20 +168,6 @@ function getLinkIDAuthnMessage()
     }
 
     return $_SESSION['linkID.authenticationMessage'];
-
-}
-
-/**
- * Specify a custom context to be shown on the linkID mobile app when finished
- */
-function setLinkIDFinishedMessage($context)
-{
-
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-
-    $_SESSION['linkID.finishedMessage'] = $context;
 
 }
 
@@ -214,20 +186,6 @@ function getLinkIDFinishedMessage()
 }
 
 /**
- * Specify custom identity profile(s)
- */
-function setLinkIDIdentityProfiles($identityProfiles)
-{
-
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-
-    $_SESSION['linkID.identityProfiles'] = $identityProfiles;
-
-}
-
-/**
  * Returns the custom linkID identity profiles
  */
 function getLinkIDIdentityProfiles()
@@ -238,20 +196,6 @@ function getLinkIDIdentityProfiles()
     }
 
     return $_SESSION['linkID.identityProfiles'];
-
-}
-
-/**
- * Specify an array of attribute suggestions to be used in the identity part of the linkID login process.
- */
-function setLinkIDAttributeSuggestions($attributeSuggestions)
-{
-
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-
-    $_SESSION['linkID.attributeSuggestions'] = $attributeSuggestions;
 
 }
 
@@ -270,20 +214,6 @@ function getLinkIDAttributeSuggestions()
 }
 
 /**
- * Specify the linkID payment context
- */
-function setLinkIDPaymentContext($paymentContext)
-{
-
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-
-    $_SESSION['linkID.paymentContext'] = $paymentContext;
-
-}
-
-/**
  * Returns the linkID payment context to be piggy-backed on the linkID authentication request ( if any )
  */
 function getLinkIDPaymentContext()
@@ -294,20 +224,6 @@ function getLinkIDPaymentContext()
     }
 
     return $_SESSION['linkID.paymentContext'];
-
-}
-
-/**
- * Specify the linkID callback config
- */
-function setLinkIDCallback($callback)
-{
-
-    if (!isset($_SESSION)) {
-        session_start();
-    }
-
-    $_SESSION['linkID.callback'] = $callback;
 
 }
 
