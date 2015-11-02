@@ -5,6 +5,7 @@ require_once('LinkIDAuthenticationContext.php');
 require_once('LinkIDSaml2.php');
 require_once('LinkIDAuthnSession.php');
 require_once('LinkIDAuthPollResponse.php');
+require_once('LinkIDThemes.php');
 
 /*
  * linkID WS client
@@ -132,7 +133,7 @@ class LinkIDClient
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->callbackPull($requestParams);
 
-        if (null != $response->error) {
+        if (isset($response->error) && null != $response->error) {
             throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
         }
 
@@ -140,8 +141,53 @@ class LinkIDClient
         return $saml2->parseAuthnResponse($response->success->any);
     }
 
+    /**
+     * @param $applicationName string name of the application to fetch themes for
+     * @return LinkIDThemes the themes found
+     * @throws Exception
+     */
+    public function getThemes($applicationName)
+    {
+        $requestParams = array(
+            'applicationName' => $applicationName
+        );
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->configThemes($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
+        }
+
+        $themes = array();
+        foreach ($response->success->themes as $theme) {
+
+            $themes[] = new LinkIDTheme($theme->name, $theme->defaultTheme,
+                isset($theme->logo) ? $this->convertLocalizedImages($theme->logo) : null,
+                isset($theme->authLogo) ? $this->convertLocalizedImages($theme->authLogo) : null,
+                isset($theme->background) ? $this->convertLocalizedImages($theme->background) : null,
+                isset($theme->tabletBackground) ? $this->convertLocalizedImages($theme->tabletBackground) : null,
+                isset($theme->alternativeBackground) ? $this->convertLocalizedImages($theme->alternativeBackground) : null,
+                isset($theme->backgroundColor) ? $theme->backgroundColor : null, isset($theme->textColor) ? $theme->textColor : null);
+        }
+
+        return new LinkIDThemes($themes);
+    }
+
 
     // Helper methods
+
+    public function convertLocalizedImages($xmlLocalizedImages)
+    {
+        if (null == $xmlLocalizedImages) return null;
+
+        $imageMap = array();
+
+        foreach ($xmlLocalizedImages as $image) {
+            $imageMap[$image->language] = new LinkIDLocalizedImage($image->url, isset($image->language) ? $image->language : null);
+        }
+
+        return new LinkIDLocalizedImages($imageMap);
+    }
 
     public function convertQRCodeInfo($xmlQrCodeInfo)
     {

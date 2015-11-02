@@ -3,9 +3,21 @@
 class LinkIDAuthPollResponse
 {
 
+    /**
+     * @var int authentication state
+     */
     public $authenticationState;
+    /**
+     * @var int payment state if applies
+     */
     public $paymentState;
+    /**
+     * @var string|null payment menu if applies, i.e. if payment is involved and user selected continue in browser
+     */
     public $paymentMenuURL;
+    /**
+     * @var LinkIDAuthnContext|null authentication context ( userId, attributes, payment response ) if done, else null
+     */
     public $authenticationContext;
 
     // authentication state constants

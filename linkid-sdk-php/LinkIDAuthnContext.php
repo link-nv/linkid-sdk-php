@@ -12,8 +12,17 @@ require_once('LinkIDAttribute.php');
 class LinkIDAuthnContext
 {
 
+    /**
+     * @var string the linkID user ID
+     */
     public $userId;
+    /**
+     * @var array the linkID user's attributes
+     */
     public $attributes;
+    /**
+     * @var LinkIDPaymentResponse|null optional payment response if applies
+     */
     public $paymentResponse;
 
     /**
