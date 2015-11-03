@@ -174,6 +174,11 @@ class LinkIDClient
         return new LinkIDThemes($themes);
     }
 
+    /**
+     * @param array $keys localization keys to fetch, array of strings
+     * @return array localizations, array of LinkIDLocalization
+     * @throws Exception
+     */
     public function getLocalization($keys)
     {
 
@@ -205,6 +210,27 @@ class LinkIDClient
         }
 
         return $localizations;
+    }
+
+
+    /**
+     * @param string $orderReference order reference of order to capture
+     * @throws Exception
+     */
+    public function paymentCapture($orderReference)
+    {
+
+        $requestParams = array(
+            'orderReference' => $orderReference
+        );
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->paymentCapture($requestParams);
+
+        if (null == $response) throw new Exception("Failed to get payment status...");
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
     }
 
 
