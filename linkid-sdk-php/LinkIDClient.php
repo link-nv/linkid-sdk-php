@@ -6,6 +6,7 @@ require_once('LinkIDSaml2.php');
 require_once('LinkIDAuthnSession.php');
 require_once('LinkIDAuthPollResponse.php');
 require_once('LinkIDThemes.php');
+require_once('LinkIDLocalization.php');
 
 /*
  * linkID WS client
@@ -171,6 +172,39 @@ class LinkIDClient
         }
 
         return new LinkIDThemes($themes);
+    }
+
+    public function getLocalization($keys)
+    {
+
+        $requestParams = new stdClass;
+
+        if (null != $keys) {
+            $requestParams->key = array();
+            foreach ($keys as $key) {
+                $requestParams->key[] = $key;
+            }
+        }
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->configLocalization($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
+        }
+
+        $localizations = array();
+
+        foreach ($response->success->localization as $localization) {
+            $values = array();
+            foreach ($localization->values as $localizationValue) {
+                $values[$localizationValue->languageCode] = $localizationValue->localized;
+            }
+
+            $localizations[] = new LinkIDLocalization($localization->key,
+                parseLinkIDLocalizationKeyType($localization->type), $values);
+        }
+
+        return $localizations;
     }
 
 
