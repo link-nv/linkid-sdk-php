@@ -11,6 +11,7 @@ require_once('LinkIDLTQRContent.php');
 require_once('LinkIDLTQRLockType.php');
 require_once('LinkIDLTQRSession.php');
 require_once('LinkIDLTQRClientSession.php');
+require_once('LinkIDLTQRInfo.php');
 
 /*
  * linkID WS client
@@ -448,6 +449,54 @@ class LinkIDClient
 
     }
 
+    /**
+     * @param array $ltqrReferences
+     * @param string $userAgent
+     * @return array
+     * @throws Exception
+     */
+    public function ltqrInfo($ltqrReferences, $userAgent)
+    {
+
+        $requestParams = new stdClass;
+
+        if (null == $ltqrReferences) {
+            throw new Exception('No LTQR references to fetch info for...');
+        }
+
+        $requestParams->ltqrReferences = array();
+        foreach ($ltqrReferences as $ltqrReference) {
+            $requestParams->ltqrReferences[] = $ltqrReference;
+        }
+        $requestParams->userAgent = $userAgent;
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->ltqrInfo($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        $infos = array();
+        foreach ($response->success as $ltqrInfo) {
+
+            $infos[] = new LinkIDLTQRInfo(
+                isset($ltqrInfo->ltqrReference) ? $ltqrInfo->ltqrReference : null,
+                isset($ltqrInfo->sessionId) ? $ltqrInfo->sessionId : null,
+                isset($ltqrInfo->created) ? $ltqrInfo->created : null,
+                $this->convertQRCodeInfo($ltqrInfo->qrCodeInfo),
+                $this->parseLTQRContent($ltqrInfo->content),
+                parseLinkIDLTQRLockType($ltqrInfo->lockType),
+                isset($ltqrInfo->locked) ? $ltqrInfo->locked : false,
+                isset($ltqrInfo->waitForUnblock) ? $ltqrInfo->waitForUnblock : false,
+                isset($ltqrInfo->blocked) ? $ltqrInfo->blocked : false
+            );
+        }
+
+        return $infos;
+
+    }
+
     // Helper methods
 
     /**
@@ -506,6 +555,32 @@ class LinkIDClient
         }
 
         return $requestContent;
+    }
+
+    /**
+     * @param $content stdClass
+     * @return LinkIDLTQRContent
+     */
+    private function parseLTQRContent($content)
+    {
+        return new LinkIDLTQRContent(
+            isset($content->authenticationMessage) ? $content->authenticationMessage : null,
+            isset($content->finishedMessage) ? $content->finishedMessage : null,
+            isset($content->paymentContext) ? parseLinkIDPaymentContext($content->paymentContext) : null,
+            isset($content->callback) ? parseLinkIDCallback($content->callback) : null,
+            isset($content->identityProfile) ? $content->identityProfile : null,
+            $content->sessionExpiryOverride,
+            isset($content->theme) ? $content->theme : null,
+            isset($content->mobileLandingSuccess) ? $content->mobileLandingSuccess : null,
+            isset($content->mobileLandingError) ? $content->mobileLandingError : null,
+            isset($content->mobileLandingCancel) ? $content->mobileLandingCancel : null,
+            isset($content->pollingConfiguration) ? parseLinkIDLTQRPollingConfiguration($content->pollingConfiguration) : null,
+            isset($content->ltqrStatusLocation) ? $content->ltqrStatusLocation : null,
+            isset($content->expiryDate) ? $content->expiryDate : null,
+            isset($content->expiryDuration) ? $content->expiryDuration : null,
+            isset($content->waitForUnblock) ? $content->waitForUnblock : false,
+            isset($content->favoritesConfiguration) ? parseLinkIDFavoritesConfiguration($content->favoritesConfiguration) : null
+        );
     }
 
     /**

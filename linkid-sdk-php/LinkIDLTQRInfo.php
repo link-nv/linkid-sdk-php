@@ -1,10 +1,8 @@
 <?php
 
-/*
- * LinkID LTQR Session
- *
- * @author Wim Vandenhaute
- */
+require_once('LinkIDQRInfo.php');
+require_once('LinkIDLTQRContent.php');
+require_once('LinkIDLTQRLockType.php');
 
 class LinkIDLTQRInfo
 {
@@ -13,62 +11,39 @@ class LinkIDLTQRInfo
     public $sessionId;
     public $created;
     //
-    public $qrCodeImage;
-    public $qrCodeURL;
+    public $qrCodeInfo;
     //
-    public $authenticationMessage;
-    public $finishedMessage;
+    public $content;
     //
-    public $oneTimeUse;
-    //
-    public $expiryDate;
-    public $expiryDuration;
-    //
-    public $paymentContext;
-    public $callback;
-    public $identityProfiles;
-    //
-    public $sessionExpiryOverride;
-    public $theme;
-    //
-    public $mobileLandingSuccess;
-    public $mobileLandingError;
-    public $mobileLandingCancel;
-    //
-    public $pollingConfiguration;
-    //
-    public $waitForUnlock;
+    public $lockType;
     public $locked;
     //
-    public $ltqrStatusLocation;
+    public $waitForUnblock;
+    public $blocked;
 
-    function __construct($ltqrReference, $sessionId, $created, $qrCodeImage, $qrCodeURL, $authenticationMessage, $finishedMessage,
-                         $oneTimeUse, $expiryDate, $expiryDuration, $paymentContext, $callback, $identityProfiles,
-                         $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel,
-                         $pollingConfiguration, $waitForUnlock, $locked, $ltqrStatusLocation)
+    /**
+     * LinkIDLTQRInfo constructor.
+     * @param string $ltqrReference
+     * @param string $sessionId
+     * @param DateTime $created
+     * @param LinkIDQRInfo $qrCodeInfo
+     * @param LinkIDLTQRContent $content
+     * @param LinkIDLTQRLockType $lockType
+     * @param bool $locked
+     * @param bool $waitForUnblock
+     * @param bool $blocked
+     */
+    public function __construct($ltqrReference, $sessionId, $created, $qrCodeInfo, $content, $lockType, $locked, $waitForUnblock, $blocked)
     {
         $this->ltqrReference = $ltqrReference;
         $this->sessionId = $sessionId;
         $this->created = $created;
-        $this->qrCodeImage = $qrCodeImage;
-        $this->qrCodeURL = $qrCodeURL;
-        $this->authenticationMessage = $authenticationMessage;
-        $this->finishedMessage = $finishedMessage;
-        $this->oneTimeUse = $oneTimeUse;
-        $this->expiryDate = $expiryDate;
-        $this->expiryDuration = $expiryDuration;
-        $this->paymentContext = $paymentContext;
-        $this->callback = $callback;
-        $this->identityProfiles = $identityProfiles;
-        $this->sessionExpiryOverride = $sessionExpiryOverride;
-        $this->theme = $theme;
-        $this->mobileLandingSuccess = $mobileLandingSuccess;
-        $this->mobileLandingError = $mobileLandingError;
-        $this->mobileLandingCancel = $mobileLandingCancel;
-        $this->pollingConfiguration = $pollingConfiguration;
-        $this->waitForUnlock = $waitForUnlock;
+        $this->qrCodeInfo = $qrCodeInfo;
+        $this->content = $content;
+        $this->lockType = $lockType;
         $this->locked = $locked;
-        $this->ltqrStatusLocation = $ltqrStatusLocation;
+        $this->waitForUnblock = $waitForUnblock;
+        $this->blocked = $blocked;
     }
 
 

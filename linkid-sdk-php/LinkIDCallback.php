@@ -29,7 +29,7 @@ class LinkIDCallback
 
 function parseLinkIDCallback($xmlCallback)
 {
-    return new LinkIDPaymentContext(
+    return new LinkIDCallback(
         isset($xmlCallback->location) ? $xmlCallback->location : null,
         isset($xmlCallback->appSessionId) ? $xmlCallback->appSessionId : null,
         isset($xmlCallback->inApp) ? $xmlCallback->inApp : true

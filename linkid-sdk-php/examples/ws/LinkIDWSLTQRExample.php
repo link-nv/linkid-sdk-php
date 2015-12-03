@@ -48,10 +48,10 @@ print("<li>LTQR reference: " . $ltqrSession->ltqrReference . "</ul>");
 $imgData = base64_encode($ltqrSession->qrCodeInfo->qrImage);
 print("<img src='data:image/png;base64, $imgData' />");
 
+
 /**
  * Fetch client sessions
  */
-
 
 $ltqrReferences = array();
 $ltqrReferences[] = "bd3d9618-97de-420f-bfc1-ec1f9286ec62";
@@ -64,20 +64,19 @@ print("<pre>");
 print_r($clientSessions);
 print("</pre>");
 
-///**
-// * Change sessions
-// */
-//$paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(9900, LinkIDCurrency::EUR, null), "Changed LTQR Test");
-//$client->change($ltqrReference, null, null, $paymentContext);
-//
-//
-///**
-// * Remove client sessions
-// */
-//
-//$ltqrReferences = array();
-//$ltqrReferences[] = $ltqrReference;
-//
-////$client->remove($ltqrReferences);
-//
+/**
+ * Fetch session info
+ */
+
+$ltqrReferences = array();
+$ltqrReferences[] = "bd3d9618-97de-420f-bfc1-ec1f9286ec62";
+
+$sessionInfo = $client->ltqrInfo($ltqrReferences, null);
+
+print("<h2>LTQR Session info</h2>");
+
+print("<pre>");
+print_r($sessionInfo);
+print("</pre>");
+
 ?>

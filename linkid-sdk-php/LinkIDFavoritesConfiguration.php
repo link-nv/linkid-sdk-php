@@ -34,3 +34,14 @@ class LinkIDFavoritesConfiguration
 
 
 }
+
+function parseLinkIDFavoritesConfiguration($xmlFavoritesConfiguration)
+{
+    return new LinkIDFavoritesConfiguration(
+        isset($xmlFavoritesConfiguration->title) ? $xmlFavoritesConfiguration->title : null,
+        isset($xmlFavoritesConfiguration->info) ? $xmlFavoritesConfiguration->info : null,
+        isset($xmlFavoritesConfiguration->logoEncoded) ? $xmlFavoritesConfiguration->logoEncoded : null,
+        isset($xmlFavoritesConfiguration->backgroundColor) ? $xmlFavoritesConfiguration->backgroundColor : null,
+        isset($xmlFavoritesConfiguration->textColor) ? $xmlFavoritesConfiguration->textColor : null
+    );
+}
