@@ -318,6 +318,38 @@ class LinkIDClient
 
     }
 
+    /**
+     * @param string $ltqrReference
+     * @param LinkIDLTQRContent $content
+     * @param string $userAgent
+     * @param bool $unlock
+     * @param bool $unblock
+     * @return LinkIDLTQRSession
+     * @throws Exception
+     */
+    public function ltqrChange($ltqrReference, $content, $userAgent, $unlock, $unblock)
+    {
+
+        $requestParams = new stdClass;
+
+        $requestParams->ltqrReference = $ltqrReference;
+        $requestParams->content = $this->convertLTQRContent($content);
+        $requestParams->userAgent = $userAgent;
+        $requestParams->unlock = $unlock;
+        $requestParams->unblock = $unblock;
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->ltqrChange($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        return new LinkIDLTQRSession($response->success->ltqrReference, $this->convertQRCodeInfo($response->success->qrCodeInfo),
+            isset($response->success->paymentOrderReference) ? $response->success->paymentOrderReference : null);
+
+    }
+
     // Helper methods
 
     /**
