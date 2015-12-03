@@ -1,5 +1,10 @@
 <?php
 
+require_once('LinkIDPaymentContext.php');
+require_once('LinkIDCallback.php');
+require_once('LinkIDLTQRPollingConfiguration.php');
+require_once('LinkIDFavoritesConfiguration.php');
+
 /**
  * Created by PhpStorm.
  * User: wvdhaute
@@ -23,26 +28,28 @@ class LinkIDLTQRContent
     public $expiryDate;
     public $expiryDuration;
     public $waitForUnblock;
+    public $favoritesConfiguration;
 
     /**
      * LinkIDLTQRContent constructor.
-     * @param $authenticationMessage
-     * @param $finishedMessage
-     * @param $paymentContext
-     * @param $callback
-     * @param $identityProfile
-     * @param $sessionExpiryOverride
-     * @param $theme
-     * @param $mobileLandingSuccess
-     * @param $mobileLandingError
-     * @param $mobileLandingCancel
-     * @param $pollingConfiguration
-     * @param $ltqrStatusLocation
-     * @param $expiryDate
-     * @param $expiryDuration
-     * @param $waitForUnblock
+     * @param string $authenticationMessage
+     * @param string $finishedMessage
+     * @param LinkIDPaymentContext $paymentContext
+     * @param LinkIDCallback $callback
+     * @param string $identityProfile
+     * @param long $sessionExpiryOverride
+     * @param string $theme
+     * @param string $mobileLandingSuccess
+     * @param string $mobileLandingError
+     * @param string $mobileLandingCancel
+     * @param LinkIDLTQRPollingConfiguration $pollingConfiguration
+     * @param string $ltqrStatusLocation
+     * @param DateTime $expiryDate
+     * @param long $expiryDuration
+     * @param bool $waitForUnblock
+     * @param LinkIDFavoritesConfiguration $favoritesConfiguration
      */
-    public function __construct($authenticationMessage, $finishedMessage, $paymentContext, $callback, $identityProfile, $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel, $pollingConfiguration, $ltqrStatusLocation, $expiryDate, $expiryDuration, $waitForUnblock)
+    public function __construct($authenticationMessage, $finishedMessage, $paymentContext, $callback, $identityProfile, $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel, $pollingConfiguration, $ltqrStatusLocation, $expiryDate, $expiryDuration, $waitForUnblock, $favoritesConfiguration)
     {
         $this->authenticationMessage = $authenticationMessage;
         $this->finishedMessage = $finishedMessage;
@@ -59,6 +66,7 @@ class LinkIDLTQRContent
         $this->expiryDate = $expiryDate;
         $this->expiryDuration = $expiryDuration;
         $this->waitForUnblock = $waitForUnblock;
+        $this->favoritesConfiguration = $favoritesConfiguration;
     }
 
 

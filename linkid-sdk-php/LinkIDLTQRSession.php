@@ -1,10 +1,6 @@
 <?php
 
-/*
- * LinkID LTQR Session
- *
- * @author Wim Vandenhaute
- */
+require_once('LinkIDQRInfo.php');
 
 class LinkIDLTQRSession
 {
@@ -15,7 +11,10 @@ class LinkIDLTQRSession
     public $paymentOrderReference;
 
     /**
-     * Constructor
+     * LinkIDLTQRSession constructor.
+     * @param string $ltqrReference
+     * @param LinkIDQRInfo $qrCodeInfo
+     * @param string $paymentOrderReference
      */
     public function __construct($ltqrReference, $qrCodeInfo, $paymentOrderReference)
     {

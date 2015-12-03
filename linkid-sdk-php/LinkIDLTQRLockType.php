@@ -23,7 +23,7 @@ function linkIDLTQRLockTypeToString($lockType)
     if (LinkIDLTQRLockType::ON_SCAN == $lockType) return "ON_SCAN";
     if (LinkIDLTQRLockType::ON_FINISH == $lockType) return "ON_FINISH";
 
-    return "FRIENDLY";
+    return "NEVER";
 }
 
 

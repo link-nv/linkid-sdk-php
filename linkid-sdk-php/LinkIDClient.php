@@ -7,6 +7,9 @@ require_once('LinkIDAuthnSession.php');
 require_once('LinkIDAuthPollResponse.php');
 require_once('LinkIDThemes.php');
 require_once('LinkIDLocalization.php');
+require_once('LinkIDLTQRContent.php');
+require_once('LinkIDLTQRLockType.php');
+require_once('LinkIDLTQRSession.php');
 
 /*
  * linkID WS client
@@ -31,7 +34,7 @@ class LinkIDClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/linkid30?wsdl";
+        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/linkid31?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation, $options);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -287,14 +290,178 @@ class LinkIDClient
 
     }
 
-    // TODO: impl me
+    /**
+     * @param LinkIDLTQRContent $content
+     * @param string $userAgent
+     * @param LinkIDLTQRLockType $lockType
+     * @return LinkIDLTQRSession the LTQR session
+     * @throws Exception
+     */
     public function ltqrPush($content, $userAgent, $lockType)
     {
 
+        $requestParams = new stdClass;
+
+        $requestParams->content = $this->convertLTQRContent($content);
+        $requestParams->userAgent = $userAgent;
+        $requestParams->lockType = linkIDLTQRLockTypeToString($lockType);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->ltqrPush($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        return new LinkIDLTQRSession($response->success->ltqrReference, $this->convertQRCodeInfo($response->success->qrCodeInfo),
+            isset($response->success->paymentOrderReference) ? $response->success->paymentOrderReference : null);
+
     }
 
-
     // Helper methods
+
+    /**
+     * @param LinkIDLTQRContent $content the content
+     * @return stdClass
+     */
+    private function convertLTQRContent($content)
+    {
+
+        $requestContent = new stdClass();
+
+        $requestContent->authenticationMessage = $content->authenticationMessage;
+        $requestContent->finishedMessage = $content->finishedMessage;
+
+        // payment context
+        if (null != $content->paymentContext) {
+            $requestContent->paymentContext = $this->convertPaymentContext($content->paymentContext);
+        }
+
+        // callback
+        if (null != $content->callback) {
+            $requestContent->callback = $this->convertCallback($content->callback);
+        }
+
+        // identity profile
+        $requestContent->identityProfile = $content->identityProfile;
+
+        if ($content->sessionExpiryOverride > 0) {
+            $requestContent->sessionExpiryOverride = $content->sessionExpiryOverride;
+        }
+        $requestContent->theme = $content->theme;
+        $requestContent->mobileLandingSuccess = $content->mobileLandingSuccess;
+        $requestContent->mobileLandingError = $content->mobileLandingError;
+        $requestContent->mobileLandingCancel = $content->mobileLandingCancel;
+
+        // polling configuration
+        if (null != $content->pollingConfiguration) {
+            $requestContent->pollingConfiguration = $this->convertLTQRPollingConfiguration($content->pollingConfiguration);
+        }
+
+        if (null != $content->expiryDate) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $requestContent->expiryDate = $content->expiryDate->format(DateTime::ATOM);
+        }
+        if (null != $content->expiryDuration) {
+            $requestContent->expiryDuration = $content->expiryDuration;
+        }
+        $requestContent->waitForUnblock = $content->waitForUnblock;
+
+        if (null != $content->ltqrStatusLocation) {
+            $requestContent->ltqrStatusLocation = $content->ltqrStatusLocation;
+        }
+
+        if (null != $content->favoritesConfiguration) {
+            $requestContent->favoritesConfiguration = $this->convertFavoritesConfiguration($content->favoritesConfiguration);
+        }
+
+        return $requestContent;
+    }
+
+    /**
+     * @param LinkIDPaymentContext $paymentContext
+     * @return stdClass
+     */
+    private function convertPaymentContext($paymentContext)
+    {
+
+        $requestPaymentContext = new stdClass;
+
+        $requestPaymentContext->amount = $paymentContext->amount->amount;
+        if (null != $paymentContext->amount && null != $paymentContext->amount->walletCoin) {
+            $requestPaymentContext->walletCoin = $paymentContext->amount->walletCoin;
+        } else {
+            $requestPaymentContext->currency = linkIDCurrencyToString($paymentContext->amount->currency);
+        }
+        $requestPaymentContext->description = $paymentContext->description;
+        $requestPaymentContext->orderReference = $paymentContext->orderReference;
+        $requestPaymentContext->paymentProfile = $paymentContext->profile;
+        $requestPaymentContext->validationTime = $paymentContext->validationTime;
+        $requestPaymentContext->allowPartial = $paymentContext->allowPartial;
+        $requestPaymentContext->onlyWallets = $paymentContext->onlyWallets;
+        $requestPaymentContext->mandate = null != $paymentContext->mandate;
+        if (null != $paymentContext->mandate) {
+            $requestPaymentContext->mandateDescription = $paymentContext->mandate->description;
+            $requestPaymentContext->mandateReference = $paymentContext->mandate->reference;
+        }
+        $requestPaymentContext->paymentStatusLocation = $paymentContext->paymentStatusLocation;
+
+        return $requestPaymentContext;
+    }
+
+    /**
+     * @param LinkIDCallback $callback
+     * @return stdClass
+     */
+    private function convertCallback($callback)
+    {
+
+        $requestCallback = new stdClass;
+
+        $requestCallback->location = $callback->location;
+        $requestCallback->appSessionId = $callback->appSessionId;
+        $requestCallback->inApp = $callback->inApp;
+
+        return $requestCallback;
+
+    }
+
+    /**
+     * @param LinkIDLTQRPollingConfiguration $pollingConfiguration
+     * @return stdClass
+     */
+    private function convertLTQRPollingConfiguration($pollingConfiguration)
+    {
+
+        $request = new stdClass;
+
+        $request->pollAttempts = $pollingConfiguration->pollAttempts;
+        $request->pollInterval = $pollingConfiguration->pollInterval;
+        $request->paymentPollAttempts = $pollingConfiguration->paymentPollAttempts;
+        $request->paymentPollInterval = $pollingConfiguration->paymentPollInterval;
+
+        return $request;
+
+    }
+
+    /**
+     * @param LinkIDFavoritesConfiguration $favoritesConfiguration
+     * @return stdClass
+     */
+    private function convertFavoritesConfiguration($favoritesConfiguration)
+    {
+
+        $request = new stdClass;
+
+        $request->info = $favoritesConfiguration->info;
+        $request->title = $favoritesConfiguration->title;
+        $request->logoEncoded = $favoritesConfiguration->logoEncoded;
+        $request->backgroundColor = $favoritesConfiguration->backgroundColor;
+        $request->textColor = $favoritesConfiguration->textColor;
+
+        return $request;
+
+    }
 
     public function convertLocalizedImages($xmlLocalizedImages)
     {
@@ -309,8 +476,18 @@ class LinkIDClient
         return new LinkIDLocalizedImages($imageMap);
     }
 
-    public function convertQRCodeInfo($xmlQrCodeInfo)
+    /**
+     * @param stdClass $responseQRCodeInfo
+     * @return LinkIDQRInfo
+     */
+    private function convertQRCodeInfo($responseQRCodeInfo)
     {
-        return new LinkIDQRInfo(base64_decode($xmlQrCodeInfo->qrEncoded), $xmlQrCodeInfo->qrEncoded, $xmlQrCodeInfo->qrURL, $xmlQrCodeInfo->qrContent, $xmlQrCodeInfo->mobile, $xmlQrCodeInfo->targetBlank);
+
+        $qrCodeImage = base64_decode($responseQRCodeInfo->qrEncoded);
+
+        return new LinkIDQRInfo($qrCodeImage, $responseQRCodeInfo->qrEncoded, $responseQRCodeInfo->qrURL,
+            $responseQRCodeInfo->qrContent, $responseQRCodeInfo->mobile);
+
     }
+
 }

@@ -7,7 +7,6 @@ class LinkIDQRInfo
     public $qrCodeURL;
     public $qrContent;
     public $mobile;
-    public $targetBlank;
 
     /**
      * LinkIDQRInfo constructor.
@@ -16,16 +15,14 @@ class LinkIDQRInfo
      * @param $qrCodeURL
      * @param $qrContent
      * @param $mobile
-     * @param $targetBlank
      */
-    public function __construct($qrImage, $qrEncoded, $qrCodeURL, $qrContent, $mobile, $targetBlank)
+    public function __construct($qrImage, $qrEncoded, $qrCodeURL, $qrContent, $mobile)
     {
         $this->qrImage = $qrImage;
         $this->qrEncoded = $qrEncoded;
         $this->qrCodeURL = $qrCodeURL;
         $this->qrContent = $qrContent;
         $this->mobile = $mobile;
-        $this->targetBlank = $targetBlank;
     }
 
 
