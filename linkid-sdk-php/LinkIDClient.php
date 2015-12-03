@@ -404,6 +404,50 @@ class LinkIDClient
 
     }
 
+    /**
+     * @param array $ltqrReferences
+     * @param array $paymentOrderReferences
+     * @param array $clientSessionIds
+     * @throws Exception
+     */
+    public function ltqrRemove($ltqrReferences = null, $paymentOrderReferences = null, $clientSessionIds = null)
+    {
+
+        $requestParams = new stdClass;
+
+        if (null != $ltqrReferences) {
+            $requestParams->ltqrReferences = array();
+            foreach ($ltqrReferences as $ltqrReference) {
+                $requestParams->ltqrReferences[] = $ltqrReference;
+            }
+        }
+
+        if (null != $paymentOrderReferences) {
+            $requestParams->paymentOrderReferences = array();
+            foreach ($paymentOrderReferences as $paymentOrderReference) {
+                $requestParams->paymentOrderReferences[] = $paymentOrderReference;
+            }
+        }
+
+        if (null != $clientSessionIds) {
+            $requestParams->clientSessionIds = array();
+            foreach ($clientSessionIds as $clientSessionId) {
+                $requestParams->clientSessionIds[] = $clientSessionId;
+            }
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->ltqrRemove($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        // all good, return
+        return;
+
+    }
+
     // Helper methods
 
     /**
