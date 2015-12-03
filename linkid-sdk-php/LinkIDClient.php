@@ -226,11 +226,71 @@ class LinkIDClient
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->paymentCapture($requestParams);
 
-        if (null == $response) throw new Exception("Failed to get payment status...");
+        if (null == $response) throw new Exception("Failed to capture payment...");
 
         if (isset($response->error) && null != $response->error) {
             throw new Exception('Error: ' . $response->error->errorCode);
         }
+    }
+
+    /**
+     * @param string $orderReference order reference of order to refund
+     * @throws Exception
+     */
+    public function paymentRefund($orderReference)
+    {
+
+        $requestParams = array(
+            'orderReference' => $orderReference
+        );
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->paymentRefund($requestParams);
+
+        if (null == $response) throw new Exception("Failed to refund payment...");
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
+
+    /**
+     * @param string $mandateReference reference of the mandate
+     * @param LinkIDPaymentContext $paymentContext payment context
+     * @param string $language optional locale
+     * @return string the payment order reference
+     * @throws Exception
+     */
+    public function mandatePayment($mandateReference, $paymentContext, $language = "en")
+    {
+
+        $requestParams = new stdClass;
+
+        $requestParams->paymentContext = new stdClass;
+        $requestParams->paymentContext->amount = $paymentContext->amount;
+        $requestParams->paymentContext->currency = linkIDCurrencyToString($paymentContext->currency);
+        $requestParams->paymentContext->description = $paymentContext->description;
+        $requestParams->paymentContext->orderReference = $paymentContext->orderReference;
+        $requestParams->paymentContext->paymentProfile = $paymentContext->profile;
+        $requestParams->paymentContext->paymentStatusLocation = $paymentContext->paymentStatusLocation;
+
+        $requestParams->mandateReference = $mandateReference;
+        $requestParams->language = $language;
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->mandatePayment($requestParams);
+
+        if (null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        return $response->success->orderReference;
+
+    }
+
+    // TODO: impl me
+    public function ltqrPush($content, $userAgent, $lockType)
+    {
+
     }
 
 
