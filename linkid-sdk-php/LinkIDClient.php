@@ -10,6 +10,7 @@ require_once('LinkIDLocalization.php');
 require_once('LinkIDLTQRContent.php');
 require_once('LinkIDLTQRLockType.php');
 require_once('LinkIDLTQRSession.php');
+require_once('LinkIDLTQRClientSession.php');
 
 /*
  * linkID WS client
@@ -347,6 +348,59 @@ class LinkIDClient
 
         return new LinkIDLTQRSession($response->success->ltqrReference, $this->convertQRCodeInfo($response->success->qrCodeInfo),
             isset($response->success->paymentOrderReference) ? $response->success->paymentOrderReference : null);
+
+    }
+
+    /**
+     * @param array $ltqrReferences
+     * @param array $paymentOrderReferences
+     * @param array $clientSessionIds
+     * @return array
+     * @throws Exception
+     */
+    public function ltqrPull($ltqrReferences = null, $paymentOrderReferences = null, $clientSessionIds = null)
+    {
+
+        $requestParams = new stdClass;
+
+        if (null != $ltqrReferences) {
+            $requestParams->ltqrReferences = array();
+            foreach ($ltqrReferences as $ltqrReference) {
+                $requestParams->ltqrReferences[] = $ltqrReference;
+            }
+        }
+
+        if (null != $paymentOrderReferences) {
+            $requestParams->paymentOrderReferences = array();
+            foreach ($paymentOrderReferences as $paymentOrderReference) {
+                $requestParams->paymentOrderReferences[] = $paymentOrderReference;
+            }
+        }
+
+        if (null != $clientSessionIds) {
+            $requestParams->clientSessionIds = array();
+            foreach ($clientSessionIds as $clientSessionId) {
+                $requestParams->clientSessionIds[] = $clientSessionId;
+            }
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->ltqrPull($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        $clientSessions = array();
+        foreach ($response->success as $session) {
+
+            $clientSessions[] = new LinkIDLTQRClientSession($session->ltqrReference,
+                $this->convertQRCodeInfo($session->qrCodeInfo), $session->clientSessionId, $session->userId,
+                $session->created, isset($session->paymentOrderReference) ? $session->paymentOrderReference : null,
+                isset($session->paymentStatus) ? $session->paymentStatus : null);
+        }
+
+        return $clientSessions;
 
     }
 

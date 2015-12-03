@@ -48,23 +48,22 @@ print("<li>LTQR reference: " . $ltqrSession->ltqrReference . "</ul>");
 $imgData = base64_encode($ltqrSession->qrCodeInfo->qrImage);
 print("<img src='data:image/png;base64, $imgData' />");
 
-///**
-// * Fetch client sessions
-// */
-//
-//
-//$ltqrReferences = array();
-//$ltqrReferences[] = $ltqrReference;
-//print("<h2>Fetch client sessions for " . $ltqrReferences[0] . "</h2>");
-//
-//$clientSessions = $client->pull($ltqrReferences);
-//
-//print("<h2>LTQR Client Sessions</h2>");
-//
-//print("<pre>");
-//print_r($clientSessions);
-//print("</pre>");
-//
+/**
+ * Fetch client sessions
+ */
+
+
+$ltqrReferences = array();
+$ltqrReferences[] = "bd3d9618-97de-420f-bfc1-ec1f9286ec62";
+
+$clientSessions = $client->ltqrPull($ltqrReferences);
+
+print("<h2>LTQR Client Sessions</h2>");
+
+print("<pre>");
+print_r($clientSessions);
+print("</pre>");
+
 ///**
 // * Change sessions
 // */
