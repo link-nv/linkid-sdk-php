@@ -21,6 +21,7 @@ require_once('LinkIDReportWalletFilter.php');
 require_once('LinkIDWalletReport.php');
 require_once('LinkIDWalletReportTransaction.php');
 require_once('LinkIDWalletInfoReport.php');
+require_once('LinkIDWalletInfo.php');
 
 /*
  * linkID WS client
@@ -842,6 +843,64 @@ class LinkIDClient
         return $walletInfos;
 
     }
+
+    /**
+     * @param $userId string the linkID user ID
+     * @param $walletOrganizationId string the linkID wallet organization ID
+     * @param $amount double optional start balance
+     * @param $currency LinkIDCurrency optional start balance currency
+     * @param $walletCoin string optional wallet coin
+     *
+     * @throws Exception something went wrong enrolling
+     *
+     * @return string the ID of the linkID wallet that was created
+     */
+    public function walletEnroll($userId, $walletOrganizationId, $amount, $currency, $walletCoin)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletOrganizationId' => $walletOrganizationId,
+            'amount' => $amount,
+            'currency' => $currency,
+            'walletCoin' => $walletCoin
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletEnroll($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        return $response->success->walletId;
+    }
+
+    /**
+     * @param string $userId
+     * @param string $walletOrganizationId
+     * @return LinkIDWalletInfo
+     * @throws Exception
+     */
+    public function walletGetInfo($userId, $walletOrganizationId)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletOrganizationId' => $walletOrganizationId
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletGetInfo($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        return new LinkIDWalletInfo($response->success->walletId);
+
+    }
+
 
     // Helper methods
 

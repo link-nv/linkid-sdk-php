@@ -33,38 +33,6 @@ class LinkIDWalletClient
 
     /**
      * @param $userId string the linkID user ID
-     * @param $walletOrganizationId string the linkID wallet organization ID
-     * @param $amount double optional start balance
-     * @param $currency LinkIDCurrency optional start balance currency
-     * @param $walletCoin string optional wallet coin
-     *
-     * @throws Exception something went wrong enrolling
-     *
-     * @return string the ID of the linkID wallet that was created
-     */
-    public function enroll($userId, $walletOrganizationId, $amount, $currency, $walletCoin)
-    {
-
-        $requestParams = array(
-            'userId' => $userId,
-            'walletOrganizationId' => $walletOrganizationId,
-            'amount' => $amount,
-            'currency' => $currency,
-            'walletCoin' => $walletCoin
-        );
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $response = $this->client->enroll($requestParams);
-
-        if (isset($response->error) && null != $response->error) {
-            throw new Exception('Error: ' . $response->error->errorCode);
-        }
-
-        return $response->success->walletId;
-    }
-
-    /**
-     * @param $userId string the linkID user ID
      * @param $walletId string the linkID wallet ID
      * @param $amount double amount to add
      * @param $currency LinkIDCurrency currency of amount to add
