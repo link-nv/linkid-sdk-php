@@ -18,6 +18,7 @@ class LinkIDPaymentStatus
     public $captured;
     public $amountPayed;
     public $amount;
+    public $refundAmount;
     public $currency;
     public $walletCoin;
     public $description;
@@ -27,7 +28,7 @@ class LinkIDPaymentStatus
     /* @var $paymentDetails LinkIDPaymentDetails */
     public $paymentDetails;
 
-    function __construct($orderReference, $userId, $paymentState, $authorized, $captured, $amountPayed, $amount, $currency, $walletCoin, $description, $profile, $created, $mandateReference, $paymentDetails)
+    function __construct($orderReference, $userId, $paymentState, $authorized, $captured, $amountPayed, $amount, $refundAmount, $currency, $walletCoin, $description, $profile, $created, $mandateReference, $paymentDetails)
     {
         $this->orderReference = $orderReference;
         $this->userId = $userId;
@@ -36,6 +37,7 @@ class LinkIDPaymentStatus
         $this->captured = $captured;
         $this->amountPayed = $amountPayed;
         $this->amount = $amount;
+        $this->refundAmount = $refundAmount;
         $this->currency = $currency;
         $this->walletCoin = $walletCoin;
         $this->description = $description;

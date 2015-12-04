@@ -12,6 +12,7 @@ require_once('LinkIDLTQRLockType.php');
 require_once('LinkIDLTQRSession.php');
 require_once('LinkIDLTQRClientSession.php');
 require_once('LinkIDLTQRInfo.php');
+require_once('LinkIDPaymentStatus.php');
 require_once('LinkIDPaymentOrder.php');
 require_once('LinkIDParkingSession.php');
 require_once('LinkIDReportDateFilter.php');
@@ -225,6 +226,74 @@ class LinkIDClient
         return $localizations;
     }
 
+    /**
+     * @param string 0$orderReference
+     * @return LinkIDPaymentStatus
+     * @throws Exception
+     */
+    public function getPaymentStatus($orderReference)
+    {
+
+        $requestParams = array(
+            'orderReference' => $orderReference
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->paymentStatus($requestParams);
+
+        if (null == $response) throw new Exception("Failed to get payment status...");
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        $paymentTransactions = array();
+        $walletTransactions = array();
+
+        // payment transactions
+        if (isset($response->success->paymentDetails->paymentTransactions)) {
+            $xmlPaymentTransactions = $response->success->paymentDetails->paymentTransactions;
+            if (is_array($xmlPaymentTransactions)) {
+                foreach ($xmlPaymentTransactions as $xmlPaymentTransaction) {
+                    $paymentTransactions[] = parseLinkIDPaymentTransaction($xmlPaymentTransaction);
+                }
+            } else {
+                $paymentTransactions[] = parseLinkIDPaymentTransaction($xmlPaymentTransactions);
+            }
+        }
+
+        // wallet transactions
+        if (isset($response->success->paymentDetails->walletTransactions)) {
+            $xmlWalletTransactions = $response->success->paymentDetails->walletTransactions;
+            if (is_array($xmlWalletTransactions)) {
+                foreach ($xmlWalletTransactions as $xmlWalletTransaction) {
+                    $walletTransactions[] = parseLinkIDWalletTransaction($xmlWalletTransaction);
+                }
+            } else {
+                $walletTransactions[] = parseLinkIDWalletTransaction($xmlWalletTransactions);
+            }
+        }
+
+        $paymentDetails = new LinkIDPaymentDetails($paymentTransactions, $walletTransactions);
+
+        return new LinkIDPaymentStatus(
+            isset($response->success->orderReference) ? $response->success->orderReference : null,
+            isset($response->success->userId) ? $response->success->userId : null,
+            isset($response->success->paymentStatus) ? parseLinkIDPaymentState($response->success->paymentStatus) : null,
+            isset($response->success->authorized) ? $response->success->authorized : false,
+            isset($response->success->captured) ? $response->success->captured : false,
+            isset($response->success->amountPayed) ? $response->success->amountPayed : null,
+            isset($response->success->amount) ? $response->success->amount : null,
+            isset($response->success->refundAmount) ? $response->success->refundAmount : null,
+            isset($response->success->currency) ? parseLinkIDCurrency($response->success->currency) : null,
+            isset($response->success->walletCoin) ? $response->success->walletCoin : null,
+            isset($response->success->description) ? $response->success->description : null,
+            isset($response->success->profile) ? $response->success->profile : null,
+            isset($response->success->created) ? $response->success->created : null,
+            isset($response->mandateReference) ? $response->mandateReference : null,
+            $paymentDetails);
+
+    }
 
     /**
      * @param string $orderReference order reference of order to capture
