@@ -957,6 +957,76 @@ class LinkIDClient
         }
     }
 
+    /**
+     * @param $userId string the linkID user ID
+     * @param $walletId string the linkID wallet ID
+     *
+     * @throws Exception something went wrong
+     */
+    public function walletRemove($userId, $walletId)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletId' => $walletId
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletRemove($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
+
+    /**
+     * @param $userId string the linkID user ID
+     * @param $walletId string the linkID wallet ID
+     * @param $walletTransactionId string the linkID wallet transaction to commit
+     *
+     * @throws Exception something went wrong
+     */
+    public function walletCommit($userId, $walletId, $walletTransactionId)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletId' => $walletId,
+            'walletTransactionId' => $walletTransactionId
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletCommit($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
+
+    /**
+     * @param $userId string the linkID user ID
+     * @param $walletId string the linkID wallet ID
+     * @param $walletTransactionId string the linkID wallet transaction to release
+     *
+     * @throws Exception something went wrong
+     */
+    public function walletRelease($userId, $walletId, $walletTransactionId)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletId' => $walletId,
+            'walletTransactionId' => $walletTransactionId
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletRelease($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
+
     // Helper methods
 
     /**
