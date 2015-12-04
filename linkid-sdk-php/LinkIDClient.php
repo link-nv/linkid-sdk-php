@@ -835,7 +835,7 @@ class LinkIDClient
                 $walletInfos[] = parseLinkIDWalletInfoReport($xmlWalletInfo);
             }
         } else {
-            $walletInfos[] = parseLinkIDWalletInfoReport($xmlWalletInfo);
+            $walletInfos[] = parseLinkIDWalletInfoReport($xmlWalletInfos);
         }
 
 
