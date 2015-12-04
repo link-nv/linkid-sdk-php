@@ -19,4 +19,12 @@ print("<pre>");
 print_r($walletInfo);
 print("</pre>");
 
+// Add / remove credit
+
+$walletId = "6e2cc86f-4178-46e5-a483-ca5fd0ebd4a1";
+$walletCoin = "urn:linkid:wallet:coin:coffee";
+
+$client->walletAddCredit($userId, $walletId, 500, null, $walletCoin);
+$client->walletRemoveCredit($userId, $walletId, 500, null, $walletCoin);
+
 ?>

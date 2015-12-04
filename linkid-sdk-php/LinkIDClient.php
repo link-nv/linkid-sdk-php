@@ -901,6 +901,61 @@ class LinkIDClient
 
     }
 
+    /**
+     * @param string $userId string the linkID user ID
+     * @param string $walletId string the linkID wallet ID
+     * @param int $amount double amount to add
+     * @param LinkIDCurrency $currency currency of amount to add
+     * @param string $walletCoin string optional wallet coin
+     *
+     * @throws Exception something went wrong
+     */
+    public function walletAddCredit($userId, $walletId, $amount, $currency, $walletCoin)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletId' => $walletId,
+            'amount' => $amount,
+            'currency' => isset($curency) ? linkIDCurrencyToString($currency) : null,
+            'walletCoin' => $walletCoin
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletAddCredit($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
+
+    /**
+     * @param string $userId string the linkID user ID
+     * @param string $walletId string the linkID wallet ID
+     * @param int $amount double amount to remove
+     * @param LinkIDCurrency $currency currency of amount to remove
+     * @param string $walletCoin string optional wallet coin
+     *
+     * @throws Exception something went wrong
+     */
+    public function walletRemoveCredit($userId, $walletId, $amount, $currency, $walletCoin)
+    {
+
+        $requestParams = array(
+            'userId' => $userId,
+            'walletId' => $walletId,
+            'amount' => $amount,
+            'currency' => isset($curency) ? linkIDCurrencyToString($currency) : null,
+            'walletCoin' => $walletCoin
+        );
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletRemoveCredit($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+    }
 
     // Helper methods
 

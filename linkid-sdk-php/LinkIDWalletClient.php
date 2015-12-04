@@ -34,62 +34,6 @@ class LinkIDWalletClient
     /**
      * @param $userId string the linkID user ID
      * @param $walletId string the linkID wallet ID
-     * @param $amount double amount to add
-     * @param $currency LinkIDCurrency currency of amount to add
-     * @param $walletCoin string optional wallet coin
-     *
-     * @throws Exception something went wrong
-     */
-    public function addCredit($userId, $walletId, $amount, $currency, $walletCoin)
-    {
-
-        $requestParams = array(
-            'userId' => $userId,
-            'walletId' => $walletId,
-            'amount' => $amount,
-            'currency' => $currency,
-            'walletCoin' => $walletCoin
-        );
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $response = $this->client->addCredit($requestParams);
-
-        if (isset($response->error) && null != $response->error) {
-            throw new Exception('Error: ' . $response->error->errorCode);
-        }
-    }
-
-    /**
-     * @param $userId string the linkID user ID
-     * @param $walletId string the linkID wallet ID
-     * @param $amount double amount to remove
-     * @param $currency LinkIDCurrency currency of amount to remove
-     * @param $walletCoin string optional wallet coin
-     *
-     * @throws Exception something went wrong
-     */
-    public function removeCredit($userId, $walletId, $amount, $currency, $walletCoin)
-    {
-
-        $requestParams = array(
-            'userId' => $userId,
-            'walletId' => $walletId,
-            'amount' => $amount,
-            'currency' => $currency,
-            'walletCoin' => $walletCoin
-        );
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $response = $this->client->removeCredit($requestParams);
-
-        if (isset($response->error) && null != $response->error) {
-            throw new Exception('Error: ' . $response->error->errorCode);
-        }
-    }
-
-    /**
-     * @param $userId string the linkID user ID
-     * @param $walletId string the linkID wallet ID
      *
      * @throws Exception something went wrong
      */
