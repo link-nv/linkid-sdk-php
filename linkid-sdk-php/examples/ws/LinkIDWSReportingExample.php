@@ -85,4 +85,15 @@ print("<pre>");
 print_r($walletReport);
 print("</pre>");
 
+// Wallet info report
 
+$walletIds = array();
+$walletIds[] = "123b1c22-e6c5-4ebc-9255-e59b72db5abf";
+$walletIds[] = "13ff6203-a086-483a-8e3c-382ce63f9a9a";
+
+$walletInfoReport = $client->getWalletInfoReport("en", $walletIds);
+
+print("<h2>Wallet info report</h2>");
+print("<pre>");
+print_r($walletInfoReport);
+print("</pre>");

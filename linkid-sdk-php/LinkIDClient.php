@@ -19,6 +19,7 @@ require_once('LinkIDReportApplicationFilter.php');
 require_once('LinkIDReportWalletFilter.php');
 require_once('LinkIDWalletReport.php');
 require_once('LinkIDWalletReportTransaction.php');
+require_once('LinkIDWalletInfoReport.php');
 
 /*
  * linkID WS client
@@ -722,6 +723,54 @@ class LinkIDClient
 
         return new LinkIDWalletReport($response->total, $transactions);
 
+    }
+
+    /**
+     * @param string $language
+     * @param array $walletIds
+     * @return array|null
+     * @throws Exception
+     */
+    public function getWalletInfoReport($language = "en", $walletIds)
+    {
+
+        $requestParams = new stdClass;
+
+        $requestParams->language = $language;
+
+        if (null == $walletIds) {
+            throw new Exception('Must specify walletIds');
+        }
+
+        $requestParams->walletId = array();
+        foreach ($walletIds as $walletId) {
+            $requestParams->walletId[] = $walletId;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletInfoReport($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        if (!isset($response->walletInfo)) {
+            return null;
+        }
+        $xmlWalletInfos = $response->walletInfo;
+
+        // payment transactions
+        $walletInfos = array();
+        if (is_array($xmlWalletInfos)) {
+            foreach ($xmlWalletInfos as $xmlWalletInfo) {
+                $walletInfos[] = parseLinkIDWalletInfoReport($xmlWalletInfo);
+            }
+        } else {
+            $walletInfos[] = parseLinkIDWalletInfoReport($xmlWalletInfo);
+        }
+
+
+        return $walletInfos;
 
     }
 
