@@ -8,7 +8,13 @@
 
 class LinkIDReportDateFilter
 {
+    /**
+     * @var DateTime
+     */
     public $startDate;
+    /**
+     * @var DateTime
+     */
     public $endDate;
 
     function __construct($startDate, $endDate = null)

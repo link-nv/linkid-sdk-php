@@ -29,7 +29,7 @@ function linkIDLocalizationKeyTypeToString($localizationKeyType)
 
 /**
  * @param string $localizationKeyType key type as a string
- * @return int|null parsed key type
+ * @return LinkIDLocalizationKeyType|null parsed key type
  * @throws Exception
  */
 function parseLinkIDLocalizationKeyType($localizationKeyType)

@@ -12,6 +12,13 @@ require_once('LinkIDLTQRLockType.php');
 require_once('LinkIDLTQRSession.php');
 require_once('LinkIDLTQRClientSession.php');
 require_once('LinkIDLTQRInfo.php');
+require_once('LinkIDPaymentOrder.php');
+require_once('LinkIDParkingSession.php');
+require_once('LinkIDReportDateFilter.php');
+require_once('LinkIDReportApplicationFilter.php');
+require_once('LinkIDReportWalletFilter.php');
+require_once('LinkIDWalletReport.php');
+require_once('LinkIDWalletReportTransaction.php');
 
 /*
  * linkID WS client
@@ -144,7 +151,7 @@ class LinkIDClient
         }
 
         $saml2 = new LinkIDSaml2();
-        return $saml2->parseAuthnResponse($response->success->any);
+        return $saml2->parseXmlAuthnResponse($response->success->any);
     }
 
     /**
@@ -494,6 +501,227 @@ class LinkIDClient
         }
 
         return $infos;
+
+    }
+
+    /**
+     * @param LinkIDReportDateFilter $dateFilter
+     * @param LinkIDReportPageFilter $pageFilter
+     * @param array $orderReferences
+     * @param array $mandateReferences
+     * @return array|null
+     * @throws Exception
+     */
+    public function getPaymentReport($dateFilter = null, $pageFilter = null, $orderReferences = null, $mandateReferences = null)
+    {
+
+        $requestParams = new stdClass;
+
+        if (null != $dateFilter) {
+            $requestParams->dateFilter = new stdClass();
+            $requestParams->dateFilter->startDate = $dateFilter->startDate->format(DateTime::ATOM);
+            if (null != $dateFilter->endDate) {
+                $requestParams->dateFilter->endDate = $dateFilter->endDate->format(DateTime::ATOM);
+            }
+
+        }
+
+        if (null != $pageFilter) {
+            $requestParams->pageFilter = new stdClass();
+            $requestParams->pageFilter->firstResult = $pageFilter->firstResult;
+            $requestParams->pageFilter->maxResults = $pageFilter->maxResults;
+        }
+
+        if (null != $orderReferences) {
+            $requestParams->orderReferences = array();
+            foreach ($orderReferences as $orderReference) {
+                $requestParams->orderReferences[] = $orderReference;
+            }
+        }
+        if (null != $mandateReferences) {
+            $requestParams->mandateReferences = array();
+            foreach ($mandateReferences as $mandateReference) {
+                $requestParams->mandateReferences[] = $mandateReference;
+            }
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->paymentReport($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        if (!isset($response->orders)) {
+            return null;
+        }
+        $xmlOrders = $response->orders;
+
+        // payment transactions
+        $orders = array();
+        if (is_array($xmlOrders)) {
+            foreach ($xmlOrders as $xmlOrder) {
+                $orders[] = parseLinkIDPaymentOrder($xmlOrder);
+            }
+        } else {
+            $orders[] = parseLinkIDPaymentOrder($xmlOrders);
+        }
+
+
+        return $orders;
+
+    }
+
+    /**
+     * @param LinkIDReportDateFilter $dateFilter
+     * @param LinkIDReportPageFilter $pageFilter
+     * @param array $barCodes
+     * @param array $ticketNumbers
+     * @param array $dtaKeys
+     * @param array $parkings
+     * @return array|null
+     * @throws Exception
+     */
+    public function getParkingReport($dateFilter = null, $pageFilter = null, $barCodes = null, $ticketNumbers = null, $dtaKeys = null, $parkings = null)
+    {
+
+        $requestParams = new stdClass;
+
+        if (null != $dateFilter) {
+            $requestParams->dateFilter = new stdClass();
+            $requestParams->dateFilter->startDate = $dateFilter->startDate->format(DateTime::ATOM);
+            if (null != $dateFilter->endDate) {
+                $requestParams->dateFilter->endDate = $dateFilter->endDate->format(DateTime::ATOM);
+            }
+
+        }
+
+        if (null != $pageFilter) {
+            $requestParams->pageFilter = new stdClass();
+            $requestParams->pageFilter->firstResult = $pageFilter->firstResult;
+            $requestParams->pageFilter->maxResults = $pageFilter->maxResults;
+        }
+
+        if (null != $barCodes) {
+            $requestParams->barCodes = array();
+            foreach ($barCodes as $barCode) {
+                $requestParams->barCodes[] = $barCode;
+            }
+        }
+        if (null != $ticketNumbers) {
+            $requestParams->ticketNumbers = array();
+            foreach ($ticketNumbers as $ticketNumber) {
+                $requestParams->ticketNumbers[] = $ticketNumber;
+            }
+        }
+        if (null != $dtaKeys) {
+            $requestParams->dtaKeys = array();
+            foreach ($dtaKeys as $dtaKey) {
+                $requestParams->dtaKeys[] = $dtaKey;
+            }
+        }
+        if (null != $parkings) {
+            $requestParams->parkings = array();
+            foreach ($parkings as $parking) {
+                $requestParams->parkings[] = $parking;
+            }
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->parkingReport($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        if (!isset($response->sessions)) {
+            return null;
+        }
+        $xmlSessions = $response->sessions;
+
+        // payment transactions
+        $sessions = array();
+        if (is_array($xmlSessions)) {
+            foreach ($xmlSessions as $xmlSession) {
+                $sessions[] = parseLinkIDParkingSession($xmlSession);
+            }
+        } else {
+            $sessions[] = parseLinkIDParkingSession($xmlSessions);
+        }
+
+
+        return $sessions;
+
+    }
+
+    /**
+     * @param string $language
+     * @param string $walletOrganizationId
+     * @param LinkIDReportApplicationFilter $applicationFilter
+     * @param LinkIDReportWalletFilter $walletFilter
+     * @param LinkIDReportDateFilter $dateFilter
+     * @param LinkIDReportPageFilter $pageFilter
+     * @return array|null
+     * @throws Exception
+     */
+    public function getWalletReport($language = "en", $walletOrganizationId, $applicationFilter = null, $walletFilter = null, $dateFilter = null, $pageFilter = null)
+    {
+
+        $requestParams = new stdClass;
+
+        $requestParams->language = $language;
+        $requestParams->walletOrganizationId = $walletOrganizationId;
+
+        if (null != $dateFilter) {
+            $requestParams->dateFilter = new stdClass();
+            $requestParams->dateFilter->startDate = $dateFilter->startDate->format(DateTime::ATOM);
+            if (null != $dateFilter->endDate) {
+                $requestParams->dateFilter->endDate = $dateFilter->endDate->format(DateTime::ATOM);
+            }
+
+        }
+
+        if (null != $pageFilter) {
+            $requestParams->pageFilter = new stdClass();
+            $requestParams->pageFilter->firstResult = $pageFilter->firstResult;
+            $requestParams->pageFilter->maxResults = $pageFilter->maxResults;
+        }
+
+        if (null != $applicationFilter) {
+            $requestParams->applicationFilter = new stdClass();
+            $requestParams->applicationFilter->applicationName = $applicationFilter->applicationName;
+        }
+
+        if (null != $walletFilter) {
+            $requestParams->walletFilter = new stdClass();
+            $requestParams->walletFilter->walletId = $walletFilter->walletId;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->walletReport($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        if (!isset($response->transactions)) {
+            return null;
+        }
+        $xmlTransactions = $response->transactions;
+
+        // payment transactions
+        $transactions = array();
+        if (is_array($xmlTransactions)) {
+            foreach ($xmlTransactions as $xmlTransaction) {
+                $transactions[] = parseLinkIDWalletReportTransaction($xmlTransaction);
+            }
+        } else {
+            $transactions[] = parseLinkIDWalletReportTransaction($xmlTransactions);
+        }
+
+
+        return new LinkIDWalletReport($response->total, $transactions);
+
 
     }
 

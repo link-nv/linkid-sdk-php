@@ -1,15 +1,15 @@
 <?php
 
-require_once('../../LinkIDReportingClient.php');
+require_once('../../LinkIDClient.php');
 require_once('../ExampleConfig.php');
 
 date_default_timezone_set('UTC'); // needed for parsing dates
 
-$client = new LinkIDReportingClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
+$client = new LinkIDClient($linkIDHost, $linkIDWSUsername, $linkIDWSPassword);
 
 // Orders lookup on date
 
-$orders = $client->getPaymentReport(new DateTime('2015-06-20'));
+$orders = $client->getPaymentReport(new LinkIDReportDateFilter(new DateTime('2015-06-20'), null), null);
 
 print("<h2>Payment orders since 2015-04-01</h2>");
 print("<pre>");
@@ -19,8 +19,8 @@ print("</pre>");
 // Orders lookup on orderReferences
 
 $orderReferences = array();
-$orderReferences[] = "QR-SHOP-0a0337b4-1fa2-4a89-a93c-e59e94bd41f5";
-$orderReferences[] = "QR-SHOP-0f3ce411-548a-4785-a7a5-feb07687f91a";
+$orderReferences[] = "08498c36674647a08c720339cdd79cf7";
+$orderReferences[] = "409b3f70dfbe48899b30e9ab92935d7f";
 $orders = $client->getPaymentReport(null, null, $orderReferences, null);
 
 print("<h2>Payment orders filtered with order references list</h2>");
@@ -42,7 +42,7 @@ print("</pre>");
 
 // Parking session lookup on date
 
-$sessions = $client->getParkingReport(new DateTime('2014-01-01'));
+$sessions = $client->getParkingReport(new LinkIDReportDateFilter(new DateTime('2014-01-01'), null));
 
 print("<h2>Parking sessions since 2014-01-01</h2>");
 print("<pre>");
@@ -53,11 +53,11 @@ print("</pre>");
 
 $walletOrganizationId = "urn:linkid:wallet:leaseplan";
 
-$transactions = $client->getWalletReport($walletOrganizationId, new LinkIDReportDateFilter(new DateTime('2014-01-01')), null, null);
+$walletReport = $client->getWalletReport("en", $walletOrganizationId, null, null, new LinkIDReportDateFilter(new DateTime('2014-01-01')));
 
 print("<h2>Wallet transactions sessions since 2014-01-01</h2>");
 print("<pre>");
-print_r($transactions);
+print_r($walletReport);
 print("</pre>");
 
 // Wallet transactions lookup on application name
@@ -65,11 +65,11 @@ print("</pre>");
 $walletOrganizationId = "urn:linkid:wallet:leaseplan";
 $applicationName = "test-shop";
 
-$transactions = $client->getWalletReport($walletOrganizationId, null, new LinkIDReportApplicationFilter($applicationName), null);
+$walletReport = $client->getWalletReport("en", $walletOrganizationId, new LinkIDReportApplicationFilter($applicationName));
 
 print("<h2>Wallet transactions for application " . $applicationName . "</h2>");
 print("<pre>");
-print_r($transactions);
+print_r($walletReport);
 print("</pre>");
 
 // Wallet transactions lookup on wallet
@@ -78,11 +78,11 @@ $walletOrganizationId = "urn:linkid:wallet:leaseplan";
 $walletId = "ff52177f-8f80-4640-9e86-558f6b1b24c3";
 $userId = "e4269366-ddfb-43dc-838d-01569a8c4c22";
 
-$transactions = $client->getWalletReport($walletOrganizationId, null, null, new LinkIDReportWalletFilter($walletId, $userId));
+$walletReport = $client->getWalletReport("en", $walletOrganizationId, null, new LinkIDReportWalletFilter($walletId, $userId));
 
 print("<h2>Wallet transactions for walletId " . $walletId . " and userId " . $userId . "</h2>");
 print("<pre>");
-print_r($transactions);
+print_r($walletReport);
 print("</pre>");
 
 

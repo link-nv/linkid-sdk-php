@@ -29,7 +29,7 @@ function linkIDLTQRLockTypeToString($lockType)
 
 /**
  * @param string $lockType lock type as a string
- * @return int|null parsed key type
+ * @return LinkIDLTQRLockType parsed key type
  * @throws Exception
  */
 function parseLinkIDLTQRLockType($lockType)

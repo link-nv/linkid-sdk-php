@@ -9,8 +9,10 @@ class LinkIDWalletTransaction
     public $amount;
     public $currency;
     public $walletCoin;
+    public $refundAmount;
+    public $paymentDescription;
 
-    function __construct($walletId, $creationDate, $transactionId, $amount, $currency, $walletCoin)
+    function __construct($walletId, $creationDate, $transactionId, $amount, $currency, $walletCoin, $refundAmount, $paymentDescription)
     {
         $this->walletId = $walletId;
         $this->creationDate = $creationDate;
@@ -18,6 +20,8 @@ class LinkIDWalletTransaction
         $this->amount = $amount;
         $this->currency = $currency;
         $this->walletCoin = $walletCoin;
+        $this->refundAmount = $refundAmount;
+        $this->paymentDescription = $paymentDescription;
     }
 
 }
@@ -30,5 +34,8 @@ function parseLinkIDWalletTransaction($xmlWalletTransaction)
         isset($xmlWalletTransaction->transactionId) ? $xmlWalletTransaction->transactionId : null,
         isset($xmlWalletTransaction->amount) ? $xmlWalletTransaction->amount : null,
         isset($xmlWalletTransaction->currency) ? parseLinkIDCurrency($xmlWalletTransaction->currency) : null,
-        isset($xmlWalletTransaction->walletCoin) ? $xmlWalletTransaction->walletCoin : null);
+        isset($xmlWalletTransaction->walletCoin) ? $xmlWalletTransaction->walletCoin : null,
+        isset($xmlWalletTransaction->refundAmount) ? $xmlWalletTransaction->refundAmount : null,
+        isset($xmlWalletTransaction->paymentDescription) ? $xmlWalletTransaction->paymentDescription : null
+        );
 }

@@ -21,6 +21,7 @@ class LinkIDPaymentOrder
     public $description;
     public $paymentState;
     public $amountPayed;
+    public $amountRefunded;
     public $authorized;
     public $captured;
     public $orderReference;
@@ -31,7 +32,7 @@ class LinkIDPaymentOrder
     public $transactions;
     public $walletTransactions;
 
-    function __construct($date, $amount, $currency, $walletCoin, $description, $paymentState, $amountPayed, $authorized, $captured, $orderReference, $userId, $email, $givenName, $familyName, $transactions, $walletTransactions)
+    function __construct($date, $amount, $currency, $walletCoin, $description, $paymentState, $amountPayed, $amountRefunded, $authorized, $captured, $orderReference, $userId, $email, $givenName, $familyName, $transactions, $walletTransactions)
     {
         $this->date = $date;
         $this->amount = $amount;
@@ -40,6 +41,7 @@ class LinkIDPaymentOrder
         $this->description = $description;
         $this->paymentState = $paymentState;
         $this->amountPayed = $amountPayed;
+        $this->amountRefunded = $amountRefunded;
         $this->authorized = $authorized;
         $this->captured = $captured;
         $this->orderReference = $orderReference;
@@ -90,6 +92,7 @@ function parseLinkIDPaymentOrder($xmlPaymentOrder)
         isset($xmlPaymentOrder->description) ? $xmlPaymentOrder->description : null,
         isset($xmlPaymentOrder->paymentState) ? parseLinkIDPaymentState($xmlPaymentOrder->paymentState) : null,
         isset($xmlPaymentOrder->amountPayed) ? $xmlPaymentOrder->amountPayed : null,
+        isset($xmlPaymentOrder->amountRefunded) ? $xmlPaymentOrder->amountRefunded : null,
         isset($xmlPaymentOrder->authorized) ? $xmlPaymentOrder->authorized : null,
         isset($xmlPaymentOrder->captured) ? $xmlPaymentOrder->captured : null,
         isset($xmlPaymentOrder->orderReference) ? $xmlPaymentOrder->orderReference : null,
