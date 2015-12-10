@@ -8,6 +8,8 @@ require_once('LinkIDAuthPollResponse.php');
 require_once('LinkIDThemes.php');
 require_once('LinkIDLocalization.php');
 require_once('LinkIDLTQRContent.php');
+require_once('LinkIDLTQRPushContent.php');
+require_once('LinkIDLTQRPushResponse.php');
 require_once('LinkIDLTQRLockType.php');
 require_once('LinkIDLTQRSession.php');
 require_once('LinkIDLTQRClientSession.php');
@@ -46,7 +48,7 @@ class LinkIDClient
     public function __construct($linkIDHost, $username, $password, array $options = array())
     {
 
-        $wsdlLocation = "http://" . $linkIDHost . "/linkid-ws-username/linkid31?wsdl";
+        $wsdlLocation = "https://" . $linkIDHost . "/linkid-ws-username/linkid31?wsdl";
 
         $this->client = new LinkIDWSSoapClient($wsdlLocation, $options);
         $this->client->__setUsernameToken($username, $password, 'PasswordDigest');
@@ -396,6 +398,47 @@ class LinkIDClient
         return new LinkIDLTQRSession($response->success->ltqrReference, $this->convertQRCodeInfo($response->success->qrCodeInfo),
             isset($response->success->paymentOrderReference) ? $response->success->paymentOrderReference : null);
 
+    }
+
+    /**
+     * @param array $contents the LTQR codes to be pushed
+     * @return array the created LTQR codes
+     * @throws Exception
+     */
+    public function ltqrBulkPush($contents)
+    {
+        $requestParams = new stdClass;
+        $requestParams->requests = array();
+        foreach ($contents as $content) {
+            $ltqrPushContent = new stdClass();
+
+            $ltqrPushContent->content = $this->convertLTQRContent($content->content);
+            $ltqrPushContent->userAgent = $content->userAgent;
+            $ltqrPushContent->lockType = linkIDLTQRLockTypeToString($content->lockType);
+
+            $requestParams->requests[] = $ltqrPushContent;
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->ltqrBulkPush($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->errorCode);
+        }
+
+        $results = array();
+
+        foreach ($response->success->responses as $ltqrPushResponse) {
+            if (null != $ltqrPushResponse->success) {
+                $results[] = new LinkIDLTQRPushResponse(new LinkIDLTQRSession($ltqrPushResponse->success->ltqrReference,
+                    $this->convertQRCodeInfo($ltqrPushResponse->success->qrCodeInfo),
+                    isset($ltqrPushResponse->success->paymentOrderReference) ? $ltqrPushResponse->success->paymentOrderReference : null));
+            } else {
+                $results[] = new LinkIDLTQRPushResponse(null, $ltqrPushResponse->error->errorCode, $ltqrPushResponse->error->errorMessage);
+            }
+        }
+
+        return $results;
     }
 
     /**
