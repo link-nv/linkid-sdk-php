@@ -11,7 +11,7 @@ class LinkIDFavoritesConfiguration
 
     public $title;
     public $info;
-    public $logoEncoded;
+    public $logoUrl;
     public $backgroundColor;
     public $textColor;
 
@@ -19,15 +19,15 @@ class LinkIDFavoritesConfiguration
      * LinkIDFavoritesConfiguration constructor.
      * @param $title
      * @param $info
-     * @param $logoEncoded
+     * @param $logoUrl
      * @param $backgroundColor
      * @param $textColor
      */
-    public function __construct($title, $info, $logoEncoded, $backgroundColor, $textColor)
+    public function __construct($title, $info, $logoUrl, $backgroundColor, $textColor)
     {
         $this->title = $title;
         $this->info = $info;
-        $this->logoEncoded = $logoEncoded;
+        $this->logoUrl = $logoUrl;
         $this->backgroundColor = $backgroundColor;
         $this->textColor = $textColor;
     }
@@ -40,7 +40,7 @@ function parseLinkIDFavoritesConfiguration($xmlFavoritesConfiguration)
     return new LinkIDFavoritesConfiguration(
         isset($xmlFavoritesConfiguration->title) ? $xmlFavoritesConfiguration->title : null,
         isset($xmlFavoritesConfiguration->info) ? $xmlFavoritesConfiguration->info : null,
-        isset($xmlFavoritesConfiguration->logoEncoded) ? $xmlFavoritesConfiguration->logoEncoded : null,
+        isset($xmlFavoritesConfiguration->logoUrl) ? $xmlFavoritesConfiguration->logoUrl : null,
         isset($xmlFavoritesConfiguration->backgroundColor) ? $xmlFavoritesConfiguration->backgroundColor : null,
         isset($xmlFavoritesConfiguration->textColor) ? $xmlFavoritesConfiguration->textColor : null
     );

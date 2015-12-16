@@ -1233,7 +1233,7 @@ class LinkIDClient
 
         $request->info = $favoritesConfiguration->info;
         $request->title = $favoritesConfiguration->title;
-        $request->logoEncoded = $favoritesConfiguration->logoEncoded;
+        $request->logoUrl = $favoritesConfiguration->logoUrl;
         $request->backgroundColor = $favoritesConfiguration->backgroundColor;
         $request->textColor = $favoritesConfiguration->textColor;
 
