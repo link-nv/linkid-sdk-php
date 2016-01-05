@@ -24,6 +24,7 @@ require_once('LinkIDWalletReport.php');
 require_once('LinkIDWalletReportTransaction.php');
 require_once('LinkIDWalletInfoReport.php');
 require_once('LinkIDWalletInfo.php');
+require_once('LinkIDWalletReportInfo.php');
 
 /*
  * linkID WS client
@@ -893,12 +894,13 @@ class LinkIDClient
      * @param $amount double optional start balance
      * @param $currency LinkIDCurrency optional start balance currency
      * @param $walletCoin string optional wallet coin
+     * @param $reportInfo LinkIDWalletReportInfo optional wallet report info
      *
      * @throws Exception something went wrong enrolling
      *
      * @return string the ID of the linkID wallet that was created
      */
-    public function walletEnroll($userId, $walletOrganizationId, $amount, $currency, $walletCoin)
+    public function walletEnroll($userId, $walletOrganizationId, $amount, $currency, $walletCoin, $reportInfo)
     {
 
         $requestParams = array(
@@ -908,6 +910,16 @@ class LinkIDClient
             'currency' => $currency,
             'walletCoin' => $walletCoin
         );
+
+        if (null != $reportInfo) {
+            $requestParams->reportInfo = new stdClass();
+            if (null != $reportInfo->reference) {
+                $requestParams->reportInfo->reference = $reportInfo->reference;
+            }
+            if (null != $reportInfo->description) {
+                $requestParams->reportInfo->description = $reportInfo->description;
+            }
+        }
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->walletEnroll($requestParams);
@@ -950,10 +962,11 @@ class LinkIDClient
      * @param int $amount double amount to add
      * @param LinkIDCurrency $currency currency of amount to add
      * @param string $walletCoin string optional wallet coin
+     * @param $reportInfo LinkIDWalletReportInfo optional wallet report info
      *
      * @throws Exception something went wrong
      */
-    public function walletAddCredit($userId, $walletId, $amount, $currency, $walletCoin)
+    public function walletAddCredit($userId, $walletId, $amount, $currency, $walletCoin, $reportInfo)
     {
 
         $requestParams = array(
@@ -963,6 +976,16 @@ class LinkIDClient
             'currency' => isset($curency) ? linkIDCurrencyToString($currency) : null,
             'walletCoin' => $walletCoin
         );
+
+        if (null != $reportInfo) {
+            $requestParams->reportInfo = new stdClass();
+            if (null != $reportInfo->reference) {
+                $requestParams->reportInfo->reference = $reportInfo->reference;
+            }
+            if (null != $reportInfo->description) {
+                $requestParams->reportInfo->description = $reportInfo->description;
+            }
+        }
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->walletAddCredit($requestParams);
@@ -978,10 +1001,11 @@ class LinkIDClient
      * @param int $amount double amount to remove
      * @param LinkIDCurrency $currency currency of amount to remove
      * @param string $walletCoin string optional wallet coin
+     * @param $reportInfo LinkIDWalletReportInfo optional wallet report info
      *
      * @throws Exception something went wrong
      */
-    public function walletRemoveCredit($userId, $walletId, $amount, $currency, $walletCoin)
+    public function walletRemoveCredit($userId, $walletId, $amount, $currency, $walletCoin, $reportInfo)
     {
 
         $requestParams = array(
@@ -991,6 +1015,16 @@ class LinkIDClient
             'currency' => isset($curency) ? linkIDCurrencyToString($currency) : null,
             'walletCoin' => $walletCoin
         );
+
+        if (null != $reportInfo) {
+            $requestParams->reportInfo = new stdClass();
+            if (null != $reportInfo->reference) {
+                $requestParams->reportInfo->reference = $reportInfo->reference;
+            }
+            if (null != $reportInfo->description) {
+                $requestParams->reportInfo->description = $reportInfo->description;
+            }
+        }
 
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->walletRemoveCredit($requestParams);
