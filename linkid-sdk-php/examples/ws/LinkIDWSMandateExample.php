@@ -14,7 +14,7 @@ $mandateReference = "2876527e-850e-4615-975c-94a29ff48fb8";
 $paymentContext = new LinkIDPaymentContext(new LinkIDPaymentAmount(500, LinkIDCurrency::EUR, null), "Mandate Test");
 $language = "nl";
 
-$orderReference = $client->mandatePayment($mandateReference, $paymentContext, $language);
+$orderReference = $client->mandatePayment($mandateReference, $paymentContext, null, $language);
 
 print("<h2>Mandate</h2>");
 print("<li>Orderreference: " . $orderReference . "</ul>");

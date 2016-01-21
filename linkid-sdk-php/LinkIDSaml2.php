@@ -85,6 +85,15 @@ class LinkIDSaml2
 
             $authnRequest .= "</saml2:Attribute>";
         }
+        if (null != $authenticationContext->notificationLocation) {
+            $authnRequest .= "<saml2:Attribute Name=\"linkID.notificationLocation\">";
+
+            $authnRequest .= "<saml2:AttributeValue xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xs:string\">";
+            $authnRequest .= $authenticationContext->notificationLocation;
+            $authnRequest .= "</saml2:AttributeValue>";
+
+            $authnRequest .= "</saml2:Attribute>";
+        }
 
         if (null != $authenticationContext->mobileLandingSuccess) {
             $authnRequest .= "<saml2:Attribute Name=\"linkID.mobileLandingSuccess\">";

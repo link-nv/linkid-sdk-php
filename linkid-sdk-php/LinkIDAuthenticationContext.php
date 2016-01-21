@@ -48,6 +48,10 @@ class LinkIDAuthenticationContext
      */
     public $theme;
     /**
+     * @var null|string optional notification location override
+     */
+    public $notificationLocation;
+    /**
      * @var null|string optional mobile landing page if successful
      */
     public $mobileLandingSuccess;
@@ -75,6 +79,7 @@ class LinkIDAuthenticationContext
      * @param string $identityProfile
      * @param int $sessionExpiryOverride
      * @param string $theme
+     * @param string $notificationLocation
      * @param string $mobileLandingSuccess
      * @param string $mobileLandingError
      * @param string $mobileLandingCancel
@@ -82,7 +87,7 @@ class LinkIDAuthenticationContext
      */
     public function __construct($applicationName, $applicationFriendlyName = null, $language = "en",
                                 $authenticationMessage = null, $finishedMessage = null, $paymentContext = null, $callback = null,
-                                $identityProfile = null, $sessionExpiryOverride = -1, $theme = null,
+                                $identityProfile = null, $sessionExpiryOverride = -1, $theme = null, $notificationLocation = null,
                                 $mobileLandingSuccess = null, $mobileLandingError = null, $mobileLandingCancel = null,
                                 $attributeSuggestions = null)
     {
@@ -96,6 +101,7 @@ class LinkIDAuthenticationContext
         $this->identityProfile = $identityProfile;
         $this->sessionExpiryOverride = $sessionExpiryOverride;
         $this->theme = $theme;
+        $this->notificationLocation = $notificationLocation;
         $this->mobileLandingSuccess = $mobileLandingSuccess;
         $this->mobileLandingError = $mobileLandingError;
         $this->mobileLandingCancel = $mobileLandingCancel;

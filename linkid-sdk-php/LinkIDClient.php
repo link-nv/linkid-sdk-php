@@ -373,11 +373,12 @@ class LinkIDClient
     /**
      * @param string $mandateReference reference of the mandate
      * @param LinkIDPaymentContext $paymentContext payment context
+     * @param string $notificationLocation optional notification location override
      * @param string $language optional locale
      * @return string the payment order reference
      * @throws Exception
      */
-    public function mandatePayment($mandateReference, $paymentContext, $language = "en")
+    public function mandatePayment($mandateReference, $paymentContext, $notificationLocation = null, $language = "en")
     {
 
         $requestParams = new stdClass;
@@ -391,6 +392,7 @@ class LinkIDClient
         $requestParams->paymentContext->paymentStatusLocation = $paymentContext->paymentStatusLocation;
 
         $requestParams->mandateReference = $mandateReference;
+        $requestParams->notificationLocation = $notificationLocation;
         $requestParams->language = $language;
 
         /** @noinspection PhpUndefinedMethodInspection */
@@ -1187,6 +1189,9 @@ class LinkIDClient
         if (null != $content->ltqrStatusLocation) {
             $requestContent->ltqrStatusLocation = $content->ltqrStatusLocation;
         }
+        if (null != $content->notificationLocation) {
+            $requestContent->notificationLocation = $content->notificationLocation;
+        }
 
         if (null != $content->favoritesConfiguration) {
             $requestContent->favoritesConfiguration = $this->convertFavoritesConfiguration($content->favoritesConfiguration);
@@ -1217,7 +1222,8 @@ class LinkIDClient
             isset($content->expiryDate) ? $content->expiryDate : null,
             isset($content->expiryDuration) ? $content->expiryDuration : null,
             isset($content->waitForUnblock) ? $content->waitForUnblock : false,
-            isset($content->favoritesConfiguration) ? parseLinkIDFavoritesConfiguration($content->favoritesConfiguration) : null
+            isset($content->favoritesConfiguration) ? parseLinkIDFavoritesConfiguration($content->favoritesConfiguration) : null,
+            isset($content->notificationLocation) ? $content->notificationLocation : null
         );
     }
 

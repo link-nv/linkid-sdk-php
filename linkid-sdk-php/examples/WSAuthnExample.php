@@ -19,7 +19,7 @@ if (!isset($_SESSION["linkIDSession"])) {
     $authenticationContext = new LinkIDAuthenticationContext("example-mobile", null, "en",
         "PHP Authn Message", "PHP Finished Message",
         $paymentContext, new LinkIDCallback("https://www.google.be"),
-        "linkid_basic", 60, "ugent", null, null, null, null);
+        "linkid_basic", 60, "ugent");
 
     $linkIDAuthnSession = $client->authStart($authenticationContext, null);
 

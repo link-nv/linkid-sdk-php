@@ -20,7 +20,8 @@ $sessionExpiryOverride = 10;
 $theme = "ugent";
 $favoritesConfiguration = new LinkIDFavoritesConfiguration("PHP Title", "PHP info", null, null, null);
 
-$ltqrContent = new LinkIDLTQRContent($authenticationMessage, $finishedMessage, $paymentContext, $callback, null, $sessionExpiryOverride, $theme, null, null, null, null, null, null, null, false, $favoritesConfiguration);
+$ltqrContent = new LinkIDLTQRContent($authenticationMessage, $finishedMessage, $paymentContext, $callback, null,
+    $sessionExpiryOverride, $theme, null, null, null, null, null, null, null, false, $favoritesConfiguration, null);
 
 
 $ltqrSession = $client->ltqrPush($ltqrContent, null, LinkIDLTQRLockType::NEVER);

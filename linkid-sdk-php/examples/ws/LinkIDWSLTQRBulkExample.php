@@ -14,7 +14,8 @@ $finishedMessage = "PHP LTQR Finished";
 $callback = new LinkIDCallback("https://www.linkid.be");
 $sessionExpiryOverride = 10;
 $theme = "ugent";
-$ltqrContent = new LinkIDLTQRContent($authenticationMessage, $finishedMessage, $paymentContext, $callback, null, $sessionExpiryOverride, $theme, null, null, null, null, null, null, null, false, null);
+$ltqrContent = new LinkIDLTQRContent($authenticationMessage, $finishedMessage, $paymentContext, $callback, null,
+    $sessionExpiryOverride, $theme, null, null, null, null, null, null, null, false, null, null);
 
 $contents = array();
 for ($i = 0; $i < 2; $i++) {

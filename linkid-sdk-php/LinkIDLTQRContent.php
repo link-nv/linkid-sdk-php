@@ -29,6 +29,7 @@ class LinkIDLTQRContent
     public $expiryDuration;
     public $waitForUnblock;
     public $favoritesConfiguration;
+    public $notificationLocation;
 
     /**
      * LinkIDLTQRContent constructor.
@@ -48,8 +49,12 @@ class LinkIDLTQRContent
      * @param long $expiryDuration
      * @param bool $waitForUnblock
      * @param LinkIDFavoritesConfiguration $favoritesConfiguration
+     * @param string $notificationLocation
      */
-    public function __construct($authenticationMessage, $finishedMessage, $paymentContext, $callback, $identityProfile, $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError, $mobileLandingCancel, $pollingConfiguration, $ltqrStatusLocation, $expiryDate, $expiryDuration, $waitForUnblock, $favoritesConfiguration)
+    public function __construct($authenticationMessage, $finishedMessage, $paymentContext, $callback, $identityProfile,
+                                $sessionExpiryOverride, $theme, $mobileLandingSuccess, $mobileLandingError,
+                                $mobileLandingCancel, $pollingConfiguration, $ltqrStatusLocation, $expiryDate,
+                                $expiryDuration, $waitForUnblock, $favoritesConfiguration, $notificationLocation)
     {
         $this->authenticationMessage = $authenticationMessage;
         $this->finishedMessage = $finishedMessage;
@@ -67,6 +72,7 @@ class LinkIDLTQRContent
         $this->expiryDuration = $expiryDuration;
         $this->waitForUnblock = $waitForUnblock;
         $this->favoritesConfiguration = $favoritesConfiguration;
+        $this->notificationLocation = $notificationLocation;
     }
 
 
