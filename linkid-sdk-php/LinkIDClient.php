@@ -25,6 +25,7 @@ require_once('LinkIDWalletReportTransaction.php');
 require_once('LinkIDWalletInfoReport.php');
 require_once('LinkIDWalletInfo.php');
 require_once('LinkIDWalletReportInfo.php');
+require_once('LinkIDApplication.php');
 
 /*
  * linkID WS client
@@ -158,6 +159,36 @@ class LinkIDClient
 
         $saml2 = new LinkIDSaml2();
         return $saml2->parseXmlAuthnResponse($response->success->any);
+    }
+
+    /**
+     * @param $walletOrganizationId the wallet organization ID
+     * @param string $language
+     * @return array
+     * @throws Exception
+     */
+    public function configWalletApplications($walletOrganizationId, $language = "en")
+    {
+
+        $requestParams = array(
+            'walletOrganizationId' => $walletOrganizationId,
+            'language' => $language
+        );
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response = $this->client->configWalletApplications($requestParams);
+
+        if (isset($response->error) && null != $response->error) {
+            throw new Exception('Error: ' . $response->error->error . " - " . $response->error->info);
+        }
+
+        $applications = array();
+        foreach ($response->success->applications as $application) {
+
+            $applications[] = new LinkIDApplication($application->name, $application->friendlyName);
+        }
+
+        return $applications;
+
     }
 
     /**

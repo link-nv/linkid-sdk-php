@@ -64,4 +64,22 @@ foreach ($localizations as $localization) {
 print("</ul>");
 
 
+/**
+ * Fetch wallet applications
+ */
+
+$walletOrganizationId = "urn:linkid:wallet:leaseplan";
+
+$applications = $client->configWalletApplications($walletOrganizationId);
+
+print("<h2>Wallet applications for " . $walletOrganizationId . "</h2>");
+print("<ul>");
+foreach ($applications as $application) {
+    print("<li>");
+    print("Application: " . $application->name . " (" . $application->friendlyName . ")");
+    print("</li>");
+}
+print("</ul>");
+
+
 ?>
