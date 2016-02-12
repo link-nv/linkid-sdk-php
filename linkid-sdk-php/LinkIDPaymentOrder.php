@@ -23,7 +23,11 @@ class LinkIDPaymentOrder
     public $amountPayed;
     public $amountRefunded;
     public $authorized;
+    public $authorizedDate;
     public $captured;
+    public $capturedDate;
+    public $refunded;
+    public $refundedDate;
     public $orderReference;
     public $userId;
     public $email;
@@ -32,7 +36,9 @@ class LinkIDPaymentOrder
     public $transactions;
     public $walletTransactions;
 
-    function __construct($date, $amount, $currency, $walletCoin, $description, $paymentState, $amountPayed, $amountRefunded, $authorized, $captured, $orderReference, $userId, $email, $givenName, $familyName, $transactions, $walletTransactions)
+    function __construct($date, $amount, $currency, $walletCoin, $description, $paymentState, $amountPayed, $amountRefunded,
+                         $authorized, $authorizedDate, $captured, $capturedDate, $refunded, $refundedDate,
+                         $orderReference, $userId, $email, $givenName, $familyName, $transactions, $walletTransactions)
     {
         $this->date = $date;
         $this->amount = $amount;
@@ -43,7 +49,11 @@ class LinkIDPaymentOrder
         $this->amountPayed = $amountPayed;
         $this->amountRefunded = $amountRefunded;
         $this->authorized = $authorized;
+        $this->authorizedDate = $authorizedDate;
         $this->captured = $captured;
+        $this->capturedDate = $capturedDate;
+        $this->refunded = $refunded;
+        $this->refundedDate = $refundedDate;
         $this->orderReference = $orderReference;
         $this->userId = $userId;
         $this->email = $email;
@@ -94,7 +104,11 @@ function parseLinkIDPaymentOrder($xmlPaymentOrder)
         isset($xmlPaymentOrder->amountPayed) ? $xmlPaymentOrder->amountPayed : null,
         isset($xmlPaymentOrder->amountRefunded) ? $xmlPaymentOrder->amountRefunded : null,
         isset($xmlPaymentOrder->authorized) ? $xmlPaymentOrder->authorized : null,
+        isset($xmlPaymentOrder->authorizedDate) ? $xmlPaymentOrder->authorizedDate : null,
         isset($xmlPaymentOrder->captured) ? $xmlPaymentOrder->captured : null,
+        isset($xmlPaymentOrder->capturedDate) ? $xmlPaymentOrder->capturedDate : null,
+        isset($xmlPaymentOrder->refunded) ? $xmlPaymentOrder->refunded : null,
+        isset($xmlPaymentOrder->refundedDate) ? $xmlPaymentOrder->refundedDate : null,
         isset($xmlPaymentOrder->orderReference) ? $xmlPaymentOrder->orderReference : null,
         isset($xmlPaymentOrder->userId) ? $xmlPaymentOrder->userId : null,
         isset($xmlPaymentOrder->email) ? $xmlPaymentOrder->email : null,

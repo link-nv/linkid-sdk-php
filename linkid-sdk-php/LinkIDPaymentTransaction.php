@@ -13,12 +13,15 @@ class LinkIDPaymentTransaction
     public $creationDate;
     public $authorizationDate;
     public $capturedDate;
+    public $refundedDate;
     public $docdataReference;
     public $amount;
     public $currency;
     public $refundAmount;
 
-    function __construct($paymentMethodType, $paymentMethod, $paymentState, $creationDate, $authorizationDate, $capturedDate, $docdataReference, $amount, $currency, $refundAmount)
+    function __construct($paymentMethodType, $paymentMethod, $paymentState, $creationDate,
+                         $authorizationDate, $capturedDate, $refundedDate,
+                         $docdataReference, $amount, $currency, $refundAmount)
     {
         $this->paymentMethodType = $paymentMethodType;
         $this->paymentMethod = $paymentMethod;
@@ -26,6 +29,7 @@ class LinkIDPaymentTransaction
         $this->creationDate = $creationDate;
         $this->authorizationDate = $authorizationDate;
         $this->capturedDate = $capturedDate;
+        $this->refundedDate = $refundedDate;
         $this->docdataReference = $docdataReference;
         $this->amount = $amount;
         $this->currency = $currency;
@@ -43,6 +47,7 @@ function parseLinkIDPaymentTransaction($xmlPaymentTransaction)
         isset($xmlPaymentTransaction->creationDate) ? $xmlPaymentTransaction->creationDate : null,
         isset($xmlPaymentTransaction->authorizationDate) ? $xmlPaymentTransaction->authorizationDate : null,
         isset($xmlPaymentTransaction->capturedDate) ? $xmlPaymentTransaction->capturedDate : null,
+        isset($xmlPaymentTransaction->refundedDate) ? $xmlPaymentTransaction->refundedDate : null,
         isset($xmlPaymentTransaction->docdataReference) ? $xmlPaymentTransaction->docdataReference : null,
         isset($xmlPaymentTransaction->amount) ? $xmlPaymentTransaction->amount : null,
         isset($xmlPaymentTransaction->currency) ? parseLinkIDCurrency($xmlPaymentTransaction->currency) : null,

@@ -13,10 +13,13 @@ class LinkIDWalletReportTransaction extends LinkIDWalletTransaction
     public $type;
     public $reportInfo;
 
-    function __construct($walletId, $creationDate, $transactionId, $amount, $currency, $walletCoin, $userId, $applicationName, $applicationFriendly, $type, $reportInfo)
+    function __construct($walletId, $creationDate, $refundedDate, $committedDate, $transactionId, $amount, $currency,
+                         $walletCoin, $userId, $applicationName, $applicationFriendly, $type, $reportInfo)
     {
         $this->walletId = $walletId;
         $this->creationDate = $creationDate;
+        $this->refundedDate = $refundedDate;
+        $this->committedDate = $committedDate;
         $this->transactionId = $transactionId;
         $this->amount = $amount;
         $this->currency = $currency;
@@ -43,6 +46,8 @@ function parseLinkIDWalletReportTransaction($xmlWalletReportTransaction)
     return new LinkIDWalletReportTransaction(
         isset($xmlWalletReportTransaction->walletId) ? $xmlWalletReportTransaction->walletId : null,
         isset($xmlWalletReportTransaction->creationDate) ? $xmlWalletReportTransaction->creationDate : null,
+        isset($xmlWalletReportTransaction->refundedDate) ? $xmlWalletReportTransaction->refundedDate : null,
+        isset($xmlWalletReportTransaction->committedDate) ? $xmlWalletReportTransaction->committedDate : null,
         isset($xmlWalletReportTransaction->transactionId) ? $xmlWalletReportTransaction->transactionId : null,
         isset($xmlWalletReportTransaction->amount) ? $xmlWalletReportTransaction->amount : null,
         isset($xmlWalletReportTransaction->currency) ? parseLinkIDCurrency($xmlWalletReportTransaction->currency) : null,
