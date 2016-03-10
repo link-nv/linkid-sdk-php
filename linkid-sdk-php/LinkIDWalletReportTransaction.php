@@ -7,23 +7,21 @@ require_once('LinkIDWalletReportInfo.php');
 class LinkIDWalletReportTransaction extends LinkIDWalletTransaction
 {
 
+    public $id;
     public $userId;
     public $applicationName;
     public $applicationFriendly;
     public $type;
     public $reportInfo;
 
-    function __construct($walletId, $creationDate, $refundedDate, $committedDate, $transactionId, $amount, $currency,
-                         $walletCoin, $userId, $applicationName, $applicationFriendly, $type, $reportInfo)
+    function __construct($id, $walletId, $creationDate, $refundedDate, $committedDate, $transactionId, $amount, $currency,
+                         $walletCoin, $refundAmount, $paymentDescription, $userId, $applicationName,
+                         $applicationFriendly, $type, $reportInfo)
     {
-        $this->walletId = $walletId;
-        $this->creationDate = $creationDate;
-        $this->refundedDate = $refundedDate;
-        $this->committedDate = $committedDate;
-        $this->transactionId = $transactionId;
-        $this->amount = $amount;
-        $this->currency = $currency;
-        $this->walletCoin = $walletCoin;
+        parent::__construct($walletId, $creationDate, $refundedDate, $committedDate, $transactionId, $amount, $currency,
+            $walletCoin, $refundAmount, $paymentDescription);
+
+        $this->id = $id;
         $this->userId = $userId;
         $this->applicationName = $applicationName;
         $this->applicationFriendly = $applicationFriendly;
@@ -44,6 +42,7 @@ function parseLinkIDWalletReportTransaction($xmlWalletReportTransaction)
     }
 
     return new LinkIDWalletReportTransaction(
+        isset($xmlWalletReportTransaction->id) ? $xmlWalletReportTransaction->id : null,
         isset($xmlWalletReportTransaction->walletId) ? $xmlWalletReportTransaction->walletId : null,
         isset($xmlWalletReportTransaction->creationDate) ? $xmlWalletReportTransaction->creationDate : null,
         isset($xmlWalletReportTransaction->refundedDate) ? $xmlWalletReportTransaction->refundedDate : null,
@@ -52,6 +51,8 @@ function parseLinkIDWalletReportTransaction($xmlWalletReportTransaction)
         isset($xmlWalletReportTransaction->amount) ? $xmlWalletReportTransaction->amount : null,
         isset($xmlWalletReportTransaction->currency) ? parseLinkIDCurrency($xmlWalletReportTransaction->currency) : null,
         isset($xmlWalletReportTransaction->walletCoin) ? $xmlWalletReportTransaction->walletCoin : null,
+        isset($xmlWalletReportTransaction->refundAmount) ? $xmlWalletReportTransaction->refundAmount : null,
+        isset($xmlWalletReportTransaction->paymentDescription) ? $xmlWalletReportTransaction->paymentDescription : null,
         isset($xmlWalletReportTransaction->userId) ? $xmlWalletReportTransaction->userId : null,
         isset($xmlWalletReportTransaction->applicationName) ? $xmlWalletReportTransaction->applicationName : null,
         isset($xmlWalletReportTransaction->applicationFriendly) ? $xmlWalletReportTransaction->applicationFriendly : null,
