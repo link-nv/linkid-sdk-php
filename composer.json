@@ -1,5 +1,5 @@
 {
-    "name": "linkID/linkid-sdk",
+    "name": "linkid/linkid-sdk",
 	"type": "library",
     "description": "linkID PHP Integration Library",
     "keywords": ["linkID"],
