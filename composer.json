@@ -1,0 +1,16 @@
+{
+    "name": "linkID/linkid-sdk",
+	"type": "library",
+    "description": "linkID PHP Integration Library",
+    "keywords": ["linkID"],
+    "homepage": "https://linkid.be",
+    "require": {
+        "php": ">=5.3.0"
+    },
+	"license": "BSD Simplified",
+    "authors": [
+        {
+            "name": "Wim Vandenhaute"
+        }
+    ]
+}
