@@ -3,7 +3,6 @@
 require_once('LinkIDPaymentAmount.php');
 require_once('LinkIDPaymentMandate.php');
 require_once('LinkIDPaymentMenu.php');
-require_once('LinkIDPaymentAddBrowser.php');
 
 /*
  * LinkID Payment context
@@ -27,9 +26,6 @@ class LinkIDPaymentContext
     // maximum time to wait for payment validation, if not specified defaults to 5s
     public $validationTime;
 
-    // whether or not to allow to display the option in the client to add a payment method in the browser, default is not allowed
-    public $paymentAddBrowser;
-
     // optional payment menu return URLs (returnPaymentMenuURL)
     /* @var $paymentMenu LinkIDPaymentMenu */
     public $paymentMenu;
@@ -50,14 +46,13 @@ class LinkIDPaymentContext
      * @param null $orderReference
      * @param null $profile
      * @param int $validationTime
-     * @param int $paymentAddBrowser
      * @param LinkIDPaymentMandate $mandate
      * @param bool $allowPartial
      * @param bool $onlyWallets
      * @param null $paymentStatusLocation
      */
     public function __construct(LinkIDPaymentAmount $amount, $description, $orderReference = null, $profile = null, $validationTime = 5,
-                                $paymentAddBrowser = LinkIDPaymentAddBrowser::NOT_ALLOWED, LinkIDPaymentMandate $mandate = null,
+                                LinkIDPaymentMandate $mandate = null,
                                 $allowPartial = false, $onlyWallets = false, $paymentStatusLocation = null)
     {
 
@@ -67,7 +62,6 @@ class LinkIDPaymentContext
         $this->orderReference = $orderReference;
         $this->profile = $profile;
         $this->validationTime = $validationTime;
-        $this->paymentAddBrowser = $paymentAddBrowser;
 
         $this->mandate = $mandate;
 
@@ -105,7 +99,6 @@ function parseLinkIDPaymentContext($xmlPaymentContext)
         isset($xmlPaymentContext->orderReference) ? $xmlPaymentContext->orderReference : null,
         isset($xmlPaymentContext->profile) ? $xmlPaymentContext->profile : null,
         isset($xmlPaymentContext->validationTime) ? $xmlPaymentContext->validationTime : null,
-        isset($xmlPaymentContext->paymentAddBrowser) ? $xmlPaymentContext->paymentAddBrowser : null,
         $linkIDPaymentMandate,
         isset($xmlPaymentContext->allowPartial) ? $xmlPaymentContext->allowPartial : false,
         isset($xmlPaymentContext->onlyWallets) ? $xmlPaymentContext->onlyWallets : false,
